@@ -1,8 +1,9 @@
 import argparse
+import pandas as pd
+import xml.etree.ElementTree as ET
 
 
 def read_prescale_table(filepath):
-    import pandas as pd
 
     data = pd.read_excel(filepath).to_dict('records')
     pstable = {}
@@ -20,8 +21,6 @@ def read_prescale_table(filepath):
 
 
 def get_seeds_from_xml(filepath):
-    import xml.etree.ElementTree as ET
-
     tree = ET.parse(filepath)
     root = tree.getroot()
 
@@ -32,8 +31,6 @@ def get_seeds_from_xml(filepath):
 
 
 def write_prescale_table(PStable, filepath='PStable_new', output_format='xlsx'):
-    import pandas as pd
-
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
     if isinstance(PStable, dict):
