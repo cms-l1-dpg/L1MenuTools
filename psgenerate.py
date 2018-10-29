@@ -70,7 +70,7 @@ if __name__ == '__main__':
                 newData[col] = find_table_value(PStable_in, seed, col)
 
         line = pd.DataFrame(newData, index=[index])
-        PStable_out = PStable_out.append(line, ignore_index=False)
+        PStable_out = PStable_out.append(line, ignore_index=False, sort=True)
     
     # PStable_out = PStable_out.sort_index().reset_index(drop=True)
     PStable_out = PStable_out[PStable_in.columns]
