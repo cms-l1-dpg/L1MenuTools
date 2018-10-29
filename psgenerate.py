@@ -4,16 +4,62 @@ import xml.etree.ElementTree as ET
 
 
 def read_prescale_table(filepath):
+    """
+    Import an existing xlsx prescale table as pandas dataframe
+    
+    Parameters
+    ----------
+    filepath : str, path object
+        Location of the input file (can be any format accepted by the pandas
+        'read_excel' function)
+
+    Returns
+    -------
+    pandas.DataFrame
+        Imported xlsx file as a DataFrame
+
+    """
+
     data = pd.read_excel(filepath, convert_float=True)
     return data
 
 
 def make_empty_table(pstable):
+    """
+    Create a new, empty dataframe with the structure of a given one.
+
+    Parameters
+    ----------
+    pstable : pandas.DataFrame
+        DataFrame that serves as a template for the new DataFrame
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame that has the same column structure as the input DataFrame, but
+        is empty.
+
+    """
+
     empty_table = pd.DataFrame(columns=pstable.columns)
     return empty_table
 
 
 def get_seeds_from_xml(filepath):
+    """
+    Import seeds and indices from an existing L1 Menu XML file.
+
+    Parameters
+    ----------
+    filepath: str
+        Location of the input file
+
+    Returns
+    -------
+    list of str, list of int
+        Seed names and corresponding indices ('bits') as two separate lists
+
+    """
     tree = ET.parse(filepath)
     root = tree.getroot()
 
@@ -24,6 +70,19 @@ def get_seeds_from_xml(filepath):
 
 
 def write_prescale_table(PStable, filepath='PStable_new', output_format='xlsx'):
+    """
+    Save a prescale table to disk.
+
+    Parameters
+    ----------
+    PStable : pandas.DataFrame
+        Presacle table that should be written
+    filepath : str (default: 'PStable_new')
+        Name of the output file (without file extension)
+    output_format : str (default: 'xlsx')
+        Output file format, specified via the file extension
+
+    """
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
     if output_format in ['xlsx']:
@@ -39,6 +98,24 @@ def fill_empty_val(name):
 
 
 def find_table_value(pstable, seed, col):
+    """
+    Retreive a specific value corresponding to seed and column name.
+
+    Parameters
+    ----------
+    pstable : pandas.DataFrame
+        PS table from which the value should be obtained
+    seed : str
+        Name of the desired seed
+    col : str
+        Name of the desired column
+
+    Returns
+    -------
+    Cell content corresponding to seed and col. If cell is not found, the
+    function fill_empty_val is called and its return value is forwarded.
+
+    """
     if 'Name' not in pstable.columns:
         raise KeyError('PS table does not have a column \'Name\'')
 
@@ -49,16 +126,20 @@ def find_table_value(pstable, seed, col):
 
 
 if __name__ == '__main__':
+
+    # define CLI elements
     parser = argparse.ArgumentParser()
     parser.add_argument('PStable', help='Existing prescale table (xlsx format)')
     parser.add_argument('NewMenu', help='New L1 menu XML')
     args = parser.parse_args()
 
+    # read all the data and prepare output
     PStable_in = read_prescale_table(args.PStable)
     PStable_out = make_empty_table(PStable_in)
-
     newSeeds, indices = get_seeds_from_xml(args.NewMenu)
 
+    # create new PS table according to the new menu and fill in values from the
+    # old PS table, if possible
     for seed,index in zip(newSeeds, indices):
         newData = {}
         for col in PStable_out.columns:
@@ -73,6 +154,9 @@ if __name__ == '__main__':
         PStable_out = PStable_out.append(line, ignore_index=False, sort=True)
     
     # PStable_out = PStable_out.sort_index().reset_index(drop=True)
+
+    # sort output table acording to the old table column layout
     PStable_out = PStable_out[PStable_in.columns]
     
+    # save new table to the disk
     write_prescale_table(PStable_out)
