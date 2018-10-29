@@ -4,7 +4,7 @@ env/
 input/
 
 
-# Created by https://www.gitignore.io/api/vim,linux,emacs,python
+# Created by https://www.gitignore.io/api/vim,linux,emacs,python,libreoffice,microsoftoffice
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
@@ -212,6 +212,29 @@ tags
 # Persistent undo
 [._]*.un~
 
+### LibreOffice ###
+# LibreOffice locks
+.~lock.*#
 
-# End of https://www.gitignore.io/api/vim,linux,emacs,python
+### MicrosoftOffice ###
+*.tmp
 
+# Word temporary
+~$*.doc*
+
+# Word Auto Backup File
+Backup of *.doc*
+
+# Excel temporary
+~$*.xls*
+
+# Excel Backup File
+*.xlk
+
+# PowerPoint temporary
+~$*.ppt*
+
+# Visio autosave temporary files
+*.~vsd*
+
+# End of https://www.gitignore.io/api/vim,linux,emacs,python,libreoffice,microsoftoffice
