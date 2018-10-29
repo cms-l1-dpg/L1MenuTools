@@ -4,20 +4,13 @@ import xml.etree.ElementTree as ET
 
 
 def read_prescale_table(filepath):
+    data = pd.read_excel(filepath, convert_float=True)
+    return data
 
-    data = pd.read_excel(filepath).to_dict('records')
-    pstable = {}
-    for entry in data:
-        pstable[entry['Name']] = {}
-        for col in entry.keys():
-            if col != 'Name':
-                pstable[entry['Name']][col] = entry[col]
 
-    colnames = []
-    for col in data[0].keys():
-        colnames.append(col)
-
-    return pstable, colnames
+def make_empty_table(pstable):
+    empty_table = pd.DataFrame(columns=pstable.columns)
+    return empty_table
 
 
 def get_seeds_from_xml(filepath):
@@ -33,22 +26,8 @@ def get_seeds_from_xml(filepath):
 def write_prescale_table(PStable, filepath='PStable_new', output_format='xlsx'):
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
-    if isinstance(PStable, dict):
-        # colnames = ['Name'].append([name for name in PStable.keys()])
-        PStable = pd.DataFrame(PStable).transpose()
-
-    PStable = PStable.fillna('-123')
-
-    int_cols = [col for col in PStable.columns if PStable[col].dtype != str]
-    for col in int_cols:
-        PStable[col] = PStable[col].astype(int)
-
-    PStable = PStable.replace(-123, '')
-
-    PStable.index.rename('Name', inplace=True)
-
     if output_format in ['xlsx']:
-        PStable.to_excel(filepath)
+        PStable.to_excel(filepath, index=False)
     else:
         raise NotImplementedError('Invalid output file format: {}'.format(
             output_format))
@@ -59,30 +38,41 @@ def fill_empty_val(name):
     return None 
 
 
+def find_table_value(pstable, seed, col):
+    if 'Name' not in pstable.columns:
+        raise KeyError('PS table does not have a column \'Name\'')
+
+    if seed in pstable['Name'].values:
+        return (pstable.loc[pstable['Name'] == seed])[col].values[0]
+    else:
+        return fill_empty_val(seed)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('PStable', help='Existing prescale table (xlsx format)')
     parser.add_argument('NewMenu', help='New L1 menu XML')
     args = parser.parse_args()
 
-    PStable_in, colnames = read_prescale_table(args.PStable)
-    colnames = [c for c in colnames if c != 'Name']
+    PStable_in = read_prescale_table(args.PStable)
+    PStable_out = make_empty_table(PStable_in)
+
     newSeeds, indices = get_seeds_from_xml(args.NewMenu)
 
-    PStable_out = {}
     for seed,index in zip(newSeeds, indices):
-        PStable_out[seed] = {}
-        if seed in PStable_in.keys():
-            for col in colnames:
-                if col == 'Index':
-                    PStable_out[seed][col] = index
-                else:
-                    PStable_out[seed][col] = PStable_in[seed][col]
-        else:
-            for col in colnames:
-                if col == 'Index':
-                    PStable_out[seed]['Index'] = index
-                else:
-                    PStable_out[seed][col] = fill_empty_val(seed)
+        newData = {}
+        for col in PStable_out.columns:
+            if col == 'Index':
+                newData[col] = index
+            elif col == 'Name':
+                newData[col] = seed
+            else:
+                newData[col] = find_table_value(PStable_in, seed, col)
 
+        line = pd.DataFrame(newData, index=[index])
+        PStable_out = PStable_out.append(line, ignore_index=False)
+    
+    # PStable_out = PStable_out.sort_index().reset_index(drop=True)
+    PStable_out = PStable_out[PStable_in.columns]
+    
     write_prescale_table(PStable_out)
