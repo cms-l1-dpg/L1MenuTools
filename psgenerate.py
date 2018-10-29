@@ -1,9 +1,10 @@
 import argparse
+from typing import Union, Any
 import pandas as pd
 import xml.etree.ElementTree as ET
 
 
-def read_prescale_table(filepath):
+def read_prescale_table(filepath: Any) -> pd.DataFrame:
     """
     Import an existing xlsx prescale table as pandas dataframe
     
@@ -24,7 +25,7 @@ def read_prescale_table(filepath):
     return data
 
 
-def make_empty_table(pstable):
+def make_empty_table(pstable: pd.DataFrame) -> pd.DataFrame:
     """
     Create a new, empty dataframe with the structure of a given one.
 
@@ -45,7 +46,7 @@ def make_empty_table(pstable):
     return empty_table
 
 
-def get_seeds_from_xml(filepath):
+def get_seeds_from_xml(filepath: str) -> (list,list):
     """
     Import seeds and indices from an existing L1 Menu XML file.
 
@@ -60,6 +61,7 @@ def get_seeds_from_xml(filepath):
         Seed names and corresponding indices ('bits') as two separate lists
 
     """
+
     tree = ET.parse(filepath)
     root = tree.getroot()
 
@@ -69,7 +71,8 @@ def get_seeds_from_xml(filepath):
     return seeds, indices
 
 
-def write_prescale_table(PStable, filepath='PStable_new', output_format='xlsx'):
+def write_prescale_table(PStable: pd.DataFrame, filepath: str = 'PStable_new',
+        output_format: str = 'xlsx') -> None:
     """
     Save a prescale table to disk.
 
@@ -83,6 +86,7 @@ def write_prescale_table(PStable, filepath='PStable_new', output_format='xlsx'):
         Output file format, specified via the file extension
 
     """
+
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
     if output_format in ['xlsx']:
@@ -91,13 +95,16 @@ def write_prescale_table(PStable, filepath='PStable_new', output_format='xlsx'):
         raise NotImplementedError('Invalid output file format: {}'.format(
             output_format))
 
+    return
 
-def fill_empty_val(name):
+
+def fill_empty_val(name: str):
     # TODO extend functionality of this method
     return None 
 
 
-def find_table_value(pstable, seed, col):
+def find_table_value(pstable: pd.DataFrame, seed: str,
+        col: str) -> Union[int, float, str]:
     """
     Retreive a specific value corresponding to seed and column name.
 
@@ -116,6 +123,7 @@ def find_table_value(pstable, seed, col):
     function fill_empty_val is called and its return value is forwarded.
 
     """
+
     if 'Name' not in pstable.columns:
         raise KeyError('PS table does not have a column \'Name\'')
 
