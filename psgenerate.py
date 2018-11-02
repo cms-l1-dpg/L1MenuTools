@@ -1,7 +1,26 @@
+import os
 import argparse
 from typing import Union, Any
+import tempfile
+import requests
+import shutil
+
 import pandas as pd
 import xml.etree.ElementTree as ET
+
+
+def download_file(url: str) -> Union[str, None]:
+    tempdir = tempfile.mkdtemp(prefix='tmp_psgenerate_')
+    local_filename = tempdir + '/' + url.split('/')[-1]
+    try:
+        r = requests.get(url, stream=True)
+        with open(local_filename, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+            print('File downloaded: {}'.format(local_filename))
+
+        return local_filename
+    except:
+        return None
 
 
 def read_prescale_table(filepath: Any) -> pd.DataFrame:
@@ -20,6 +39,13 @@ def read_prescale_table(filepath: Any) -> pd.DataFrame:
         Imported xlsx file as a DataFrame
 
     """
+
+    if not os.path.exists(filepath):
+        print('No local file found, trying to download {}...'.format(filepath))
+        filepath = download_file(filepath)
+        if filepath is None:
+            raise RuntimeError('File does not exist and/or could not be '
+                    'downloaded: {}'.format(filepath))
 
     data = pd.read_excel(filepath, convert_float=True)
     return data
@@ -61,6 +87,14 @@ def get_seeds_from_xml(filepath: str) -> (list,list):
         Seed names and corresponding indices ('bits') as two separate lists
 
     """
+
+    if not os.path.exists(filepath):
+        print('No local file found, trying to download {}...'.format(filepath))
+        filepath = download_file(filepath)
+        if filepath is None:
+            raise RuntimeError('File does not exist and/or could not be '
+                    'downloaded: {}'.format(filepath))
+
 
     tree = ET.parse(filepath)
     root = tree.getroot()

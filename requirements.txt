@@ -1,3 +1,4 @@
-pandas
-xlrd
 openpyxl
+pandas
+requests
+xlrd
