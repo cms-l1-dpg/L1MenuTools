@@ -137,8 +137,18 @@ if __name__ == '__main__':
 
     # define CLI elements
     parser = argparse.ArgumentParser()
-    parser.add_argument('PStable', help='Existing prescale table (xlsx format)')
-    parser.add_argument('NewMenu', help='New L1 menu XML')
+    parser.add_argument('PStable',
+            help='Existing prescale table (xlsx format)',
+            type=str)
+    parser.add_argument('NewMenu',
+            help='New L1 menu XML',
+            type=str)
+    parser.add_argument('-output', '--output',
+            help='Name of the created output file (w/o file extension)',
+            type=str,
+            default='new_PStable',
+            dest='output')
+
     args = parser.parse_args()
 
     # read all the data and prepare output
@@ -167,4 +177,4 @@ if __name__ == '__main__':
     PStable_out = PStable_out[PStable_in.columns]
     
     # save new table to the disk
-    write_prescale_table(PStable_out)
+    write_prescale_table(PStable_out, filepath=args.output)
