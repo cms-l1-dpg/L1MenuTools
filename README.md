@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/version-0.1.0--dev-blue.svg)
+![](https://img.shields.io/badge/version-0.1.0-blue.svg)
 
 # PS-generate
 
