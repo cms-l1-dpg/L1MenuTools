@@ -1,5 +1,5 @@
 # my-project
-wget https://github.com/alokekumardas/my-project.git
+gitclone https://github.com/alokekumardas/my-project.git
 
 make
 
