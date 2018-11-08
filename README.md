@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/version-0.1.0--dev-blue.svg)
+![](https://img.shields.io/badge/version-0.1.0-blue.svg)
 
 # PS-generate
 
@@ -37,6 +37,10 @@ table and a given L1 menu (see example below).
 ```
 python psgenerate.py PStable.xlsx L1Menu.xml
 ```
+
+#### Optional arguments:
+* `-output`: Specify the name of the output file, without file extension
+  (*default: "new_PStable"*)
 
 If run successfully, the tool creates a new xlsx file ("PStable_new.xlsx") which
 contains the seeds of the passed L1 menu XML with their corresponding prescale
