@@ -1,5 +1,5 @@
 # my-project
-gitclone https://github.com/alokekumardas/my-project.git
+git clone https://github.com/alokekumardas/my-project.git
 
 make
 
