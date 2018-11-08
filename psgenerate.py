@@ -2,7 +2,7 @@ import os
 import argparse
 from typing import Union, Any
 import tempfile
-import requests
+import wget
 import shutil
 
 import pandas as pd
@@ -10,15 +10,27 @@ import xml.etree.ElementTree as ET
 
 
 def download_file(url: str) -> Union[str, None]:
-    tempdir = tempfile.mkdtemp(prefix='tmp_psgenerate_')
-    local_filename = tempdir + '/' + url.split('/')[-1]
-    try:
-        r = requests.get(url, stream=True)
-        with open(local_filename, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)
-            print('File downloaded: {}'.format(local_filename))
+    """
+    Download a file from a given url
 
-        return local_filename
+    Parameters
+    ----------
+    url : str
+        URL of the file that is to be downloaded
+
+    Returns
+    -------
+    str, None
+        Filepath of the downloaded file, None if the download failed
+
+    """
+
+    tempdir = tempfile.mkdtemp(prefix='psgenerate_')
+    local_filepath = tempdir + '/' + url.split('/')[-1]
+
+    try:
+        wget.download(url, local_filepath)
+        return local_filepath
     except:
         return None
 
@@ -41,11 +53,13 @@ def read_prescale_table(filepath: Any) -> pd.DataFrame:
     """
 
     if not os.path.exists(filepath):
-        print('No local file found, trying to download {}...'.format(filepath))
+        print('\nNo local file found, trying to download {}...'.format(filepath))
         filepath = download_file(filepath)
         if filepath is None:
             raise RuntimeError('File does not exist and/or could not be '
                     'downloaded: {}'.format(filepath))
+        else:
+            print('\nFile downloaded: {}'.format(filepath))
 
     data = pd.read_excel(filepath, convert_float=True)
     return data
