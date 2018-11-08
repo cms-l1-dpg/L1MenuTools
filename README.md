@@ -5,4 +5,6 @@ cd my-project
 
 make
 
-./fileread rateTable.txt    
+./fileread rateTable.txt  
+
+"piechart.pdf" is saved in current directory
