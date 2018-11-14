@@ -4,7 +4,6 @@ from typing import Union, Any
 import tempfile
 import wget
 import shutil
-
 import pandas as pd
 import xml.etree.ElementTree as ET
 
@@ -26,7 +25,7 @@ def download_file(url: str) -> Union[str, None]:
     """
 
     tempdir = tempfile.mkdtemp(prefix='psgenerate_')
-    local_filepath = tempdir + '/' + url.split('/')[-1]
+    local_filepath = os.path.join(tempdir, os.path.basename(url))
 
     try:
         wget.download(url, local_filepath)
@@ -43,7 +42,7 @@ def read_prescale_table(filepath: Any) -> pd.DataFrame:
     ----------
     filepath : str, path object
         Location of the input file (can be any format accepted by the pandas
-        'read_excel' function)
+        'read_excel' function), can be a local path or a URL
 
     Returns
     -------
@@ -93,7 +92,7 @@ def get_seeds_from_xml(filepath: str) -> (list,list):
     Parameters
     ----------
     filepath: str
-        Location of the input file
+        Location of the input file, can be a local path or a URL
 
     Returns
     -------
@@ -108,7 +107,6 @@ def get_seeds_from_xml(filepath: str) -> (list,list):
         if filepath is None:
             raise RuntimeError('File does not exist and/or could not be '
                     'downloaded: {}'.format(filepath))
-
 
     tree = ET.parse(filepath)
     root = tree.getroot()
@@ -135,9 +133,11 @@ def write_prescale_table(PStable: pd.DataFrame, filepath: str = 'PStable_new',
 
     """
 
+    supported_formats = ['xlsx']
+
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
-    if output_format in ['xlsx']:
+    if output_format in supported_formats:
         PStable.to_excel(filepath, index=False)
     else:
         raise NotImplementedError('Invalid output file format: {}'.format(
@@ -154,7 +154,7 @@ def fill_empty_val(name: str):
 def find_table_value(pstable: pd.DataFrame, seed: str,
         col: str) -> Union[int, float, str]:
     """
-    Retreive a specific value corresponding to seed and column name.
+    Retrieve a specific value corresponding to a given seed and column name.
 
     Parameters
     ----------
@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # read all the data and prepare output
+    # read all data and prepare the output
     PStable_in = read_prescale_table(args.PStable)
     PStable_out = make_empty_table(PStable_in)
     newSeeds, indices = get_seeds_from_xml(args.NewMenu)
@@ -221,7 +221,7 @@ if __name__ == '__main__':
     
     # PStable_out = PStable_out.sort_index().reset_index(drop=True)
 
-    # sort output table acording to the old table column layout
+    # sort output table according to the old table column layout
     PStable_out = PStable_out[PStable_in.columns]
     
     # save new table to the disk
