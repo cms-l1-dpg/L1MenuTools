@@ -32,6 +32,7 @@ int fileread(int arc, char** arv)
         double EGrate=0,EGpurerate=0,EGproprate=0;
         double Jetrate=0,Jetpurerate=0,Jetproprate=0;
         double Taurate=0,Taupurerate=0,Tauproprate=0;
+        double Otherrate=0,Otherpurerate=0,Otherproprate=0;
         while(getline(myfile,line))
         {
                 if(line.find("L1Bit")!=std::string::npos)
@@ -57,24 +58,30 @@ int fileread(int arc, char** arv)
                          mupurerate = mupurerate + pure;
                          muproprate = muproprate + prop;
                   }
-                 if(seedname.find("Mu")==string::npos && seedname.find("EG")!=string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")==string::npos)
+                 else if(seedname.find("Mu")==string::npos && seedname.find("EG")!=string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")==string::npos)
                  {
                          EGrate=EGrate + rate;
                          EGpurerate = EGpurerate + pure;
                          EGproprate = EGproprate + prop;
                   }
-                 if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")!=string::npos && seedname.find("Tau")==string::npos)
+                 else if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")!=string::npos && seedname.find("Tau")==string::npos)
                  {
                          Jetrate=Jetrate + rate;
                          Jetpurerate = Jetpurerate + pure;
                          Jetproprate = Jetproprate + prop;
                   }
-                 if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")!=string::npos)
+                 else if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")!=string::npos)
                  {
                          Taurate=Taurate + rate;
                          Taupurerate = Taupurerate + pure;
                          Tauproprate = Tauproprate + prop;
                   }
+                   else
+                   {
+                         Otherrate=Otherrate + rate;
+                         Otherpurerate = Otherpurerate + pure;
+                         Otherproprate = Otherproprate + prop;
+                   }
                 }
         }
         myfile.close();
@@ -82,7 +89,8 @@ int fileread(int arc, char** arv)
         cout<<"EG rate  "<<EGrate<<"  "<<EGpurerate<<" "<<EGproprate<<endl;
         cout<<"Jet rate  "<<Jetrate<<"  "<<Jetpurerate<<" "<<Jetproprate<<endl;
         cout<<"Tau rate  "<<Taurate<<"  "<<Taupurerate<<" "<<Tauproprate<<endl;
-        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate};
+        cout<<"Other rate  "<<Otherrate<<"  "<<Otherpurerate<<" "<<Otherproprate<<endl;
+        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Otherproprate};
    Int_t colors[] = {2,4,6,7};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",1000,1000);
@@ -95,6 +103,7 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(1,"EG");
    pie4->SetEntryLabel(2,"Jet");
    pie4->SetEntryLabel(3,"Tau");
+   pie4->SetEntryLabel(4,"Other");
    pie4->Draw("nol <");
 
    cpie->SaveAs("piechart.pdf");
