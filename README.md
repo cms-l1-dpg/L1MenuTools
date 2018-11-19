@@ -1,5 +1,5 @@
 # my-project
-Requirements- This tool need only root librabry
+Requirements- This tool need only root library
 
 So In lxplus it is expected to be ran under a CMSSW environment
 
