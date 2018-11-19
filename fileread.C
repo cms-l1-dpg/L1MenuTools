@@ -82,7 +82,7 @@ int fileread(int arc, char** arv)
         cout<<"EG rate  "<<EGrate<<"  "<<EGpurerate<<" "<<EGproprate<<endl;
         cout<<"Jet rate  "<<Jetrate<<"  "<<Jetpurerate<<" "<<Jetproprate<<endl;
         cout<<"Tau rate  "<<Taurate<<"  "<<Taupurerate<<" "<<Tauproprate<<endl;
-        double vals[]= {murate,EGrate,Jetrate,Taurate};
+        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate};
    Int_t colors[] = {2,4,6,7};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",1000,1000);
