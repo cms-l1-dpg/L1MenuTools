@@ -51,25 +51,25 @@ int fileread(int arc, char** arv)
                  aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
-                 if(seedname.find("Mu")!=string::npos && seedname.find("EG")>=string::npos && seedname.find("Jet")>=string::npos && seedname.find("Tau")>=string::npos)
+                 if(seedname.find("Mu")!=string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")==string::npos)
                  {
                          murate=murate + rate;
                          mupurerate = mupurerate + pure;
                          muproprate = muproprate + prop;
                   }
-                 if(seedname.find("Mu")>=string::npos && seedname.find("EG")!=string::npos && seedname.find("Jet")>=string::npos && seedname.find("Tau")>=string::npos)
+                 if(seedname.find("Mu")==string::npos && seedname.find("EG")!=string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")==string::npos)
                  {
                          EGrate=EGrate + rate;
                          EGpurerate = EGpurerate + pure;
                          EGproprate = EGproprate + prop;
                   }
-                 if(seedname.find("Mu")>=string::npos && seedname.find("EG")>=string::npos && seedname.find("Jet")!=string::npos && seedname.find("Tau")>=string::npos)
+                 if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")!=string::npos && seedname.find("Tau")==string::npos)
                  {
                          Jetrate=Jetrate + rate;
                          Jetpurerate = Jetpurerate + pure;
                          Jetproprate = Jetproprate + prop;
                   }
-                 if(seedname.find("Mu")>=string::npos && seedname.find("EG")>=string::npos && seedname.find("Jet")>=string::npos && seedname.find("Tau")!=string::npos)
+                 if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")!=string::npos)
                  {
                          Taurate=Taurate + rate;
                          Taupurerate = Taupurerate + pure;
