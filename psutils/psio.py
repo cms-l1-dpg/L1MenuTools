@@ -34,7 +34,8 @@ def download_file(url: str) -> Union[str, None]:
 
 def read_prescale_table(filepath: Any) -> pd.DataFrame:
     """
-    Import an existing xlsx prescale table as pandas dataframe
+    Import an existing xlsx prescale table as pandas dataframe from a local
+    path or a URL
     
     Parameters
     ----------
