@@ -32,6 +32,13 @@ int fileread(int arc, char** arv)
         double EGrate=0,EGpurerate=0,EGproprate=0;
         double Jetrate=0,Jetpurerate=0,Jetproprate=0;
         double Taurate=0,Taupurerate=0,Tauproprate=0;
+        double Sumsrate=0,Sumspurerate=0,Sumsproprate=0;
+        double MuEGrate=0,MuEGpurerate=0,MuEGproprate=0;
+        double MuJetSumsrate=0,MuJetSumspurerate=0,MuJetSumsproprate=0;
+        double MuTaurate=0,MuTaupurerate=0,MuTauproprate=0;
+        double EGJetSumsrate=0,EGJetSumspurerate=0,EGJetSumsproprate=0;
+        double EGTaurate=0,EGTaupurerate=0,EGTauproprate=0;
+        double TauJetSumsrate=0,TauJetSumspurerate=0,TauJetSumsproprate=0;
         double Otherrate=0,Otherpurerate=0,Otherproprate=0;
         while(getline(myfile,line))
         {
@@ -52,31 +59,79 @@ int fileread(int arc, char** arv)
                  aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
-                 if(seedname.find("Mu")!=string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")==string::npos)
+                 bool issums=false, ismu=false, isjet=false, isEG=false,isTau=false; 
+                 if(seedname.find("ETM")!=string::npos || seedname.find("HTT")!=string::npos || seedname.find("ETT")!=string::npos || seedname.find("ETMHF")!=string::npos)     issums=true;
+                 if(seedname.find("Mu")!=string::npos) ismu=true;
+                 if(seedname.find("EG")!=string::npos) isEG=true;
+                 if(seedname.find("Jet")!=string::npos)isjet=true;
+                 if(seedname.find("Tau")!=string::npos)isTau=true;
+                 if(ismu && !isjet && !isEG && !isTau && !issums)
                  {
                          murate=murate + rate;
                          mupurerate = mupurerate + pure;
                          muproprate = muproprate + prop;
                   }
-                 else if(seedname.find("Mu")==string::npos && seedname.find("EG")!=string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")==string::npos)
+                 else if(!ismu && !isjet && isEG && !isTau && !issums)
                  {
                          EGrate=EGrate + rate;
                          EGpurerate = EGpurerate + pure;
                          EGproprate = EGproprate + prop;
                   }
-                 else if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")!=string::npos && seedname.find("Tau")==string::npos)
+                 else if(!ismu && isjet && !isEG && !isTau && !issums)
                  {
                          Jetrate=Jetrate + rate;
                          Jetpurerate = Jetpurerate + pure;
                          Jetproprate = Jetproprate + prop;
                   }
-                 else if(seedname.find("Mu")==string::npos && seedname.find("EG")==string::npos && seedname.find("Jet")==string::npos && seedname.find("Tau")!=string::npos)
+                 else if(!ismu && !isjet && !isEG && isTau && !issums)
                  {
                          Taurate=Taurate + rate;
                          Taupurerate = Taupurerate + pure;
                          Tauproprate = Tauproprate + prop;
                   }
-                   else
+                 else if(!ismu && !isjet && !isEG && !isTau && issums)
+                  {
+                       Sumsrate=Sumsrate + rate;
+                       Sumspurerate = Sumspurerate + pure;
+                       Sumsproprate = Sumsproprate + prop;
+                  }
+                 else if(ismu && !isjet && isEG && !isTau && !issums)
+                  {
+                       MuEGrate=MuEGrate + rate;
+                       MuEGpurerate = MuEGpurerate + pure;
+                       MuEGproprate = MuEGproprate + prop;
+                  }
+                 else if(ismu && (isjet || issums ) && !isEG && !isTau )
+                  {
+                       MuJetSumsrate=MuJetSumsrate + rate;
+                       MuJetSumspurerate = MuJetSumspurerate + pure;
+                       MuJetSumsproprate = MuJetSumsproprate + prop;
+                  }
+                 else if(ismu && !isjet && !isEG && isTau && !issums)
+                  {
+                       MuTaurate=MuTaurate + rate;
+                       MuTaupurerate = MuTaupurerate + pure;
+                       MuTauproprate = MuTauproprate + prop;
+                  }
+                 else if(!ismu  && isEG && !isTau && (isjet || issums))
+                  {
+                       EGJetSumsrate=EGJetSumsrate + rate;
+                       EGJetSumspurerate = EGJetSumspurerate + pure;
+                       EGJetSumsproprate = EGJetSumsproprate + prop;
+                  }
+                 else if(!ismu && !isjet && isEG && isTau && !issums)
+                  {
+                       EGTaurate=EGTaurate + rate;
+                       EGTaupurerate = EGTaupurerate + pure;
+                       EGTauproprate = EGTauproprate + prop;
+                  }
+                 else if(!ismu && (isjet || issums ) && !isEG && isTau )
+                  {
+                       TauJetSumsrate=TauJetSumsrate + rate;
+                       TauJetSumspurerate = TauJetSumspurerate + pure;
+                       TauJetSumsproprate = TauJetSumsproprate + prop;
+                  }
+                 else
                    {
                          Otherrate=Otherrate + rate;
                          Otherpurerate = Otherpurerate + pure;
@@ -89,21 +144,32 @@ int fileread(int arc, char** arv)
         cout<<"EG rate  "<<EGrate<<"  "<<EGpurerate<<" "<<EGproprate<<endl;
         cout<<"Jet rate  "<<Jetrate<<"  "<<Jetpurerate<<" "<<Jetproprate<<endl;
         cout<<"Tau rate  "<<Taurate<<"  "<<Taupurerate<<" "<<Tauproprate<<endl;
+        cout<<"Sums rate  "<<Sumsrate<<"  "<<Sumspurerate<<" "<<Sumsproprate<<endl;
+        cout<<"MuEG rate  "<<MuEGrate<<"  "<<MuEGpurerate<<" "<<MuEGproprate<<endl;
+        cout<<"MuJetSums rate  "<<MuJetSumsrate<<"  "<<MuJetSumspurerate<<" "<<MuJetSumsproprate<<endl;
+        cout<<"MuTau rate  "<<MuTaurate<<"  "<<MuTaupurerate<<" "<<MuTauproprate<<endl;
+        cout<<"EGJetSums rate  "<<EGJetSumsrate<<"  "<<EGJetSumspurerate<<" "<<EGJetSumsproprate<<endl;
+        cout<<"EGTau rate  "<<EGTaurate<<"  "<<EGTaupurerate<<" "<<EGTauproprate<<endl;
+        cout<<"TauJetSums rate  "<<TauJetSumsrate<<"  "<<TauJetSumspurerate<<" "<<TauJetSumsproprate<<endl;
         cout<<"Other rate  "<<Otherrate<<"  "<<Otherpurerate<<" "<<Otherproprate<<endl;
-        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Otherproprate};
-   Int_t colors[] = {2,4,6,7,9};
+        double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate+Otherproprate;
+        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
+   Int_t colors[] = {2,4,6,7,9,8,5};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",1000,1000);
    TPie *pie4 = new TPie("pie4",
-      "Pie with verbose labels",nvals,vals,colors);
+      "rate disbritution between different seeds",nvals,vals,colors);
    pie4->SetRadius(.3);
-   pie4->SetLabelsOffset(0);
+   pie4->SetLabelsOffset(0.05);
+   pie4->SetEntryFillStyle(1,3030);
    pie4->SetLabelFormat("#splitline{ (%perc)}{%txt}");
    pie4->SetEntryLabel(0,"Mu");
    pie4->SetEntryLabel(1,"EG");
    pie4->SetEntryLabel(2,"Jet");
    pie4->SetEntryLabel(3,"Tau");
-   pie4->SetEntryLabel(4,"Other");
+   pie4->SetEntryLabel(4,"Sums");
+   pie4->SetEntryLabel(5,"Cross");
+   pie4->SetEntryLabel(6,"Other");
    pie4->Draw("nol <");
 
    cpie->SaveAs("piechart.pdf");
