@@ -40,7 +40,7 @@ int fileread(int arc, char** arv)
         double EGTaurate=0,EGTaupurerate=0,EGTauproprate=0;
         double TauJetSumsrate=0,TauJetSumspurerate=0,TauJetSumsproprate=0;
         double Otherrate=0,Otherpurerate=0,Otherproprate=0;
-      //  double Zerobiasrate=0,Zerobiaspurerate=0,Zerobiasproprate=0;
+        double ZeroBiasrate=0,ZeroBiaspurerate=0,ZeroBiasproprate=0;
         while(getline(myfile,line))
         {
                 if(line.find("L1Bit")!=std::string::npos)
@@ -60,77 +60,84 @@ int fileread(int arc, char** arv)
                  aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
-                 bool issums=false, ismu=false, isjet=false, isEG=false,isTau=false; 
+                 bool issums=false, ismu=false, isjet=false, isEG=false,isTau=false,isZerobias=false; 
                  if(seedname.find("ETM")!=string::npos || seedname.find("HTT")!=string::npos || seedname.find("ETT")!=string::npos || seedname.find("ETMHF")!=string::npos)     issums=true;
                  if(seedname.find("Mu")!=string::npos) ismu=true;
                  if(seedname.find("EG")!=string::npos) isEG=true;
                  if(seedname.find("Jet")!=string::npos)isjet=true;
                  if(seedname.find("Tau")!=string::npos)isTau=true;
-                 if(ismu && !isjet && !isEG && !isTau && !issums)
+                 if(seedname.find("ZeroBias")!=string::npos ||seedname.find("Copy")==string::npos)isTau=true;
+                 if(ismu && !isjet && !isEG && !isTau && !issums && !isZerobias)
                  {
                          murate=murate + rate;
                          mupurerate = mupurerate + pure;
                          muproprate = muproprate + prop;
                   }
-                 else if(!ismu && !isjet && isEG && !isTau && !issums)
+                 else if(!ismu && !isjet && isEG && !isTau && !issums && !isZerobias)
                  {
                          EGrate=EGrate + rate;
                          EGpurerate = EGpurerate + pure;
                          EGproprate = EGproprate + prop;
                   }
-                 else if(!ismu && isjet && !isEG && !isTau && !issums)
+                 else if(!ismu && isjet && !isEG && !isTau && !issums && !isZerobias)
                  {
                          Jetrate=Jetrate + rate;
                          Jetpurerate = Jetpurerate + pure;
                          Jetproprate = Jetproprate + prop;
                   }
-                 else if(!ismu && !isjet && !isEG && isTau && !issums)
+                 else if(!ismu && !isjet && !isEG && isTau && !issums && !isZerobias)
                  {
                          Taurate=Taurate + rate;
                          Taupurerate = Taupurerate + pure;
                          Tauproprate = Tauproprate + prop;
                   }
-                 else if(!ismu && !isjet && !isEG && !isTau && issums)
+                 else if(!ismu && !isjet && !isEG && !isTau && issums && !isZerobias)
                   {
                        Sumsrate=Sumsrate + rate;
                        Sumspurerate = Sumspurerate + pure;
                        Sumsproprate = Sumsproprate + prop;
                   }
-                 else if(ismu && !isjet && isEG && !isTau && !issums)
+                 else if(ismu && !isjet && isEG && !isTau && !issums && !isZerobias)
                   {
                        MuEGrate=MuEGrate + rate;
                        MuEGpurerate = MuEGpurerate + pure;
                        MuEGproprate = MuEGproprate + prop;
                   }
-                 else if(ismu && (isjet || issums ) && !isEG && !isTau )
+                 else if(ismu && (isjet || issums ) && !isEG && !isTau && !isZerobias)
                   {
                        MuJetSumsrate=MuJetSumsrate + rate;
                        MuJetSumspurerate = MuJetSumspurerate + pure;
                        MuJetSumsproprate = MuJetSumsproprate + prop;
                   }
-                 else if(ismu && !isjet && !isEG && isTau && !issums)
+                 else if(ismu && !isjet && !isEG && isTau && !issums && !isZerobias)
                   {
                        MuTaurate=MuTaurate + rate;
                        MuTaupurerate = MuTaupurerate + pure;
                        MuTauproprate = MuTauproprate + prop;
                   }
-                 else if(!ismu  && isEG && !isTau && (isjet || issums))
+                 else if(!ismu  && isEG && !isTau && (isjet || issums) && !isZerobias)
                   {
                        EGJetSumsrate=EGJetSumsrate + rate;
                        EGJetSumspurerate = EGJetSumspurerate + pure;
                        EGJetSumsproprate = EGJetSumsproprate + prop;
                   }
-                 else if(!ismu && !isjet && isEG && isTau && !issums)
+                 else if(!ismu && !isjet && isEG && isTau && !issums && !isZerobias )
                   {
                        EGTaurate=EGTaurate + rate;
                        EGTaupurerate = EGTaupurerate + pure;
                        EGTauproprate = EGTauproprate + prop;
                   }
-                 else if(!ismu && (isjet || issums ) && !isEG && isTau )
+                 else if(!ismu && (isjet || issums ) && !isEG && isTau && !isZerobias)
                   {
                        TauJetSumsrate=TauJetSumsrate + rate;
                        TauJetSumspurerate = TauJetSumspurerate + pure;
                        TauJetSumsproprate = TauJetSumsproprate + prop;
+                  }
+                 else if(!ismu && !isjet && !isEG && !isTau && !issums && isZerobias )
+                  {
+                       ZeroBiasrate=ZeroBiasrate + rate;
+                       ZeroBiaspurerate = ZeroBiaspurerate + pure;
+                       ZeroBiasproprate = ZeroBiasproprate + prop;
                   }
                  else
                    {
@@ -153,11 +160,11 @@ int fileread(int arc, char** arv)
         cout<<"EGTau rate  "<<EGTaurate<<"  "<<EGTaupurerate<<" "<<EGTauproprate<<endl;
         cout<<"TauJetSums rate  "<<TauJetSumsrate<<"  "<<TauJetSumspurerate<<" "<<TauJetSumsproprate<<endl;
         cout<<"Other rate  "<<Otherrate<<"  "<<Otherpurerate<<" "<<Otherproprate<<endl;
-    //    cout<<"ZerBias rate  "<<ZeroBiasrate<<"  "<<ZeroBiaspurerate<<" "<<ZeroBiasproprate<<endl;
-        double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
-        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
-        //double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,Otherproprate};
-   Int_t colors[] = {2,4,6,7,9,8,5};
+        cout<<"ZerBias rate  "<<ZeroBiasrate<<"  "<<ZeroBiaspurerate<<" "<<ZeroBiasproprate<<endl;
+       // double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
+       // double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
+        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,Otherproprate};
+   Int_t colors[] = {1,2,3,4,5,6,7,8,9,10,11,12};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
    TPie *pie4 = new TPie("pie4",
@@ -174,8 +181,14 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(2,"Jet");
    pie4->SetEntryLabel(3,"Tau");
    pie4->SetEntryLabel(4,"Sums");
-   pie4->SetEntryLabel(5,"Cross");
-   pie4->SetEntryLabel(6,"Other");
+   pie4->SetEntryLabel(5,"Mu+EG");
+   pie4->SetEntryLabel(6,"Mu+Jet/Sum");
+   pie4->SetEntryLabel(7,"Mu+Tau");
+   pie4->SetEntryLabel(8,"EG+Jet/Sum");
+   pie4->SetEntryLabel(9,"EG+Tau");
+   pie4->SetEntryLabel(10,"Tau+Jet/Sum");
+   pie4->SetEntryLabel(11,"ZeroBias");
+   pie4->SetEntryLabel(12,"Other");
    pie4->Draw("rsc");
    //pie4->Draw("nol <");
 

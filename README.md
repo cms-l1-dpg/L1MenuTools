@@ -5,7 +5,7 @@ So In lxplus it is expected to be ran under a CMSSW environment
 
 Log in to your lxplus account 
 
-Go to any CMSSW area 
+Go to any CMSSW scram area i.e cd $CMSSW_BASE/src
 
 git clone https://github.com/alokekumardas/my-project.git
 
