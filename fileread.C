@@ -40,6 +40,7 @@ int fileread(int arc, char** arv)
         double EGTaurate=0,EGTaupurerate=0,EGTauproprate=0;
         double TauJetSumsrate=0,TauJetSumspurerate=0,TauJetSumsproprate=0;
         double Otherrate=0,Otherpurerate=0,Otherproprate=0;
+      //  double Zerobiasrate=0,Zerobiaspurerate=0,Zerobiasproprate=0;
         while(getline(myfile,line))
         {
                 if(line.find("L1Bit")!=std::string::npos)
@@ -152,17 +153,22 @@ int fileread(int arc, char** arv)
         cout<<"EGTau rate  "<<EGTaurate<<"  "<<EGTaupurerate<<" "<<EGTauproprate<<endl;
         cout<<"TauJetSums rate  "<<TauJetSumsrate<<"  "<<TauJetSumspurerate<<" "<<TauJetSumsproprate<<endl;
         cout<<"Other rate  "<<Otherrate<<"  "<<Otherpurerate<<" "<<Otherproprate<<endl;
-        double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate+Otherproprate;
+    //    cout<<"ZerBias rate  "<<ZeroBiasrate<<"  "<<ZeroBiaspurerate<<" "<<ZeroBiasproprate<<endl;
+        double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
         double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
+        //double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,Otherproprate};
    Int_t colors[] = {2,4,6,7,9,8,5};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
-   TCanvas *cpie = new TCanvas("cpie","TPie test",1000,1000);
+   TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
    TPie *pie4 = new TPie("pie4",
       "rate disbritution between different seeds",nvals,vals,colors);
-   pie4->SetRadius(.3);
-   pie4->SetLabelsOffset(0.05);
-   pie4->SetEntryFillStyle(1,3030);
-   pie4->SetLabelFormat("#splitline{ (%perc)}{%txt}");
+   pie4->SetRadius(.25);
+   pie4->SetLabelsOffset(0.0);
+ //  pie4->SetEntryFillStyle(1,3030);
+   pie4->SetLabelFormat("%perc %txt");
+ //  pie4->SetLabelColor(1);
+   //pie4->SetLabelFormat("#splitline{ (%perc)}{%txt}");
+   //pie4->SetLabelSize(40f);
    pie4->SetEntryLabel(0,"Mu");
    pie4->SetEntryLabel(1,"EG");
    pie4->SetEntryLabel(2,"Jet");
@@ -170,7 +176,8 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(4,"Sums");
    pie4->SetEntryLabel(5,"Cross");
    pie4->SetEntryLabel(6,"Other");
-   pie4->Draw("nol <");
+   pie4->Draw("rsc");
+   //pie4->Draw("nol <");
 
    cpie->SaveAs("piechart.pdf");
         //cin.ignore();
