@@ -66,7 +66,7 @@ int fileread(int arc, char** arv)
                  if(seedname.find("EG")!=string::npos) isEG=true;
                  if(seedname.find("Jet")!=string::npos)isjet=true;
                  if(seedname.find("Tau")!=string::npos)isTau=true;
-                 if(seedname.find("ZeroBias")!=string::npos ||seedname.find("Copy")==string::npos)isTau=true;
+                 if(seedname.find("ZeroBias")!=string::npos && seedname.find("copy")==string::npos) isZerobias=true;
                  if(ismu && !isjet && !isEG && !isTau && !issums && !isZerobias)
                  {
                          murate=murate + rate;
@@ -164,12 +164,12 @@ int fileread(int arc, char** arv)
        // double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
        // double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
         double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,Otherproprate};
-   Int_t colors[] = {1,2,3,4,5,6,7,8,9,10,11,12};
+   Int_t colors[] = {1,2,3,4,5,6,7,8,9,10,11,12,13};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
    TPie *pie4 = new TPie("pie4",
       "rate disbritution between different seeds",nvals,vals,colors);
-   pie4->SetRadius(.25);
+   pie4->SetRadius(.20);
    pie4->SetLabelsOffset(0.0);
  //  pie4->SetEntryFillStyle(1,3030);
    pie4->SetLabelFormat("%perc %txt");
