@@ -5,6 +5,8 @@
 #include <TPie.h>
 #include <TString.h>
 #include <sstream>
+#include <TLegend.h>
+#include <TStyle.h>
 using namespace std;
 int fileread(int arc, char** arv)
 
@@ -164,13 +166,16 @@ int fileread(int arc, char** arv)
        // double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
        // double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
         double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,/*Otherproprate*/};
-   Int_t colors[] = {2,3,4,5,6,7,8,9,10,11,12,13};
+   Int_t colors[] = {2,3,4,5,6,7,8,9,30,40,43,46};
   // Int_t colors[] = {2,3,4,5,6,7,8,9};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
+     //cpie->Divide(2,1);
+     //cpie->cd(1);
    TPie *pie4 = new TPie("pie4",
       "rate disbritution between different seeds",nvals,vals,colors);
-   pie4->SetRadius(.25);
+   //pie4->SetY(.32);
+   pie4->SetRadius(.20);
    pie4->SetLabelsOffset(0.01);
  //  pie4->SetEntryFillStyle(1,3030);
    pie4->SetLabelFormat("%perc %txt");
@@ -191,7 +196,31 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(10,"Tau+Jet/Sum");
    pie4->SetEntryLabel(11,"ZeroBias");
  //  pie4->SetEntryLabel(12,"Other");
-   pie4->Draw("rsc");
+ /* pie4->SetEntryFillStyle(1,3031);
+  pie4->SetEntryFillStyle(2,3031);
+  pie4->SetEntryFillStyle(3,3031);
+  pie4->SetEntryFillStyle(4,3031);
+  pie4->SetEntryFillStyle(5,3031);
+  pie4->SetEntryFillStyle(6,3031);
+  pie4->SetEntryFillStyle(7,3031);
+  pie4->SetEntryFillStyle(8,3031);
+  pie4->SetEntryFillStyle(9,3031);
+  pie4->SetEntryFillStyle(10,3031);
+  pie4->SetEntryFillStyle(11,3031);*/
+ // pie4->SetFillStyle(12,3031);
+
+   pie4->Draw("nol rsc");
+   TLegend *pieleg = pie4->MakeLegend();
+   //TLegend *pieleg =(TLegend*)pie4->GetLegend();
+   // pieleg->SetNColumns(2);
+   // pieleg->SetEntrySeparation(.01f);
+  // cpie->cd(2);
+    pieleg->Draw();
+ /*  gStyle->SetLegendBorderSize(1);
+   gStyle->SetLegendFillColor(0);
+   gStyle->SetLegendFont(42);
+   gStyle->SetLegendTextSize(0.);*/
+  // pieleg->SetY1(.56); pieleg->SetY2(.86);
    //pie4->Draw("nol <");
 
    cpie->SaveAs("piechart.pdf");
