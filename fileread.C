@@ -163,8 +163,9 @@ int fileread(int arc, char** arv)
         cout<<"ZerBias rate  "<<ZeroBiasrate<<"  "<<ZeroBiaspurerate<<" "<<ZeroBiasproprate<<endl;
        // double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
        // double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
-        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,Otherproprate};
-   Int_t colors[] = {2,3,4,5,6,7,8,9,10,11,12,13,14};
+        double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,/*Otherproprate*/};
+   Int_t colors[] = {2,3,4,5,6,7,8,9,10,11,12,13};
+  // Int_t colors[] = {2,3,4,5,6,7,8,9};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
    TPie *pie4 = new TPie("pie4",
@@ -189,7 +190,7 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(9,"EG+Tau");
    pie4->SetEntryLabel(10,"Tau+Jet/Sum");
    pie4->SetEntryLabel(11,"ZeroBias");
-   pie4->SetEntryLabel(12,"Other");
+ //  pie4->SetEntryLabel(12,"Other");
    pie4->Draw("rsc");
    //pie4->Draw("nol <");
 
