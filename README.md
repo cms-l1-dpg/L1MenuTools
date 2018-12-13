@@ -13,6 +13,9 @@ cd my-project
 
 make
 
-./fileread rateTable.txt  (This is an example table one need to change the table name accroding to their table)
+./fileread menu_v2_1_0_rate.txt > output.txt  (This is an example table one need to change the table name accroding to their table)
 
-"piechart.pdf" is saved in current directory
+"piechart.pdf" and "output.txt" is saved in current directory
+ 
+To see the category of each seed one should check the "output.txt" file
+
