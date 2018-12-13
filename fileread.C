@@ -59,9 +59,10 @@ int fileread(int arc, char** arv)
                  line1=line;
                  //cout<<line1<<endl;
                  stringstream aloke(line1);
-                 aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
+                 aloke >> index >> seedname >> prescale >> rate /*>> sign*/ >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
-                 cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
+                 //cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;
+               //  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
                  bool issums=false, ismu=false, isjet=false, isEG=false,isTau=false,isZerobias=false; 
                  if(seedname.find("ETM")!=string::npos || seedname.find("HTT")!=string::npos || seedname.find("ETT")!=string::npos || seedname.find("ETMHF")!=string::npos)     issums=true;
                  if(seedname.find("Mu")!=string::npos) ismu=true;
@@ -74,78 +75,91 @@ int fileread(int arc, char** arv)
                          murate=murate + rate;
                          mupurerate = mupurerate + pure;
                          muproprate = muproprate + prop;
+                         cout<<seedname<<"  is Mu"<<endl;        
                   }
                  else if(!ismu && !isjet && isEG && !isTau && !issums && !isZerobias)
                  {
                          EGrate=EGrate + rate;
                          EGpurerate = EGpurerate + pure;
                          EGproprate = EGproprate + prop;
+                         cout<<seedname<<"  is EG"<<endl;        
                   }
                  else if(!ismu && isjet && !isEG && !isTau && !issums && !isZerobias)
                  {
                          Jetrate=Jetrate + rate;
                          Jetpurerate = Jetpurerate + pure;
                          Jetproprate = Jetproprate + prop;
+                         cout<<seedname<<"  is Jet"<<endl;        
                   }
                  else if(!ismu && !isjet && !isEG && isTau && !issums && !isZerobias)
                  {
                          Taurate=Taurate + rate;
                          Taupurerate = Taupurerate + pure;
                          Tauproprate = Tauproprate + prop;
+                         cout<<seedname<<"  is Tau"<<endl;        
                   }
                  else if(!ismu && !isjet && !isEG && !isTau && issums && !isZerobias)
                   {
                        Sumsrate=Sumsrate + rate;
                        Sumspurerate = Sumspurerate + pure;
                        Sumsproprate = Sumsproprate + prop;
+                         cout<<seedname<<"  is Sums"<<endl;        
                   }
                  else if(ismu && !isjet && isEG && !isTau && !issums && !isZerobias)
                   {
                        MuEGrate=MuEGrate + rate;
                        MuEGpurerate = MuEGpurerate + pure;
                        MuEGproprate = MuEGproprate + prop;
+                         cout<<seedname<<"  is MuEG"<<endl;        
                   }
                  else if(ismu && (isjet || issums ) && !isEG && !isTau && !isZerobias)
                   {
                        MuJetSumsrate=MuJetSumsrate + rate;
                        MuJetSumspurerate = MuJetSumspurerate + pure;
                        MuJetSumsproprate = MuJetSumsproprate + prop;
+                         cout<<seedname<<"  is Mu+Jet/Sums"<<endl;        
                   }
                  else if(ismu && !isjet && !isEG && isTau && !issums && !isZerobias)
                   {
                        MuTaurate=MuTaurate + rate;
                        MuTaupurerate = MuTaupurerate + pure;
                        MuTauproprate = MuTauproprate + prop;
+                         cout<<seedname<<"  is Mu+Tau"<<endl;        
                   }
                  else if(!ismu  && isEG && !isTau && (isjet || issums) && !isZerobias)
                   {
                        EGJetSumsrate=EGJetSumsrate + rate;
                        EGJetSumspurerate = EGJetSumspurerate + pure;
                        EGJetSumsproprate = EGJetSumsproprate + prop;
+                         cout<<seedname<<"  is EG+Jet/Sums"<<endl;        
                   }
                  else if(!ismu && !isjet && isEG && isTau && !issums && !isZerobias )
                   {
                        EGTaurate=EGTaurate + rate;
                        EGTaupurerate = EGTaupurerate + pure;
                        EGTauproprate = EGTauproprate + prop;
+                         cout<<seedname<<"  is EG+Tau"<<endl;        
                   }
                  else if(!ismu && (isjet || issums ) && !isEG && isTau && !isZerobias)
                   {
                        TauJetSumsrate=TauJetSumsrate + rate;
                        TauJetSumspurerate = TauJetSumspurerate + pure;
                        TauJetSumsproprate = TauJetSumsproprate + prop;
+                         cout<<seedname<<"  is Tau+Jet/sums"<<endl;        
                   }
                  else if(!ismu && !isjet && !isEG && !isTau && !issums && isZerobias )
                   {
                        ZeroBiasrate=ZeroBiasrate + rate;
                        ZeroBiaspurerate = ZeroBiaspurerate + pure;
                        ZeroBiasproprate = ZeroBiasproprate + prop;
+                         cout<<seedname<<"  is ZeroBias"<<endl;        
                   }
                  else
                    {
                          Otherrate=Otherrate + rate;
                          Otherpurerate = Otherpurerate + pure;
                          Otherproprate = Otherproprate + prop;
+                         cout<<seedname<<"  is OtherSeeds"<<endl;        
                    }
                 }
         }
@@ -176,12 +190,13 @@ int fileread(int arc, char** arv)
       "rate disbritution between different seeds",nvals,vals,colors);
    //pie4->SetY(.32);
    pie4->SetRadius(.20);
-   pie4->SetLabelsOffset(0.01);
+   pie4->SetLabelsOffset(-0.08);
  //  pie4->SetEntryFillStyle(1,3030);
    pie4->SetLabelFormat("%perc %txt");
+   //pie4->SetLabelFormat("%txt");
  //  pie4->SetLabelColor(1);
    //pie4->SetLabelFormat("#splitline{ (%perc)}{%txt}");
-   pie4->SetTextSize(.02);
+   pie4->SetTextSize(.010);
    pie4->SetTextColor(1);
    pie4->SetEntryLabel(0,"Mu");
    pie4->SetEntryLabel(1,"EG");
@@ -209,7 +224,7 @@ int fileread(int arc, char** arv)
   pie4->SetEntryFillStyle(11,3031);*/
  // pie4->SetFillStyle(12,3031);
 
-   pie4->Draw("nol rsc");
+   pie4->Draw("nol rs");
    TLegend *pieleg = pie4->MakeLegend();
    //TLegend *pieleg =(TLegend*)pie4->GetLegend();
    // pieleg->SetNColumns(2);
