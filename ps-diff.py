@@ -18,6 +18,10 @@ if __name__ == '__main__':
     parser.add_argument('PSTABLE_RIGHT',
             help='Right PS table',
             type=str)
+    parser.add_argument('DIFF_OPTIONS',
+            help='Any number of valid options for the unix diff command, without dash prefixes (i.e., don\'t use "-" or "--")',
+            nargs='*',
+            type=str)
     parser.add_argument('--by-line',
             help='Do a line-by-line comparison',
             action='store_true',
@@ -29,7 +33,20 @@ if __name__ == '__main__':
     parser.add_argument('--no-color', '--nocolor',
             help='Do not colorize the terminal output',
             action='store_true',
-            dest='NOCOLOR')
+            dest='DIFF_NOCOLOR')
+    # parser.add_argument('--left-column',
+    #         help='Diff output only the left column of common lines',
+    #         action='store_true',
+    #         dest='DIFF_LEFTCOLUMN')
+    # parser.add_argument('--suppress-common-lines',
+    #         help='Diff does not output common lines',
+    #         action='store_true',
+    #         dest='DIFF_SUPPRESSCOMMONLINES')
+    # parser.add_argument('--side-by-side', '-y',
+    #         help='diff output in two columns',
+    #         action='store_true',
+    #         dest='DIFF_SIDEBYSIDE')
+            
 
     args = parser.parse_args()
 
@@ -69,12 +86,19 @@ if __name__ == '__main__':
 
         fright.write(fright_content)
 
-    print('\nComparing file {} (left)  and  file {} (right):\n'.format(
+    print('\nComparing files {} (left)  and  {} (right):\n'.format(
         args.PSTABLE_LEFT, args.PSTABLE_RIGHT))
 
-    diff_cmd = 'diff' if args.NOCOLOR else 'colordiff'
-    diff_cmd_args = [diff_cmd, '--side-by-side', #'--left-column',
-            '--width={}'.format(term_columns), fleft_path, fright_path]
+    diff_cmd = 'diff' if args.DIFF_NOCOLOR else 'colordiff'
+
+    diff_cmd_args = [diff_cmd, '--width={}'.format(term_columns),
+            fleft_path, fright_path]
+    for option in args.DIFF_OPTIONS:
+        if len(option) == 1:
+            diff_cmd_args.append('-{}'.format(option))
+        elif len(option) > 1:
+            diff_cmd_args.append('--{}'.format(option))
+
     try:
         diff = subprocess.run(diff_cmd_args,
             stdout=subprocess.PIPE).stdout.decode('utf-8')
