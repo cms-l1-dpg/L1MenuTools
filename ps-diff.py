@@ -20,7 +20,8 @@ if __name__ == '__main__':
             help='Right PS table',
             type=str)
     parser.add_argument('DIFF_OPTIONS',
-            help='Any number of valid options for the unix diff command, without dash prefixes (i.e., don\'t use "-" or "--")',
+            help='Any number of valid options for the unix diff command, ' \
+                    'without dash prefixes (i.e., don\'t use "-" or "--")',
             nargs='*',
             type=str)
     parser.add_argument('--by-line',
@@ -59,33 +60,23 @@ if __name__ == '__main__':
 
     # generate files with the preferred representation of the PS table data
 
-    with open(fleft_path, 'w') as fleft:
-        if MODE == 'BYLINE':
-            fleft_content = 'Column names:\n{}\n\n'.format(
-                    '\n'.join(['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable_left.columns)]))
-            fleft_content += 'Table contents:\n'
-            for l in range(0, PStable_left.shape[0]):
-                fleft_content += ' '.join(['{}'.format(val) for val in PStable_left.loc[l,:]])
-                fleft_content += '\n'
+    for file_path, PStable in ((fleft_path, PStable_left),
+            (fright_path, PStable_right)):
+        with open(file_path, 'w') as f:
+            if MODE == 'BYLINE':
+                file_content = 'Column names:\n{}\n\n'.format('\n'.join(
+                    ['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable.columns)]))
+                file_content += 'Table contents:\n'
+                for l in range(0, PStable.shape[0]):
+                    file_content += ' '.join(
+                            ['{}'.format(val) for val in PStable.loc[l,:]])
+                    file_content += '\n'
 
-        else:
-            raise NotImplementedError('The only currently supported comparison mode is "by line"')
+            else:
+                raise NotImplementedError('The only currently supported ' \
+                        'comparison mode is "by line"')
 
-        fleft.write(fleft_content)
-
-    with open(fright_path, 'w') as fright:
-        if MODE == 'BYLINE':
-            fright_content = 'Column names:\n{}\n\n'.format(
-                    '\n'.join(['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable_right.columns)]))
-            fright_content += 'Table contents:\n'
-            for l in range(0, PStable_right.shape[0]):
-                fright_content += ' '.join(['{}'.format(val) for val in PStable_right.loc[l,:]])
-                fright_content += '\n'
-
-        else:
-            raise NotImplementedError('The only currently supported comparison mode is "by line"')
-
-        fright.write(fright_content)
+            f.write(file_content)
 
 
     # generate the diff between the two files
