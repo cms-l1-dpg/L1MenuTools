@@ -5,6 +5,7 @@ import subprocess
 
 from psutils.psio import read_prescale_table
 
+# determine the size of the current terminal
 term_rows, term_columns = os.popen('stty size', 'r').read().split()
 
 
@@ -34,20 +35,6 @@ if __name__ == '__main__':
             help='Do not colorize the terminal output',
             action='store_true',
             dest='DIFF_NOCOLOR')
-    # parser.add_argument('--left-column',
-    #         help='Diff output only the left column of common lines',
-    #         action='store_true',
-    #         dest='DIFF_LEFTCOLUMN')
-    # parser.add_argument('--suppress-common-lines',
-    #         help='Diff does not output common lines',
-    #         action='store_true',
-    #         dest='DIFF_SUPPRESSCOMMONLINES')
-    # parser.add_argument('--side-by-side', '-y',
-    #         help='diff output in two columns',
-    #         action='store_true',
-    #         dest='DIFF_SIDEBYSIDE')
-            
-
     args = parser.parse_args()
 
     modelist = [args.BYLINE, args.BYNAME]
@@ -59,32 +46,49 @@ if __name__ == '__main__':
     else:
         MODE = 'BYLINE'  # default value
 
+
+    # read the PS table files
     PStable_left = read_prescale_table(args.PSTABLE_LEFT)
     PStable_right = read_prescale_table(args.PSTABLE_RIGHT)
 
+    # create a temporary directory for the files that will be compared
     tempdir = tempfile.mkdtemp(prefix='psdiff_')
     fleft_path = os.path.join(tempdir, 'PStable_left.csv')
     fright_path = os.path.join(tempdir, 'PStable_right.csv')
 
+
+    # generate files with the preferred representation of the PS table data
+
     with open(fleft_path, 'w') as fleft:
-        fleft_content = 'Column names:\n{}\n\n'.format(
-                '\n'.join(['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable_left.columns)]))
-        fleft_content += 'Table contents:\n'
-        for l in range(0, PStable_left.shape[0]):
-            fleft_content += ' '.join(['{}'.format(val) for val in PStable_left.loc[l,:]])
-            fleft_content += '\n'
+        if MODE == 'BYLINE':
+            fleft_content = 'Column names:\n{}\n\n'.format(
+                    '\n'.join(['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable_left.columns)]))
+            fleft_content += 'Table contents:\n'
+            for l in range(0, PStable_left.shape[0]):
+                fleft_content += ' '.join(['{}'.format(val) for val in PStable_left.loc[l,:]])
+                fleft_content += '\n'
+
+        else:
+            raise NotImplementedError('The only currently supported comparison mode is "by line"')
 
         fleft.write(fleft_content)
 
     with open(fright_path, 'w') as fright:
-        fright_content = 'Column names:\n{}\n\n'.format(
-                '\n'.join(['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable_right.columns)]))
-        fright_content += 'Table contents:\n'
-        for l in range(0, PStable_right.shape[0]):
-            fright_content += ' '.join(['{}'.format(val) for val in PStable_right.loc[l,:]])
-            fright_content += '\n'
+        if MODE == 'BYLINE':
+            fright_content = 'Column names:\n{}\n\n'.format(
+                    '\n'.join(['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable_right.columns)]))
+            fright_content += 'Table contents:\n'
+            for l in range(0, PStable_right.shape[0]):
+                fright_content += ' '.join(['{}'.format(val) for val in PStable_right.loc[l,:]])
+                fright_content += '\n'
+
+        else:
+            raise NotImplementedError('The only currently supported comparison mode is "by line"')
 
         fright.write(fright_content)
+
+
+    # generate the diff between the two files
 
     print('\nComparing files {} (left)  and  {} (right):\n'.format(
         args.PSTABLE_LEFT, args.PSTABLE_RIGHT))
@@ -103,8 +107,10 @@ if __name__ == '__main__':
         diff = subprocess.run(diff_cmd_args,
             stdout=subprocess.PIPE).stdout.decode('utf-8')
     except FileNotFoundError:
-        diff_cmd_args[0] = 'diff'
+        diff_cmd_args[0] = 'diff'  # use diff if colordiff is not installed
         diff = subprocess.run(diff_cmd_args,
             stdout=subprocess.PIPE).stdout.decode('utf-8')
 
+
+    # output the diff
     print(diff)
