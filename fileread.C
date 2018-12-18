@@ -7,6 +7,7 @@
 #include <sstream>
 #include <TLegend.h>
 #include <TStyle.h>
+#include <TLatex.h>
 using namespace std;
 int fileread(int arc, char** arv)
 
@@ -260,20 +261,20 @@ int fileread(int arc, char** arv)
    //pie4->SetEntryFillColor(1,1);
    //pie4->SetEntryFillColor(3,1);
    //pie4->SetEntryFillColor(5,1);
-   pie4->SetEntryLabel(0,"SingleMu");
-   pie4->SetEntryLabel(1,"MultiMu");
-   pie4->SetEntryLabel(2,"SingleEG");
-   pie4->SetEntryLabel(3,"MultiEG");
-   pie4->SetEntryLabel(4,"Jet");
-   pie4->SetEntryLabel(5,"Tau");
-   pie4->SetEntryLabel(6,"Sums");
-   pie4->SetEntryLabel(7,"Mu+EG");
-   pie4->SetEntryLabel(8,"Mu+Jet/Sum");
-   pie4->SetEntryLabel(9,"EG+Jet/Sum");
+   pie4->SetEntryLabel(0,"Single #mu");
+   pie4->SetEntryLabel(1,"Multi #mu");
+   pie4->SetEntryLabel(2,"Single e/#gamma");
+   pie4->SetEntryLabel(3,"Multi e/#gamma");
+   pie4->SetEntryLabel(4,"Jets");
+   pie4->SetEntryLabel(5,"#tau");
+   pie4->SetEntryLabel(6,"sums");
+   pie4->SetEntryLabel(7,"#mu+e/#gamma");
+   pie4->SetEntryLabel(8,"#mu+jets/sums");
+   pie4->SetEntryLabel(9,"e/#gamma+jets/sums");
    //pie4->SetEntryLabel(1,"EG+Tau");
    //pie4->SetEntryLabel(10,"Tau+Jet/Sum");
-   pie4->SetEntryLabel(10,"Jet+Sum");
-   pie4->SetEntryLabel(11,"Tau+Mu/EG/Jet/Sum");
+   pie4->SetEntryLabel(10,"Jets+sums");
+   pie4->SetEntryLabel(11,"#tau+#mu/e/#gamma/jets/sums");
    pie4->SetEntryLabel(12,"ZeroBias");
  //  pie4->SetEntryLabel(12,"Other");
  /* pie4->SetEntryFillStyle(1,3031);
