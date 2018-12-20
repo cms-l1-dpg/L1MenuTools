@@ -66,7 +66,7 @@ int fileread(int arc, char** arv)
                  line1=line;
                  //cout<<line1<<endl;
                  stringstream aloke(line1);
-                 aloke >> index >> seedname >> prescale >> rate /*>> sign*/ >> error >> pure >> prop ;
+                 aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  //cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;
                //  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
@@ -88,7 +88,7 @@ int fileread(int arc, char** arv)
                          singlemurate=singlemurate + rate;
                          singlemupurerate = singlemupurerate + pure;
                          singlemuproprate = singlemuproprate + prop;
-                         cout<<seedname<<"  is SingleMu"<<endl;        
+                         cout<<seedname<<"  is SingleMu and rate " <<singlemuproprate<<endl;        
                             
                             } 
                     else 
@@ -219,10 +219,10 @@ int fileread(int arc, char** arv)
         myfile.close();
         //cout<<"Mu rate  "<<murate<<"  "<<mupurerate<<" "<<muproprate<<endl;
         cout<<"SingleMu rate  "<<singlemurate<<"  "<<singlemupurerate<<" "<<singlemuproprate<<endl;
-        cout<<"Mu rate  "<<multimurate<<"  "<<multimupurerate<<" "<<multimuproprate<<endl;
+        cout<<"MultuMu rate  "<<multimurate<<"  "<<multimupurerate<<" "<<multimuproprate<<endl;
         //cout<<"EG rate  "<<EGrate<<"  "<<EGpurerate<<" "<<EGproprate<<endl;
         cout<<"SingleEG rate  "<<singleEGrate<<"  "<<singleEGpurerate<<" "<<singleEGproprate<<endl;
-        cout<<"EG rate  "<<multiEGrate<<"  "<<multiEGpurerate<<" "<<multiEGproprate<<endl;
+        cout<<"MultiEG rate  "<<multiEGrate<<"  "<<multiEGpurerate<<" "<<multiEGproprate<<endl;
         cout<<"Jet rate  "<<Jetrate<<"  "<<Jetpurerate<<" "<<Jetproprate<<endl;
         cout<<"Tau rate  "<<Taurate<<"  "<<Taupurerate<<" "<<Tauproprate<<endl;
         cout<<"Sums rate  "<<Sumsrate<<"  "<<Sumspurerate<<" "<<Sumsproprate<<endl;
@@ -277,19 +277,6 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(11,"#tau+#mu/e/#gamma/jets/sums");
    pie4->SetEntryLabel(12,"ZeroBias");
  //  pie4->SetEntryLabel(12,"Other");
- /* pie4->SetEntryFillStyle(1,3031);
-  pie4->SetEntryFillStyle(2,3031);
-  pie4->SetEntryFillStyle(3,3031);
-  pie4->SetEntryFillStyle(4,3031);
-  pie4->SetEntryFillStyle(5,3031);
-  pie4->SetEntryFillStyle(6,3031);
-  pie4->SetEntryFillStyle(7,3031);
-  pie4->SetEntryFillStyle(8,3031);
-  pie4->SetEntryFillStyle(9,3031);
-  pie4->SetEntryFillStyle(10,3031);
-  pie4->SetEntryFillStyle(11,3031);*/
- // pie4->SetFillStyle(12,3031);
-
    pie4->Draw("nol rs");
   // TLegend *pieleg = pie4->MakeLegend();
    //TLegend *pieleg =(TLegend*)pie4->GetLegend();
