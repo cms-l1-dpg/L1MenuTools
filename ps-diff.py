@@ -1,4 +1,5 @@
 import os
+import logging
 import argparse
 import tempfile
 import subprocess
@@ -10,6 +11,8 @@ term_rows, term_columns = os.popen('stty size', 'r').read().split()
 
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.DEBUG, filename='run_ps-diff.log', filemode='w')
 
     # define CLI elements
     parser = argparse.ArgumentParser()
@@ -38,6 +41,8 @@ if __name__ == '__main__':
             dest='DIFF_NOCOLOR')
     args = parser.parse_args()
 
+    logging.info('Received input arguments: {}'.format(args))
+
     modelist = [args.BYLINE, args.BYNAME]
     if modelist.count(True) > 1:
         raise RuntimeError('Only one comparison mode can be invoked at a time')
@@ -47,6 +52,7 @@ if __name__ == '__main__':
     else:
         MODE = 'BYLINE'  # default value
 
+    logging.info('Using comparison mode {}'.format(MODE))
 
     # read the PS table files
     PStable_left = read_prescale_table(args.PSTABLE_LEFT)
@@ -57,25 +63,36 @@ if __name__ == '__main__':
     fleft_path = os.path.join(tempdir, 'PStable_left.csv')
     fright_path = os.path.join(tempdir, 'PStable_right.csv')
 
+    logging.info('Created temporary directory {}'.format(tempdir))
+    for ftmp in (fleft_path, fright_path):
+        logging.info('Created temporary file {}'.format(ftmp))
+
 
     # generate files with the preferred representation of the PS table data
 
     for file_path, PStable in ((fleft_path, PStable_left),
             (fright_path, PStable_right)):
+        if MODE == 'BYNAME':
+            if 'Name' not in PStable.columns:
+                raise RuntimeError('No column \'Name\' in {}'.format(
+                    file_path))
+
+            PStable = PStable.sort_values(by=['Name'])
+
+        elif MODE == 'BYLINE':
+            pass  # no extra preparations needed
+
+        file_content = 'Column names:\n{}\n\n'.format('\n'.join(
+            ['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable.columns)]))
+        file_content += 'Table contents:\n'
+
+        for l in range(PStable.shape[0]):
+            file_content += ' '.join(
+                    ['{}'.format(val) for val in PStable.iloc[l,:]])
+            file_content += '\n'
+
         with open(file_path, 'w') as f:
-            if MODE == 'BYLINE':
-                file_content = 'Column names:\n{}\n\n'.format('\n'.join(
-                    ['\t{}:\t{}'.format(idx,name) for idx,name in enumerate(PStable.columns)]))
-                file_content += 'Table contents:\n'
-                for l in range(0, PStable.shape[0]):
-                    file_content += ' '.join(
-                            ['{}'.format(val) for val in PStable.loc[l,:]])
-                    file_content += '\n'
-
-            else:
-                raise NotImplementedError('The only currently supported ' \
-                        'comparison mode is "by line"')
-
+            logging.debug('File content written:\n{}'.format(file_content))
             f.write(file_content)
 
 
@@ -95,9 +112,12 @@ if __name__ == '__main__':
             diff_cmd_args.append('--{}'.format(option))
 
     try:
+        logging.info('Command components for diff call: {}'.format(diff_cmd_args))
         diff = subprocess.run(diff_cmd_args,
             stdout=subprocess.PIPE).stdout.decode('utf-8')
     except FileNotFoundError:
+        logging.warning('\'colordiff\' not installed. Using \'diff\' instead')
+        logging.info('Command components for diff call: {}'.format(diff_cmd_args))
         diff_cmd_args[0] = 'diff'  # use diff if colordiff is not installed
         diff = subprocess.run(diff_cmd_args,
             stdout=subprocess.PIPE).stdout.decode('utf-8')
