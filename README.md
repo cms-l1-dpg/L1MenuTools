@@ -1,16 +1,14 @@
-![](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![](https://img.shields.io/badge/version-0.2.0-blue.svg)
 
-# PS-generate
+# PS-tools
 
-Prescale table generation tool for L1 Menu operations in CMS
+Prescale table tools for L1 Menu operations in CMS
 
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your
 local machine.
-
-> This software is being developed and tested on Ubuntu 18.04 LTS.
 
 
 ### Setting up the environment
@@ -29,49 +27,21 @@ source env/bin/activate
 ```
 
 
-### Using the tool
+### Available tools
 
-#### Working with local files
+#### ![`ps-generate`](./docs/ps-generate.md): prescale table generation tool
 
-Use the tool by running the Python script and passing both an existing prescale
-table and a given L1 menu (see example below).
+Prescale table generation tool: create a new prescale table according to a L1 Menu, using information from an existing prescale table.
 
-```
-python psgenerate.py PStable.xlsx L1Menu.xml
-```
-
-#### Download files on-the-fly
-
-It is also possible to pass URLs instead of the local filepaths of a prescale
-table or an XML menu, as the following example demonstrates.
-
-> The given URLs must refer to files that are downloadable via `wget`.
-
-```
-python psgenerate.py https://github.com/cms-l1-dpg/L1Menu2018/raw/master/official/PrescaleTables/PrescaleTable-1_L1Menu_Collisions2018_v2_1_0.xlsx https://raw.githubusercontent.com/cms-l1-dpg/L1Menu2018/master/official/XMLs/L1Menu_CollisionsHeavyIons2018_v4_0_0.xml
-```
-
-The files are stored in temporary directories and are
-removed by the operating system automatically. No need for manual cleanup.
-
-#### Optional arguments:
-* `-output`: Specify the name of the output file, without file extension
-  (*default: "new_PStable"*)
-
-If run successfully, the tool creates a new xlsx file ("PStable_new.xlsx") which
-contains the seeds of the passed L1 menu XML with their corresponding prescale
-values (if they existed in the passed PS table).
+&rarr; see the ![documentation on `ps-generate`](./docs/ps-generate.md) for further details.
 
 
-## Deployment
+#### ![`ps-diff`](./docs/ps-diff.md): prescale table comparison tool
 
-The preferred way of creating an executable binary for deployment is by using
-[pyinstaller](https://www.pyinstaller.org/) (version 3.4+).
+Prescale table comparison tool: create diffs between two PS table in various output formats.
 
-In order to create a binary with *pyinstaller*, run
-```
-pyinstaller --onefile psgenerate.py
-```
+&rarr; see the ![documentation on `ps-diff`](./docs/ps-diff.md) for further details.
+
 
 ## Versioning
 
@@ -82,4 +52,4 @@ for the available versions of this software.
 ## Authors
 
 * **Sebastian Templ** - *Initial work* - [tempse](https://github.com/tempse)
-
+* Developed in close collaboration with the ![L1 Menu Team](https://github.com/cms-l1-dpg) of the CMS collaboration
