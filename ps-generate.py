@@ -50,7 +50,7 @@ if __name__ == '__main__':
         line = pd.DataFrame(newData, index=[index])
         PStable_out = PStable_out.append(line, ignore_index=False, sort=True)
     
-    # PStable_out = PStable_out.sort_index().reset_index(drop=True)
+    PStable_out = PStable_out.sort_index().reset_index(drop=True)
 
     # sort output table according to the old table column layout
     PStable_out = PStable_out[PStable_in.columns]
