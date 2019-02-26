@@ -27,20 +27,25 @@ source env/bin/activate
 ```
 
 
-### Available tools
+### Available tools & usage guides
 
-#### ![`ps-generate`](./docs/ps-generate.md): prescale table generation tool
+#### [`ps-generate`](./docs/ps-generate.md): prescale table generation tool
 
 Prescale table generation tool: create a new prescale table according to a L1 Menu, using information from an existing prescale table.
 
-&rarr; see the ![documentation on `ps-generate`](./docs/ps-generate.md) for further details.
+&rarr; see the [documentation on `ps-generate`](./docs/ps-generate.md) for further details.
 
 
-#### ![`ps-diff`](./docs/ps-diff.md): prescale table comparison tool
+#### [`ps-diff`](./docs/ps-diff.md): prescale table comparison tool
 
 Prescale table comparison tool: create diffs between two PS table in various output formats.
 
-&rarr; see the ![documentation on `ps-diff`](./docs/ps-diff.md) for further details.
+&rarr; see the [documentation on `ps-diff`](./docs/ps-diff.md) for further details.
+
+
+### Presentations of PS-tools
+
+See [this table](./docs/talks.md) for a collection of talks/slides about this software.
 
 
 ## Versioning
@@ -52,4 +57,4 @@ for the available versions of this software.
 ## Authors
 
 * **Sebastian Templ** - *Initial work* - [tempse](https://github.com/tempse)
-* Developed in close collaboration with the ![L1 Menu Team](https://github.com/cms-l1-dpg) of the CMS collaboration
+* Developed in close collaboration with the [L1 Menu Team](https://github.com/cms-l1-dpg) of the CMS collaboration

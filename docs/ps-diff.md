@@ -4,7 +4,7 @@ Prescale table comparison tool
 
 ## Additional requirements
 
-Optional requirement for colored output: ![`colordiff`](https://www.colordiff.org/) (on Debian/Ubuntu-based systems, install via `sudo apt install colordiff`)
+Optional requirement for colored output: [`colordiff`](https://www.colordiff.org/) (on Debian/Ubuntu-based systems, install via `sudo apt install colordiff`)
 
 
 ## Basic usage
