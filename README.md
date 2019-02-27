@@ -21,7 +21,7 @@ To see the category of each seed one should check the "output.txt" file
 
 N.B - If your rate Table looks like 
 
-L1Bit     L1SeedName                pre-scale rate@13TeV +/- error_rate@13TeV    pure@13TeV     prop@13TeV     Comments
+L1Bit	L1SeedName	pre-scale 	rate@13TeV 	+/- 	error_rate@13TeV	pure@13TeV	prop@13TeV	Comments
 
  Then use line 74 instead of line 73      
    cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
@@ -29,7 +29,7 @@ L1Bit     L1SeedName                pre-scale rate@13TeV +/- error_rate@13TeV   
 
 if your rate table looks like this 
 
-L1Bit   L1SeedName      PS      PS_rate error   pure_rate       prop_rate
+L1Bit	L1SeedName	PS	PS_rate	error	pure_rate	prop_rate
 
 
 Then use line 73 and comment out line 74
