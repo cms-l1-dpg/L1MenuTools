@@ -1,7 +1,7 @@
-L1_SingleMu5  is SingleMu
-L1_SingleMu7  is SingleMu
-L1_SingleMu22  is SingleMu
-L1_SingleMu25  is SingleMu
+L1_SingleMu5  is SingleMu and rate 192.79
+L1_SingleMu7  is SingleMu and rate 1028.23
+L1_SingleMu22  is SingleMu and rate 4988.25
+L1_SingleMu25  is SingleMu and rate 7598.71
 L1_DoubleMu8_SQ  is MultiMu
 L1_DoubleMu9_SQ  is MultiMu
 L1_DoubleMu_15_5_SQ  is MultiMu
@@ -127,9 +127,9 @@ L1_TripleJet_95_75_65_DoubleJet_75_65_er2p5  is Jet
 L1_TripleJet_100_80_70_DoubleJet_80_70_er2p5  is Jet
 L1_TripleJet_105_85_75_DoubleJet_85_75_er2p5  is Jet
 L1_QuadJet_95_75_65_20_DoubleJet_75_65_er2p5_Jet20_FWD3p0  is Jet
-L1_HTT320er_QuadJet_70_55_40_40_er2p4  is Jet+Sums
-L1_HTT320er_QuadJet_80_60_er2p1_45_40_er2p3  is Jet+Sums
-L1_HTT320er_QuadJet_80_60_er2p1_50_45_er2p3  is Jet+Sums
+L1_HTT320er_QuadJet_70_55_40_40_er2p4  is Sums
+L1_HTT320er_QuadJet_80_60_er2p1_45_40_er2p3  is Sums
+L1_HTT320er_QuadJet_80_60_er2p1_50_45_er2p3  is Sums
 L1_HTT360er  is Sums
 L1_HTT400er  is Sums
 L1_HTT450er  is Sums
@@ -147,16 +147,16 @@ L1_ETMHF110_HTT60er  is Sums
 L1_ETMHF120_HTT60er  is Sums
 L1_ETMHF130_HTT60er  is Sums
 SingleMu rate  16323.2  1927.95 7598.71
-Mu rate  39844.2  7968.83 16561.3
+MultuMu rate  39844.2  7968.83 16561.3
 SingleEG rate  295746  3598.83 24861.1
-EG rate  65550  1413.83 6954.49
+MultiEG rate  65550  1413.83 6954.49
 Jet rate  31104.1  1156.77 5434.19
 Tau rate  43957.1  2056.47 11053.3
-Sums rate  42414.7  2442.06 5890.9
+Sums rate  46527.6  2570.59 6660.55
 MuEG rate  9768.25  771.18 2737.23
 MuJetSums rate  15809.1  899.71 3897.65
 EGJetSums rate  62336.8  642.65 4201.76
 TauMuEGJetSums rate  31618.3  1285.3 5922.67
-JetSums rate  4112.94  128.53 769.65
 Other rate  0  0 0
 ZerBias rate  0  0 0
+Calibration rate   2827.66  2827.66 2827.66

@@ -19,3 +19,19 @@ make
  
 To see the category of each seed one should check the "output.txt" file
 
+N.B - If your rate Table looks like 
+
+L1Bit     L1SeedName                pre-scale rate@13TeV +/- error_rate@13TeV    pure@13TeV     prop@13TeV     Comments
+0         L1_SingleMuCosmics        0         0          +/- 0                   0              0
+
+ Then use line 74 instead of line 73      
+   cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
+
+
+if your rate table looks like this 
+
+L1Bit   L1SeedName      PS      PS_rate error   pure_rate       prop_rate
+0       L1_SingleMuCosmics      0       0       0       0       0
+
+Then use line 73 and comment out line 74
+ cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;

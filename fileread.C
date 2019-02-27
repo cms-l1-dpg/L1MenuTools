@@ -50,6 +50,7 @@ int fileread(int arc, char** arv)
         double JetSumsrate=0,JetSumspurerate=0,JetSumsproprate=0;
         double Otherrate=0,Otherpurerate=0,Otherproprate=0;
         double ZeroBiasrate=0,ZeroBiaspurerate=0,ZeroBiasproprate=0;
+        double Calibrationrate=0,Calibrationpurerate=0,Calibrationproprate=0;
         while(getline(myfile,line))
         {
                 if(line.find("L1Bit")!=std::string::npos)
@@ -66,7 +67,8 @@ int fileread(int arc, char** arv)
                  line1=line;
                  //cout<<line1<<endl;
                  stringstream aloke(line1);
-                 aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
+                 aloke >> index >> seedname >> prescale >> rate >> error >> pure >> prop ;
+                // aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  //cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;
                //  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
@@ -77,6 +79,12 @@ int fileread(int arc, char** arv)
                  if(seedname.find("Jet")!=string::npos)isjet=true;
                  if(seedname.find("Tau")!=string::npos)isTau=true;
                  if(seedname.find("ZeroBias")!=string::npos && seedname.find("copy")==string::npos) isZerobias=true;
+                 if(prescale >1)
+                 {
+                  Calibrationrate=Calibrationrate+ rate;  
+                  Calibrationpurerate=Calibrationpurerate+ rate;  
+                  Calibrationproprate=Calibrationproprate+ rate;  
+                  }
                  if(ismu && !isjet && !isEG && !isTau && !issums && !isZerobias)
                  {
                          murate=murate + rate;
@@ -137,7 +145,7 @@ int fileread(int arc, char** arv)
                          Tauproprate = Tauproprate + prop;
                          cout<<seedname<<"  is Tau"<<endl;        
                   }
-                 else if(!ismu && !isjet && !isEG && !isTau && issums && !isZerobias)
+                 else if(!ismu /*&& !isjet*/ && !isEG && !isTau && issums && !isZerobias)
                   {
                        Sumsrate=Sumsrate + rate;
                        Sumspurerate = Sumspurerate + pure;
@@ -233,14 +241,15 @@ int fileread(int arc, char** arv)
         //cout<<"EGTau rate  "<<EGTaurate<<"  "<<EGTaupurerate<<" "<<EGTauproprate<<endl;
        // cout<<"TauJetSums rate  "<<TauJetSumsrate<<"  "<<TauJetSumspurerate<<" "<<TauJetSumsproprate<<endl;
         cout<<"TauMuEGJetSums rate  "<<TauMuEGJetSumsrate<<"  "<<TauMuEGJetSumspurerate<<" "<<TauMuEGJetSumsproprate<<endl;
-        cout<<"JetSums rate  "<<JetSumsrate<<"  "<<JetSumspurerate<<" "<<JetSumsproprate<<endl;
+        //cout<<"JetSums rate  "<<JetSumsrate<<"  "<<JetSumspurerate<<" "<<JetSumsproprate<<endl;
         cout<<"Other rate  "<<Otherrate<<"  "<<Otherpurerate<<" "<<Otherproprate<<endl;
         cout<<"ZerBias rate  "<<ZeroBiasrate<<"  "<<ZeroBiaspurerate<<" "<<ZeroBiasproprate<<endl;
+        cout<<"Calibration rate   "<<Calibrationrate<<"  "<<Calibrationpurerate<<" "<<Calibrationproprate<<endl;
        // double crossrate= MuEGproprate+MuJetSumsproprate+MuTauproprate+EGJetSumsproprate+EGTauproprate+TauJetSumsproprate;
        // double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
       //  double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,/*Otherproprate*/};
-        double vals[]= {singlemuproprate,multimuproprate,singleEGproprate,multiEGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,EGJetSumsproprate,JetSumsproprate,TauMuEGJetSumsproprate,ZeroBiasproprate,/*Otherproprate*/};
-   Int_t colors[] = {2,46,4,38,6,36,8,9,30,40,43,49,13};
+        double vals[]= {singlemuproprate,multimuproprate,singleEGproprate,multiEGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,EGJetSumsproprate,/*JetSumsproprate,*/TauMuEGJetSumsproprate,Calibrationproprate/*ZeroBiasproprate,Otherproprate*/};
+   Int_t colors[] = {2,46,4,38,6,36,8,9,30,40,/*43,*/49,13};
   // Int_t colors[] = {2,3,4,5,6,7,8,9};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
@@ -267,15 +276,16 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(3,"Multi e/#gamma");
    pie4->SetEntryLabel(4,"Jets");
    pie4->SetEntryLabel(5,"#tau");
-   pie4->SetEntryLabel(6,"sums");
+   pie4->SetEntryLabel(6,"Sums");
    pie4->SetEntryLabel(7,"#mu+e/#gamma");
-   pie4->SetEntryLabel(8,"#mu+jets/sums");
-   pie4->SetEntryLabel(9,"e/#gamma+jets/sums");
+   pie4->SetEntryLabel(8,"#mu+Jets/Sums");
+   pie4->SetEntryLabel(9,"e/#gamma+Jets/Sums");
    //pie4->SetEntryLabel(1,"EG+Tau");
    //pie4->SetEntryLabel(10,"Tau+Jet/Sum");
-   pie4->SetEntryLabel(10,"Jets+sums");
-   pie4->SetEntryLabel(11,"#tau+#mu/e/#gamma/jets/sums");
-   pie4->SetEntryLabel(12,"ZeroBias");
+  // pie4->SetEntryLabel(10,"Jets+sums");
+   pie4->SetEntryLabel(10,"#tau+#mu/e/#gamma/Jets/Sums");
+//   pie4->SetEntryLabel(11,"ZeroBias");
+   pie4->SetEntryLabel(11,"Calibration");
  //  pie4->SetEntryLabel(12,"Other");
    pie4->Draw("nol rs");
   // TLegend *pieleg = pie4->MakeLegend();
