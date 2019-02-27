@@ -34,4 +34,5 @@ L1Bit   L1SeedName      PS      PS_rate error   pure_rate       prop_rate
 0       L1_SingleMuCosmics      0       0       0       0       0
 
 Then use line 73 and comment out line 74
+
  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;
