@@ -14,7 +14,7 @@ int fileread(int arc, char** arv)
 {
         string fString,line;
         string line1,seedname,sign;
-        int index;
+        int index,index2;
         double prescale,rate,error,pure,prop;
 
         ifstream myfile;
@@ -67,7 +67,7 @@ int fileread(int arc, char** arv)
                  line1=line;
                  //cout<<line1<<endl;
                  stringstream aloke(line1);
-                 aloke >> index >> seedname >> prescale >> rate >> error >> pure >> prop ;
+                 aloke >> index >> seedname >> prescale >> rate >> error >> pure >> prop >>index2;
                 // aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  //cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;
