@@ -11,18 +11,41 @@
 using namespace std;
 int fileread(int arc, char** arv)
 
-{
+{       cout<<"no of arguments "<<arc<<endl;
         string fString,line;
         string line1,seedname,sign;
         int index,index2;
-        double prescale,rate,error,pure,prop;
+ 
+       double prescale,rate,error,pure,prop;
 
+double murate=0,mupurerate=0,muproprate=0;
+        double singlemurate=0,singlemupurerate=0,singlemuproprate=0;
+        double multimurate=0,multimupurerate=0,multimuproprate=0;
+        double EGrate=0,EGpurerate=0,EGproprate=0;
+        double singleEGrate=0,singleEGpurerate=0,singleEGproprate=0;
+        double multiEGrate=0,multiEGpurerate=0,multiEGproprate=0;
+        double Jetrate=0,Jetpurerate=0,Jetproprate=0;
+        double Taurate=0,Taupurerate=0,Tauproprate=0;
+        double Sumsrate=0,Sumspurerate=0,Sumsproprate=0;
+        double MuEGrate=0,MuEGpurerate=0,MuEGproprate=0;
+        double MuJetSumsrate=0,MuJetSumspurerate=0,MuJetSumsproprate=0;
+      // double MuTaurate=0,MuTaupurerate=0,MuTauproprate=0;
+       double EGJetSumsrate=0,EGJetSumspurerate=0,EGJetSumsproprate=0;
+       // double EGTaurate=0,EGTaupurerate=0,EGTauproprate=0;
+       // double TauJetSumsrate=0,TauJetSumspurerate=0,TauJetSumsproprate=0;
+       double TauMuEGJetSumsrate=0,TauMuEGJetSumspurerate=0,TauMuEGJetSumsproprate=0;
+       double JetSumsrate=0,JetSumspurerate=0,JetSumsproprate=0;
+       double Otherrate=0,Otherpurerate=0,Otherproprate=0;
+       double ZeroBiasrate=0,ZeroBiaspurerate=0,ZeroBiasproprate=0;
+       double Calibrationrate=0,Calibrationpurerate=0,Calibrationproprate=0;
+ for(int ntable=1;ntable<arc;ntable++)
+{
         ifstream myfile;
         //string fileLocation;
 
         //opens the file
         //myfile.open("output_aloke.txt");
-        myfile.open(arv[1]);
+        myfile.open(arv[ntable]);
 
         //makes sure that the file opened properly
         while(myfile.fail())
@@ -31,7 +54,7 @@ int fileread(int arc, char** arv)
         }
         bool pietable = false;
         int count=0;
-        double murate=0,mupurerate=0,muproprate=0;
+       /* double murate=0,mupurerate=0,muproprate=0;
         double singlemurate=0,singlemupurerate=0,singlemuproprate=0;
         double multimurate=0,multimupurerate=0,multimuproprate=0;
         double EGrate=0,EGpurerate=0,EGproprate=0;
@@ -50,7 +73,7 @@ int fileread(int arc, char** arv)
         double JetSumsrate=0,JetSumspurerate=0,JetSumsproprate=0;
         double Otherrate=0,Otherpurerate=0,Otherproprate=0;
         double ZeroBiasrate=0,ZeroBiaspurerate=0,ZeroBiasproprate=0;
-        double Calibrationrate=0,Calibrationpurerate=0,Calibrationproprate=0;
+        double Calibrationrate=0,Calibrationpurerate=0,Calibrationproprate=0;*/
         while(getline(myfile,line))
         {
                 if(line.find("L1Bit")!=std::string::npos)
@@ -67,8 +90,8 @@ int fileread(int arc, char** arv)
                  line1=line;
                  //cout<<line1<<endl;
                  stringstream aloke(line1);
-                 aloke >> index >> seedname >> prescale >> rate >> error >> pure >> prop >>index2;
-                // aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
+             //    aloke >> index >> seedname >> prescale >> rate >> error >> pure >> prop >>index2;
+                 aloke >> index >> seedname >> prescale >> rate >> sign >> error >> pure >> prop ;
                  if(rate==0 && pure==0 && prop==0) continue;
                  //cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<error<<" "<<pure<<" "<<prop<<endl;
                //  cout<<index<<" "<<seedname<<" "<<prescale<<" "<<rate<<" "<<sign<<" "<<error<<" "<<pure<<" "<<prop<<endl;
@@ -225,6 +248,7 @@ int fileread(int arc, char** arv)
                 }
         }
         myfile.close();
+}
         //cout<<"Mu rate  "<<murate<<"  "<<mupurerate<<" "<<muproprate<<endl;
         cout<<"SingleMu rate  "<<singlemurate<<"  "<<singlemupurerate<<" "<<singlemuproprate<<endl;
         cout<<"MultuMu rate  "<<multimurate<<"  "<<multimupurerate<<" "<<multimuproprate<<endl;
@@ -249,7 +273,8 @@ int fileread(int arc, char** arv)
        // double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,crossrate,Otherproprate};
       //  double vals[]= {muproprate,EGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,MuTauproprate,EGJetSumsproprate,EGTauproprate,TauJetSumsproprate,ZeroBiasproprate,/*Otherproprate*/};
         double vals[]= {singlemuproprate,multimuproprate,singleEGproprate,multiEGproprate,Jetproprate,Tauproprate,Sumsproprate,MuEGproprate,MuJetSumsproprate,EGJetSumsproprate,/*JetSumsproprate,*/TauMuEGJetSumsproprate,Calibrationproprate/*ZeroBiasproprate,Otherproprate*/};
-   Int_t colors[] = {2,46,4,38,6,36,8,9,30,40,/*43,*/49,13};
+   Int_t colors[] = {16,14,865,38,802,819,9,798,30,40,/*43,*/49,13};
+   //Int_t colors[] = {2,46,4,38,6,36,8,9,30,40,/*43,*/49,13};
   // Int_t colors[] = {2,3,4,5,6,7,8,9};
    Int_t nvals = sizeof(vals)/sizeof(vals[0]);
    TCanvas *cpie = new TCanvas("cpie","TPie test",2000,2000);
@@ -258,14 +283,14 @@ int fileread(int arc, char** arv)
    TPie *pie4 = new TPie("pie4",
       " ",nvals,vals,colors);
    //pie4->SetY(.32);
-   pie4->SetRadius(.24);
-   pie4->SetLabelsOffset(-0.14);
+   pie4->SetRadius(.3);
+   pie4->SetLabelsOffset(-0.23);
  //  pie4->SetEntryFillStyle(1,3030);
    pie4->SetLabelFormat("%perc %txt");
    //pie4->SetLabelFormat("%txt");
  //  pie4->SetLabelColor(1);
    //pie4->SetLabelFormat("#splitline{ (%perc)}{%txt}");
-   pie4->SetTextSize(.012);
+   pie4->SetTextSize(.02);
    pie4->SetTextColor(19);
    //pie4->SetEntryFillColor(1,1);
    //pie4->SetEntryFillColor(3,1);
@@ -288,7 +313,11 @@ int fileread(int arc, char** arv)
    pie4->SetEntryLabel(11,"Calibration");
  //  pie4->SetEntryLabel(12,"Other");
    pie4->Draw("nol rs");
-  // TLegend *pieleg = pie4->MakeLegend();
+  TLegend *pieleg = pie4->MakeLegend();
+pieleg->SetFillStyle(0);
+pieleg->SetY1(.25); pieleg->SetY2(.75);
+   pieleg->SetX1(.00); pieleg->SetX2(.20);
+   pieleg->SetBorderSize(0);
    //TLegend *pieleg =(TLegend*)pie4->GetLegend();
    // pieleg->SetNColumns(2);
    // pieleg->SetEntrySeparation(.01f);
