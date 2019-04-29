@@ -13,11 +13,13 @@ cd my-project
 
 make
 
-./fileread menu_v2_1_0_rate.txt > output.txt  (This is an example table one need to change the table name accroding to their table)
+./fileread <outputname> <input ratetable>  > output.txt  (This is an example table one need to change the table name accroding to their table)
+ for example
+ ./fileread run_323940 ratetable.txt > outputlog.txt (for better understanding see "piemake.sh")
 
-"piechart.pdf" and "output.txt" is saved in current directory
- 
-To see the category of each seed one should check the "output.txt" file
+"run_323940_piechart.pdf" and "outputlog.txt" is saved in current directory
+
+To see the category of each seed one should check the "outputlog.txt" file
 
 N.B - If your rate Table looks like 
 
