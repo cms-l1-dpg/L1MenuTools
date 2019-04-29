@@ -1,7 +1,8 @@
 #!/bin/bash
 filelist=`cat run_323940_ratetable.list`
-echo "${filelist}"
-#filelist="/eos/uscms/store/user/aldas/L1Menu2018/Apr28run_323940_nanodst_main_seeds_inclusive/your_ntuple_323940_0_Default.txt"
+filelist2=`cat run_324077_ratetable.list`
+filelist3=`cat run_325022_ratetable.list`
+#echo "${filelist}"
 ./fileread run_323940 ${filelist}
-#filelist2="aloke"
-#echo $filelist2
+./fileread run_324077 ${filelist2}
+./fileread run_325022 ${filelist3}
