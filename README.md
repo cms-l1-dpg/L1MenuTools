@@ -15,7 +15,7 @@ make
 
 ./fileread <outputname> <input ratetable>  > output.txt  (This is an example table one need to change the table name accroding to their table)
  for example
- ./fileread run_323940 ratetable.txt > outputlog.txt (for understanding see "piemake.sh")
+ ./fileread run_323940 ratetable.txt > outputlog.txt (for better understanding see "piemake.sh")
 
 "run_323940_piechart.pdf" and "outputlog.txt" is saved in current directory
 
