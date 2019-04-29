@@ -11,7 +11,7 @@
 using namespace std;
 int fileread(int arc, char** arv)
 
-{       cout<<"no of arguments "<<arc<<endl;
+{       cout<<"no of tables "<<arc-2<<endl;
         string fString,line;
         string line1,seedname,sign;
         int index,index2;
@@ -38,7 +38,7 @@ double murate=0,mupurerate=0,muproprate=0;
        double Otherrate=0,Otherpurerate=0,Otherproprate=0;
        double ZeroBiasrate=0,ZeroBiaspurerate=0,ZeroBiasproprate=0;
        double Calibrationrate=0,Calibrationpurerate=0,Calibrationproprate=0;
- for(int ntable=1;ntable<arc;ntable++)
+ for(int ntable=2;ntable<arc;ntable++)
 {
         ifstream myfile;
         //string fileLocation;
@@ -330,7 +330,12 @@ pieleg->SetY1(.25); pieleg->SetY2(.75);
   // pieleg->SetY1(.56); pieleg->SetY2(.86);
    //pie4->Draw("nol <");
 
-   cpie->SaveAs("piechart.pdf");
+   //cpie->SaveAs("piechart.pdf");
+   string s1,s2,s3;
+   s1=arv[1];
+   s2="_piechart.pdf";
+   s3=s1+s2;
+   cpie->SaveAs(s3.c_str());
         //cin.ignore();
         return 0;
 }
