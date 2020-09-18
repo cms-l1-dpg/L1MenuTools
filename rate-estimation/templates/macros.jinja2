@@ -1,0 +1,457 @@
+{#
+ # @author: Takashi MATSUSHITA
+ #}
+
+{#
+ # get maximum number of taus
+ #}
+{%- macro getMaxTaus() -%}
+12
+{%- endmacro -%}
+
+
+{#
+ # get comparison operator
+ #}
+{% macro getOperator(operator, tmEventSetup) %}
+  {%- if operator == tmEventSetup.GE -%} >=
+  {%- elif operator == tmEventSetup.EQ -%} ==
+  {%- endif -%}
+{% endmacro %}
+
+
+{#
+ # get IPhi
+ #}
+{%- macro getIPhi(prefix, idx) -%}
+  {%- if (prefix | isMuon) -%}
+    {{prefix}}IPhiAtVtx.at({{idx}})
+  {%- else -%}
+    {{prefix}}IPhi.at({{idx}})
+  {%- endif -%}
+{%- endmacro -%}
+
+
+{#
+ # get IEta
+ #}
+{%- macro getIEta(prefix, idx) -%}
+  {%- if (prefix | isMuon) -%}
+    {{prefix}}IEtaAtVtx.at({{idx}})
+  {%- else -%}
+    {{prefix}}IEta.at({{idx}})
+  {%- endif -%}
+{%- endmacro -%}
+
+
+{#
+ # set delta phi
+ #}
+{% macro setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) %}
+  int iPhi = {{ getIPhi(prefix0, idx0) }};
+  {% if (prefix0 != prefix1) and (prefix1 | isMuon) %}
+    iPhi = {{LUTS.CONV_PHI}}[iPhi];
+  {% endif %}
+
+  unsigned int deltaIPhi = abs(iPhi - {{ getIPhi(prefix1, idx1) }});
+  if (deltaIPhi >= {{iPi}}) deltaIPhi = 2*{{iPi}} - deltaIPhi;
+  {% if useDelta %}
+    unsigned int deltaPhi = {{LUTS.DPHI}}[deltaIPhi];
+  {% endif %}
+{% endmacro %}
+
+
+{#
+ # set delta eta
+ #}
+{% macro setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta=True) %}
+  iEta = {{ getIEta(prefix0, idx0) }};
+  {% if (prefix0 != prefix1) and (prefix1 | isMuon) %}
+    if (iEta < 0) iEta += {{LUTS.ETA_OFFSET}};
+    iEta = {{LUTS.CONV_ETA}}[iEta];
+  {% endif %}
+  deltaIEta = abs(iEta - {{ getIEta(prefix1, idx1) }});
+  {% if useDelta %}
+    unsigned int deltaEta = {{LUTS.DETA}}[deltaIEta];
+  {% endif %}
+{% endmacro %}
+
+
+{#
+ # set delta R2
+ #}
+{%- macro setDeltaR2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
+  {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
+  {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+  long long deltaR2 = deltaEta*deltaEta + deltaPhi*deltaPhi;
+{%- endmacro -%}
+
+
+{#
+ # set mass2
+ #}
+{%- macro setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
+  {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
+  {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+  long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
+  long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
+  long long pt0 = {{LUTS.ET0}}[{{prefix0}}IEt.at({{idx0}})];
+  long long pt1 = {{LUTS.ET1}}[{{prefix1}}IEt.at({{idx1}})];
+  long long mass2 = pt0*pt1*(coshDeltaEta - cosDeltaPhi);
+{%- endmacro -%}
+
+
+{#
+ # set mt2
+ #}
+{%- macro setMt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
+  {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+  long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
+  long long pt0 = {{LUTS.ET0}}[{{prefix0}}IEt.at({{idx0}})];
+  long long pt1 = {{LUTS.ET1}}[{{prefix1}}IEt.at({{idx1}})];
+  long long mt2 = pt0*pt1*(1*POW10[{{LUTS.PREC_MATH}}] - cosDeltaPhi);
+{%- endmacro -%}
+
+
+{#
+ # apply function cut
+ #}
+{%- macro applyFunctionCut(value, cut, precision) -%}
+  minimum = (long long)({{cut.getMinimum().value}} * POW10[{{precision}}]);
+  maximum = (long long)({{cut.getMaximum().value}} * POW10[{{precision}}]);
+  if (not ((minimum <= {{value}}) and ({{value}} <= maximum))) continue;
+{%- endmacro -%}
+
+
+{#
+ # get cuts for object
+ #}
+{% macro getObjectCuts(prefix, idx, object, tmEventSetup, nEtaBits) %}
+  {# local variables #}
+  {% set cuts = object.getCuts() %}
+  {% set nEtaWindow = [0] %}
+  {% set nPhiWindow = [0] %}
+  {# loop over cuts #}
+  {% for cut in cuts %}
+    {# set threshold #}
+    {% if cut.getCutType() == tmEventSetup.Threshold %}
+      // {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
+
+    {# set eta ranges #}
+    {% elif cut.getCutType() == tmEventSetup.Eta %}
+      // {{ cut.getMinimumValue() }} <= eta <= {{ cut.getMaximumValue()}}
+      {% if nEtaWindow[0] == 0 %}
+        etaWindow1 = (({{ cut.getMinimumIndex() | toDecimal(nEtaBits) }} <= {{ getIEta(prefix, idx) }}) and ({{ getIEta(prefix, idx) }} <= {{ cut.getMaximumIndex() | toDecimal(nEtaBits) }}));
+      {% elif nEtaWindow[0] == 1 %}
+        etaWindow2 = (({{ cut.getMinimumIndex() | toDecimal(nEtaBits) }} <= {{ getIEta(prefix, idx) }}) and ({{ getIEta(prefix, idx) }} <= {{ cut.getMaximumIndex() | toDecimal(nEtaBits) }}));
+      {% endif %}
+      {% if nEtaWindow.append(nEtaWindow.pop() + 1) %}{% endif %}
+
+    {# set phi ranges #}
+    {% elif cut.getCutType() == tmEventSetup.Phi %}
+      // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
+      {% if nPhiWindow[0] == 0 %}
+        phiWindow1 = (({{ cut.getMinimumIndex() }} <= {{ getIPhi(prefix, idx) }}) and ({{ getIPhi(prefix, idx) }} <= {{ cut.getMaximumIndex() }}));
+      {% elif nPhiWindow[0] == 1 %}
+        phiWindow2 = (({{ cut.getMinimumIndex() }} <= {{ getIPhi(prefix, idx) }}) and ({{ getIPhi(prefix, idx) }} <= {{ cut.getMaximumIndex() }}));
+      {% endif %}
+      {% if nPhiWindow.append(nPhiWindow.pop() +1) %}{% endif %}
+
+    {# set quality #}
+    {% elif cut.getCutType() == tmEventSetup.Quality %}
+      // quality : {{"0x%x" % cut.getData() | int }}
+      if (not (({{cut.getData() | int}} >> {{prefix}}Qual.at({{idx}})) & 1)) continue;
+
+    {# set isolation #}
+    {% elif cut.getCutType() == tmEventSetup.Isolation %}
+      // isolation : {{"0x%x" % cut.getData() | int }}
+      if (not (({{cut.getData() | int}} >> {{prefix}}Iso.at({{idx}})) & 1)) continue;
+
+    {# set charge #}
+    {% elif cut.getCutType() == tmEventSetup.Charge %}
+      // charge : {{ cut.getData() }}
+      if (not ({{cut.getData() | toCharge}} == {{prefix}}Chg.at({{idx}}))) continue;
+    {% endif %}
+  {% endfor %}
+
+  {%- if nEtaWindow[0] == 1 -%}
+    if (not etaWindow1) continue;
+  {%- elif nEtaWindow[0] == 2 -%}
+    if (not (etaWindow1 or etaWindow2)) continue;
+  {%- endif -%}
+
+  {%- if nPhiWindow[0] == 1 -%}
+    if (not phiWindow1) continue;
+  {%- elif nPhiWindow[0] == 2 -%}
+    if (not (phiWindow1 or phiWindow2)) continue;
+  {%- endif -%}
+{% endmacro %}
+
+
+{#
+ # get cuts for esum
+ #}
+{% macro getEsumCuts(prefix, idx, object, tmEventSetup) %}
+  {# local variables #}
+  {% set cuts = object.getCuts() %}
+  {% set nPhiWindow = [0] %}
+  {# loop over cuts #}
+  {% for cut in cuts %}
+    {% if cut.getCutType() == tmEventSetup.Threshold %}
+      // {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
+    {% elif cut.getCutType() == tmEventSetup.Count %}
+      // {{object.getName()}}: Count {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
+    {# set phi ranges #}
+    {% elif cut.getCutType() == tmEventSetup.Phi %}
+      // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
+      {% if nPhiWindow[0] == 0 %}
+        phiWindow1 = (({{ cut.getMinimumIndex() }} <= {{prefix}}IPhi.at({{idx}})) and ({{prefix}}IPhi.at({{idx}}) <= {{ cut.getMaximumIndex() }}));
+      {% elif nPhiWindow[0] == 1 %}
+        phiWindow2 = (({{ cut.getMinimumIndex() }} <= {{prefix}}IPhi.at({{idx}})) and ({{prefix}}IPhi.at({{idx}}) <= {{ cut.getMaximumIndex() }}));
+      {% endif %}
+      {% if nPhiWindow.append(nPhiWindow.pop() +1) %}{% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {%- if nPhiWindow[0] == 1 -%}
+    if (not phiWindow1) continue;
+  {%- elif nPhiWindow[0] == 2 -%}
+    if (not (phiWindow1 or phiWindow2)) continue;
+  {%- endif -%}
+{% endmacro %}
+
+
+{#
+ # get cuts for correlations of objects with the same type
+ #}
+{% macro getSameTypeCorrelationCuts(prefix, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
+  {# local variables #}
+  long long minimum;
+  long long maximum;
+
+  {{ cond | hasCorrelationCuts }}
+  {% for cut in cond.getCuts() %}
+  {% if cut.getCutType() == tmEventSetup.DeltaEta %}
+    // {{cut.getMinimum().value}} <= DeltaEta <= {{cut.getMaximum().value}}
+    {{ setDeltaEta(prefix, prefix, idx0, idx1, LUTS) }}
+    {{ applyFunctionCut('deltaEta', cut, LUTS.PREC_DELTA) }}
+
+  {% elif cut.getCutType() == tmEventSetup.DeltaPhi %}
+    // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
+    {{ setDeltaPhi(prefix, prefix, idx0, idx1, LUTS, iPi) }}
+    {{ applyFunctionCut('deltaPhi', cut, LUTS.PREC_DELTA) }}
+
+  {% elif cut.getCutType() == tmEventSetup.DeltaR %}
+    // {{cut.getMinimum().value | toDeltaR }} <= DeltaR <= {{cut.getMaximum().value | toDeltaR}}
+    {{ setDeltaR2(prefix, prefix, idx0, idx1, LUTS, iPi) }}
+    {{ applyFunctionCut('deltaR2', cut, LUTS.PREC_DR) }}
+
+  {% elif cut.getCutType() == tmEventSetup.Mass %}
+    // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
+    {{ setMass2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
+    {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
+
+  {% elif cut.getCutType() == tmEventSetup.ChargeCorrelation %}
+    const std::string OS = "os";
+    const std::string SS = "ls";
+    if ({{prefix}}Chg.at({{idx0}}) == 0) continue;  // charge valid bit not set
+    if ({{prefix}}Chg.at({{idx1}}) == 0) continue;  // charge valid bit not set
+    if ("{{ cut.getData() }}" == OS)
+    {
+      if (not ({{prefix}}Chg.at({{idx0}}) != {{prefix}}Chg.at({{idx1}}))) continue;
+    }
+    else if ("{{ cut.getData() }}" == SS)
+    {
+      if (not ({{prefix}}Chg.at({{idx0}}) == {{prefix}}Chg.at({{idx1}}))) continue;
+    }
+  {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+
+{#
+ # get cuts for correlations of objects with the different type
+ #}
+{% macro getDifferentTypeCorrelationCuts(prefix0, prefix1, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
+  {# local variables #}
+  long long minimum;
+  long long maximum;
+  {% set convert = true if (prefix1 | isMuon) else false %}
+  {{ cond | hasCorrelationCuts }}
+  {% for cut in cond.getCuts() %}
+  {% if cut.getCutType() == tmEventSetup.DeltaEta %}
+    // {{cut.getMinimum().value}} <= DeltaEta <= {{cut.getMaximum().value}}
+    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS) }}
+    {{ applyFunctionCut('deltaEta', cut, LUTS.PREC_DELTA) }}
+
+  {% elif cut.getCutType() == tmEventSetup.DeltaPhi %}
+    // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
+    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi) }}
+    {{ applyFunctionCut('deltaPhi', cut, LUTS.PREC_DELTA) }}
+
+  {% elif cut.getCutType() == tmEventSetup.DeltaR %}
+    // {{cut.getMinimum().value | toDeltaR }} <= DeltaR <= {{cut.getMaximum().value | toDeltaR}}
+    {{ setDeltaR2(prefix0, prefix1, idx0, idx1, LUTS, iPi) }}
+    {{ applyFunctionCut('deltaR2', cut, LUTS.PREC_DR) }}
+
+  {% elif cut.getCutType() == tmEventSetup.Mass %}
+    // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
+    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, False) }}
+    {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
+
+  {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+
+{#
+ # get cuts for correlations of object and esum
+ #}
+{% macro getEsumCorrelationCuts(object, esum, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
+  {# local variables #}
+  long long minimum;
+  long long maximum;
+  {% for cut in cond.getCuts() %}
+  {% if cut.getCutType() == tmEventSetup.DeltaPhi %}
+    // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
+    {{ setDeltaPhi(esum, object, idx1, idx0, LUTS, iPi) }}
+    {{ applyFunctionCut('deltaPhi', cut, LUTS.PREC_DELTA) }}
+  {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+
+{#
+ # get cuts for mT of calo object and esum
+ #}
+{% macro getEsumMtCuts(object, esum, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
+  {# local variables #}
+  long long minimum;
+  long long maximum;
+  {% for cut in cond.getCuts() %}
+  {% if cut.getCutType() == tmEventSetup.Mass %}
+    // {{ cut.getMinimum().value | toMass }} <= Mt <= {{ cut.getMaximum().value | toMass }}
+    {{ setMt2(object, esum, idx0, idx1, LUTS, iPi, False) }}
+    {{ applyFunctionCut('mt2', cut, LUTS.PREC_MASS) }}
+
+  {% elif cut.getCutType() == tmEventSetup.DeltaPhi %}
+    // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
+    {{ setDeltaPhi(esum, object, idx1, idx0, LUTS, iPi) }}
+    {{ applyFunctionCut('deltaPhi', cut, LUTS.PREC_DELTA) }}
+  {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+
+{#
+ # check object index
+ #}
+{% macro checkObjectIndex(object, index) %}
+  {% if object.getCuts() | hasIndexCut %} {# check range #}
+    {% set range = object.getCuts() | getIndexCut %}
+    // index : [{{ range[0] }}, {{ range[1] }}]  NB: index = {{index}} - 1
+    if (not (({{range[0]}} < {{index}}) and ({{index}} <= ({{range[1]}}+1)))) continue;
+  {% endif %}
+{% endmacro %}
+
+
+{#
+ # get indicies of reference objects
+ #}
+{% macro getReference(object, tmEventSetup, nEtaBits) %}
+  // remove overlap -- reference: {{object.getName()}}
+  std::vector<int> reference;
+  {% set prefixRef = object | getPrefix %}
+  size_t nref = 0;
+  for (size_t ii = 0; ii < {{prefixRef}}Bx.size(); ii++)
+  {
+    if (not ({{prefixRef}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
+    nref++;
+    {% if prefixRef | isTau %}
+      if (nref > {{getMaxTaus()}}) break;
+    {% endif %}
+    {{ checkObjectIndex(object, 'nref') }}
+    {{ getObjectCuts(prefixRef, 'ii', object, tmEventSetup, nEtaBits) }}
+    reference.push_back(ii);
+  }
+  if (not reference.size()) return false;
+{% endmacro %}
+
+
+{#
+ # remove overlapped objects
+ #}
+{% macro removeOverlap(cond, obj_tgt, idx_tgt, obj_ref, tmEventSetup, scaleMap, iPi) %}
+  {% set objects = obj_tgt | sortObjects(obj_ref) %}
+  {% if (obj_tgt != objects[0]) %} {# swapped #}
+    {% set idx0 = 'index' %}
+    {% set idx1 = idx_tgt %}
+  {% else %}
+    {% set idx0 = idx_tgt %}
+    {% set idx1 = 'index' %}
+  {% endif %}
+  {% set prefix0 = objects[0] | getPrefix %}
+  {% set prefix1 = objects[1] | getPrefix %}
+  {% set LUTS = scaleMap | getLookUpTable(objects[0], objects[1]) %}
+
+  // remove overlap -- target: {{obj_tgt.getName()}}
+  {% for cut in cond.getCuts() %} {# extract cut values #}
+  {% if cut.getCutType() == tmEventSetup.OvRmDelta %}
+  // {{cut.getMinimum().value}} <= DeltaEta <= {{cut.getMaximum().value}}
+  long long minDeltaEta = std::numeric_limits<long long>::max();
+  const long long cutDeltaEtaMin = (long long)({{cut.getMinimum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
+  const long long cutDeltaEtaMax = (long long)({{cut.getMaximum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
+
+  {% elif cut.getCutType() == tmEventSetup.OvRmDeltaPhi %}
+  // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
+  long long minDeltaPhi = std::numeric_limits<long long>::max();
+  const long long cutDeltaPhiMin = (long long)({{cut.getMinimum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
+  const long long cutDeltaPhiMax = (long long)({{cut.getMaximum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
+
+  {% elif cut.getCutType() == tmEventSetup.OvRmDeltaR %}
+  // {{cut.getMinimum().value | toDeltaR}} <= DeltaR <= {{cut.getMaximum().value|toDeltaR}}
+  long long minDeltaR2 = std::numeric_limits<long long>::max();
+  const long long cutDeltaR2Min = (long long)({{cut.getMinimum().value}} * POW10[{{LUTS.PREC_DR}}]);
+  const long long cutDeltaR2Max = (long long)({{cut.getMaximum().value}} * POW10[{{LUTS.PREC_DR}}]);
+  {% endif %}
+  {% endfor %}
+
+  // compute minimum distance to reference objects
+  for (size_t _jj = 0; _jj < reference.size(); _jj++)
+  {
+    const int index = reference.at(_jj);
+    {% for cut in cond.getCuts() %}
+    {% if cut.getCutType() == tmEventSetup.OvRmDeltaEta %}
+      {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS) }}
+      if (deltaEta < minDeltaEta) minDeltaEta = deltaEta;
+
+    {% elif cut.getCutType() == tmEventSetup.OvRmDeltaPhi %}
+      {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi) }}
+      if (deltaPhi < minDeltaPhi) minDeltaPhi = deltaPhi;
+
+    {% elif cut.getCutType() == tmEventSetup.OvRmDeltaR %}
+      {{ setDeltaR2(prefix0, prefix1, idx0, idx1, LUTS, iPi) }}
+      if (deltaR2 < minDeltaR2) minDeltaR2 = deltaR2;
+    {% endif %}
+    {% endfor %}
+  }
+
+  // skip if needed
+  {% for cut in cond.getCuts() %}
+  {% if cut.getCutType() == tmEventSetup.OvRmDeltaEta %}
+  if ((cutDeltaEtaMin <= minDeltaEta) and (minDeltaEta <= cutDeltaEtaMax)) continue;
+
+  {% elif cut.getCutType() == tmEventSetup.OvRmDeltaPhi %}
+  if ((cutDeltaPhiMin <= minDeltaPhi) and (minDeltaPhi <= cutDeltaPhiMax)) continue;
+
+  {% elif cut.getCutType() == tmEventSetup.OvRmDeltaR %}
+  if ((cutDeltaR2Min <= minDeltaR2) and (minDeltaR2 <= cutDeltaR2Max)) continue;
+
+  {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+{# eof #}

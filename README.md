@@ -13,3 +13,6 @@ Contains the following tools:
 
 ### Piechart tool ([piechart-tool/](piechart-tool/))
 Create piecharts from a L1 Menu rate table.
+
+### Rate estimation tools ([rate-estimation/](rate-estimation/))
+Collection of tools used for rate estimation of a new menu.

@@ -1,0 +1,47 @@
+{#
+ # @author: Takashi MATSUSHITA
+ #}
+// LUTs for MuonMuonCorrelation conditions
+{% set math = {tmGrammar.ETA: tmEventSetup.applyCosh, tmGrammar.PHI: tmEventSetup.applyCos} %}
+
+{# delta #}
+const int prec_mu_mu_delta = {{ scaleMap | getPrecisionByName('MU', 'MU', 'Delta') }};
+
+{% set mu_mu_delta = scaleMap | getDeltaLut(tmGrammar.MU, tmGrammar.MU, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_DETA_MU_MU[] = {
+{% for x in mu_mu_delta[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_DPHI_MU_MU[] = {
+{% for x in mu_mu_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# mass #}
+const int prec_mu_mu_math = {{ scaleMap | getPrecisionByName('MU', 'MU', 'Math') }};
+const int prec_mu_mu_mass = {{ scaleMap | getPrecisionByName('MU', 'MU', 'Mass') }};
+const int prec_mu_mu_massPt = {{ scaleMap | getPrecisionByName('MU', 'MU', 'MassPt') }};
+
+{% set mu_mu_math = scaleMap | getMathLut(tmGrammar.MU, tmGrammar.MU, math) %}
+const int LUT_COSH_DETA_MU_MU[] = {
+{% for x in mu_mu_math[tmEventSetup.applyCosh.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_COS_DPHI_MU_MU[] = {
+{% for x in mu_mu_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_MU_ET[] = {
+{% set key = mu_mu_math['Key'] %}
+{% for x in mu_mu_math[key] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{# eof #}

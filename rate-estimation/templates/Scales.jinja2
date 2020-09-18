@@ -1,0 +1,136 @@
+{#
+ # @author: Takashi MATSUSHITA
+ #}
+// Scales
+{% set FORMAT = "%+23.16E" %}
+{# EG #}
+{% for key in ('EG-ET', 'EG-ETA', 'EG-PHI') -%}
+  {% set es_scale = scaleMap[key] %}
+  {% if key == 'EG-ETA' %}
+const int eg_eta_bits = {{es_scale.getNbits()}};
+  {% elif key == 'EG-PHI' %}
+const int eg_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% endif %}
+const std::vector<double> {{key | replace("-", "_")}}_MIN = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.minimum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MAX = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+{% endfor %}
+
+{# JET #}
+{% for key in ('JET-ET', 'JET-ETA', 'JET-PHI') -%}
+  {% set es_scale = scaleMap[key] %}
+  {% if key == 'JET-ETA' %}
+const int jet_eta_bits = {{es_scale.getNbits()}};
+  {% elif key == 'JET-PHI' %}
+const int jet_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% endif %}
+const std::vector<double> {{key | replace("-", "_")}}_MIN = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.minimum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MAX = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+{% endfor %}
+
+{# TAU #}
+{% for key in ('TAU-ET', 'TAU-ETA', 'TAU-PHI') -%}
+  {% set es_scale = scaleMap[key] %}
+  {% if key == 'TAU-ETA' %}
+const int tau_eta_bits = {{es_scale.getNbits()}};
+  {% elif key == 'TAU-PHI' %}
+const int tau_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% endif %}
+const std::vector<double> {{key | replace("-", "_")}}_MIN = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.minimum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MAX = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+{% endfor %}
+
+{# MU #}
+{% for key in ('MU-ET', 'MU-ETA', 'MU-PHI') -%}
+  {% set es_scale = scaleMap[key] %}
+  {% if key == 'MU-PHI' %}
+const int mu_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% endif %}
+const std::vector<double> {{key | replace("-", "_")}}_MIN = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.minimum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MAX = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+{% endfor %}
+
+{# ESUM #}
+{% for key in ('ETT-ET', 'HTT-ET', 'ETM-ET', 'ETM-PHI', 'HTM-ET', 'HTM-PHI', 'ETTEM-ET', 'ETMHF-ET', 'ETMHF-PHI') -%}
+  {% if key not in scaleMap %}{% continue %}{% endif %}
+  {% set es_scale = scaleMap[key] %}
+  {% if key == 'ETM-PHI' %}
+const int etm_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% elif key == 'HTM-PHI' %}
+const int htm_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% elif key == 'ETMHF-PHI' %}
+#define HAS_ETMHF_SCALE
+const int etmhf_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
+  {% elif key == 'ETTEM-ET' %}
+#define HAS_ETTEM_SCALE
+  {% endif %}
+const std::vector<double> {{key | replace("-", "_")}}_MIN = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.minimum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MAX = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+{% endfor %}
+
+{# MB #}
+{% for key in ('MBT0HFM-COUNT', 'MBT0HFP-COUNT', 'MBT1HFM-COUNT', 'MBT1HFP-COUNT', 'TOWERCOUNT-COUNT') -%}
+  {% if key not in scaleMap %}{% continue %}{% endif %}
+  {% if key == 'TOWERCOUNT-COUNT' %}
+#define HAS_TOWERCOUNT_SCALE
+  {% elif key == 'MBT0HFM-COUNT' %}
+#define HAS_MINBIAS_HF_SCALE
+  {% endif %}
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MIN = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.minimum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+  {% set es_scale = scaleMap[key] %}
+const std::vector<double> {{key | replace("-", "_")}}_MAX = {
+  {% for x in es_scale.getBins() -%}
+    {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+{% endfor %}
+{# eof #}

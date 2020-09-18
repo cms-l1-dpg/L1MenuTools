@@ -1,0 +1,156 @@
+{#
+ # @author: Takashi MATSUSHITA
+ #}
+// LUTs for CaloMuonCorrelation conditions
+{% set math = {tmGrammar.ETA: tmEventSetup.applyCosh, tmGrammar.PHI: tmEventSetup.applyCos} %}
+
+{# EG-MU #}
+{# conversion #}
+{% set lut_eg2mu = scaleMap | getCaloMuonConversionLut(tmGrammar.EG, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_ETA_EG2MU[] = {
+{% for x in lut_eg2mu[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_PHI_EG2MU[] = {
+{% for x in lut_eg2mu[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# delta #}
+const int prec_eg_mu_delta = {{ scaleMap | getPrecisionByName('EG', 'MU', 'Delta') }};
+
+{% set eg_mu_delta = scaleMap | getDeltaLut(tmGrammar.EG, tmGrammar.MU, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_DETA_EG_MU[] = {
+{% for x in eg_mu_delta[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_DPHI_EG_MU[] = {
+{% for x in eg_mu_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# mass #}
+const int prec_eg_mu_math = {{ scaleMap | getPrecisionByName('EG', 'MU', 'Math') }};
+const int prec_eg_mu_mass = {{ scaleMap | getPrecisionByName('EG', 'MU', 'Mass') }};
+const int prec_eg_mu_massPt = {{ scaleMap | getPrecisionByName('EG', 'MU', 'MassPt') }};
+
+{% set eg_mu_math = scaleMap | getMathLut(tmGrammar.EG, tmGrammar.MU, math) %}
+const int LUT_COSH_DETA_EG_MU[] = {
+{% for x in eg_mu_math[tmEventSetup.applyCosh.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_COS_DPHI_EG_MU[] = {
+{% for x in eg_mu_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+
+{# JET-MU #}
+{# conversion #}
+{% set lut_jet2mu = scaleMap | getCaloMuonConversionLut(tmGrammar.JET, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_ETA_JET2MU[] = {
+{% for x in lut_jet2mu[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_PHI_JET2MU[] = {
+{% for x in lut_jet2mu[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# delta #}
+const int prec_jet_mu_delta = {{ scaleMap | getPrecisionByName('JET', 'MU', 'Delta') }};
+
+{% set jet_mu_delta = scaleMap | getDeltaLut(tmGrammar.JET, tmGrammar.MU, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_DETA_JET_MU[] = {
+{% for x in jet_mu_delta[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_DPHI_JET_MU[] = {
+{% for x in jet_mu_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# mass #}
+const int prec_jet_mu_math = {{ scaleMap | getPrecisionByName('JET', 'MU', 'Math') }};
+const int prec_jet_mu_mass = {{ scaleMap | getPrecisionByName('JET', 'MU', 'Mass') }};
+const int prec_jet_mu_massPt = {{ scaleMap | getPrecisionByName('JET', 'MU', 'MassPt') }};
+
+{% set jet_mu_math = scaleMap | getMathLut(tmGrammar.JET, tmGrammar.MU, math) %}
+const int LUT_COSH_DETA_JET_MU[] = {
+{% for x in jet_mu_math[tmEventSetup.applyCosh.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_COS_DPHI_JET_MU[] = {
+{% for x in jet_mu_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+
+{# TAU-MU #}
+{# conversion #}
+{% set lut_tau2mu = scaleMap | getCaloMuonConversionLut(tmGrammar.TAU, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_ETA_TAU2MU[] = {
+{% for x in lut_tau2mu[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_PHI_TAU2MU[] = {
+{% for x in lut_tau2mu[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# delta #}
+const int prec_tau_mu_delta = {{ scaleMap | getPrecisionByName('TAU', 'MU', 'Delta') }};
+
+{% set tau_mu_delta = scaleMap | getDeltaLut(tmGrammar.TAU, tmGrammar.MU, (tmGrammar.ETA, tmGrammar.PHI)) %}
+const int LUT_DETA_TAU_MU[] = {
+{% for x in tau_mu_delta[tmGrammar.ETA] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_DPHI_TAU_MU[] = {
+{% for x in tau_mu_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# mass #}
+const int prec_tau_mu_math = {{ scaleMap | getPrecisionByName('TAU', 'MU', 'Math') }};
+const int prec_tau_mu_mass = {{ scaleMap | getPrecisionByName('TAU', 'MU', 'Mass') }};
+const int prec_tau_mu_massPt = {{ scaleMap | getPrecisionByName('TAU', 'MU', 'MassPt') }};
+
+{% set tau_mu_math = scaleMap | getMathLut(tmGrammar.TAU, tmGrammar.MU, math) %}
+const int LUT_COSH_DETA_TAU_MU[] = {
+{% for x in tau_mu_math[tmEventSetup.applyCosh.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_COS_DPHI_TAU_MU[] = {
+{% for x in tau_mu_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{# eof #}
