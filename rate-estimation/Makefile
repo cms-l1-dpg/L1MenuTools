@@ -11,7 +11,7 @@ CXXFLAGS  += $(subst -I, -isystem , $(shell root-config --cflags))
 
 LD         = g++
 LDFLAGS    =
-LIBS       = $(shell root-config --libs)   -lTable
+LIBS       = $(shell root-config --libs) 
 
 ifneq ($(shell echo $$CMSSW_BASE), )
   CXXFLAGS  += -isystem $(CMSSW_BASE)/src/
@@ -20,7 +20,7 @@ ifneq ($(shell echo $$CMSSW_BASE), )
   LIBS += -L$(CMSSW_BASE)/lib/$(SCRAM_ARCH)/ -L$(CMSSW_RELEASE_BASE)/lib/$(SCRAM_ARCH)/ \
 		  -lFWCoreFWLite -lDataFormatsL1TGlobal
   LIBS += -L$(shell scram tool info boost | awk -F"=" '/LIBDIR=(.*)/{print $$NF}') \
-		  -lboost_program_options -lboost_filesystem
+		  -lboost_program_options -lboost_system -lboost_filesystem
 endif
 
 TestOBJS = include/L1Ntuple include/L1AlgoFactory include/L1Menu2016 include/L1Plot include/L1TnP include/L1uGT include/PreColumn
