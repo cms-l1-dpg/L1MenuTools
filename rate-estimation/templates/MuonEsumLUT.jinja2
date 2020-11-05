@@ -1,0 +1,63 @@
+{#
+ # @author: Takashi MATSUSHITA
+ #}
+// LUTs for MuonEsumCorrelation conditions
+{# conversion #}
+{% set lut_etm2mu = scaleMap | getCaloMuonConversionLut(tmGrammar.ETM, (tmGrammar.PHI,)) %}
+const int LUT_PHI_ETM2MU[] = {
+{% for x in lut_etm2mu[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set lut_htm2mu = scaleMap | getCaloMuonConversionLut(tmGrammar.HTM, (tmGrammar.PHI,)) %}
+const int LUT_PHI_HTM2MU[] = {
+{% for x in lut_htm2mu[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmGrammar.ETMHF, tmGrammar.PHI] | join("-") %}
+{% if key in scaleMap.keys() %}
+{% set lut_etmhf2mu = scaleMap | getCaloMuonConversionLut(tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
+const int LUT_PHI_ETMHF2MU[] = {
+{% for x in lut_etmhf2mu[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+
+{# delta #}
+const int prec_mu_etm_delta = {{ scaleMap | getPrecisionByName('MU', 'ETM', 'Delta') }};
+const int prec_mu_htm_delta = {{ scaleMap | getPrecisionByName('MU', 'HTM', 'Delta') }};
+
+{% set mu_etm_delta = scaleMap | getDeltaLut(tmGrammar.MU, tmGrammar.ETM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_MU_ETM[] = {
+{% for x in mu_etm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set mu_htm_delta = scaleMap | getDeltaLut(tmGrammar.MU, tmGrammar.HTM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_MU_HTM[] = {
+{% for x in mu_htm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmGrammar.ETMHF, tmGrammar.PHI] | join("-") %}
+{% if key in scaleMap.keys() %}
+const int prec_mu_etmhf_delta = {{ scaleMap | getPrecisionByName('MU', 'ETMHF', 'Delta') }};
+{% set mu_etmhf_delta = scaleMap | getDeltaLut(tmGrammar.MU, tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_MU_ETMHF[] = {
+{% for x in mu_etmhf_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+{# eof #}

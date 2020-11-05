@@ -1,0 +1,242 @@
+{#
+ # @author: Takashi MATSUSHITA
+ #}
+// LUTs for CaloEsumCorrelation conditions
+{% set math = {tmGrammar.PHI: tmEventSetup.applyCos} %}
+
+{# EG-ESUM #}
+{# delta #}
+const int prec_eg_etm_delta = {{ scaleMap | getPrecisionByName('EG', 'ETM', 'Delta') }};
+const int prec_eg_htm_delta = {{ scaleMap | getPrecisionByName('EG', 'HTM', 'Delta') }};
+
+{% set eg_etm_delta = scaleMap | getDeltaLut(tmGrammar.EG, tmGrammar.ETM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_EG_ETM[] = {
+{% for x in eg_etm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set eg_htm_delta = scaleMap | getDeltaLut(tmGrammar.EG, tmGrammar.HTM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_EG_HTM[] = {
+{% for x in eg_htm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmEventSetup.PRECISION, tmGrammar.EG, tmGrammar.ETMHF, 'Delta'] | join("-") %}
+{% if key in scaleMap.keys() %}
+{% set eg_etmhf_delta = scaleMap | getDeltaLut(tmGrammar.EG, tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_EG_ETMHF[] = {
+{% for x in eg_etmhf_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+{# mass #}
+const int prec_eg_etm_math = {{ scaleMap | getPrecisionByName('EG', 'ETM', 'Math') }};
+const int prec_eg_etm_mass = {{ scaleMap | getPrecisionByName('EG', 'ETM', 'Mass') }};
+const int prec_eg_etm_massPt = {{ scaleMap | getPrecisionByName('EG', 'ETM', 'MassPt') }};
+const int prec_eg_htm_math = {{ scaleMap | getPrecisionByName('EG', 'HTM', 'Math') }};
+const int prec_eg_htm_mass = {{ scaleMap | getPrecisionByName('EG', 'HTM', 'Mass') }};
+const int prec_eg_htm_massPt = {{ scaleMap | getPrecisionByName('EG', 'HTM', 'MassPt') }};
+
+{% set eg_etm_math = scaleMap | getMathLut(tmGrammar.EG, tmGrammar.ETM, math) %}
+const int LUT_COS_DPHI_EG_ETM[] = {
+{% for x in eg_etm_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set eg_htm_math = scaleMap | getMathLut(tmGrammar.EG, tmGrammar.HTM, math) %}
+const int LUT_COS_DPHI_EG_HTM[] = {
+{% for x in eg_htm_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmEventSetup.PRECISION, tmGrammar.EG, tmGrammar.ETMHF, 'Delta'] | join("-") %}
+{% if key in scaleMap.keys() %}
+const int prec_eg_etmhf_delta = {{ scaleMap | getPrecisionByName('EG', 'ETMHF', 'Delta') }};
+const int prec_eg_etmhf_math = {{ scaleMap | getPrecisionByName('EG', 'ETMHF', 'Math') }};
+const int prec_eg_etmhf_mass = {{ scaleMap | getPrecisionByName('EG', 'ETMHF', 'Mass') }};
+const int prec_eg_etmhf_massPt = {{ scaleMap | getPrecisionByName('EG', 'ETMHF', 'MassPt') }};
+{% set eg_etmhf_math = scaleMap | getMathLut(tmGrammar.EG, tmGrammar.ETMHF, math) %}
+const int LUT_COS_DPHI_EG_ETMHF[] = {
+{% for x in eg_etmhf_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+
+{# JET-ESUM #}
+{# delta #}
+const int prec_jet_etm_delta = {{ scaleMap | getPrecisionByName('JET', 'ETM', 'Delta') }};
+const int prec_jet_htm_delta = {{ scaleMap | getPrecisionByName('JET', 'HTM', 'Delta') }};
+
+{% set jet_etm_delta = scaleMap | getDeltaLut(tmGrammar.JET, tmGrammar.ETM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_JET_ETM[] = {
+{% for x in jet_etm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set jet_htm_delta = scaleMap | getDeltaLut(tmGrammar.JET, tmGrammar.HTM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_JET_HTM[] = {
+{% for x in jet_htm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmEventSetup.PRECISION, tmGrammar.JET, tmGrammar.ETMHF, 'Delta'] | join("-") %}
+{% if key in scaleMap.keys() %}
+{% set jet_etmhf_delta = scaleMap | getDeltaLut(tmGrammar.JET, tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_JET_ETMHF[] = {
+{% for x in jet_etmhf_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+{# mass #}
+const int prec_jet_etm_math = {{ scaleMap | getPrecisionByName('JET', 'ETM', 'Math') }};
+const int prec_jet_etm_mass = {{ scaleMap | getPrecisionByName('JET', 'ETM', 'Mass') }};
+const int prec_jet_etm_massPt = {{ scaleMap | getPrecisionByName('JET', 'ETM', 'MassPt') }};
+const int prec_jet_htm_math = {{ scaleMap | getPrecisionByName('JET', 'HTM', 'Math') }};
+const int prec_jet_htm_mass = {{ scaleMap | getPrecisionByName('JET', 'HTM', 'Mass') }};
+const int prec_jet_htm_massPt = {{ scaleMap | getPrecisionByName('JET', 'HTM', 'MassPt') }};
+
+{% set jet_etm_math = scaleMap | getMathLut(tmGrammar.JET, tmGrammar.ETM, math) %}
+const int LUT_COS_DPHI_JET_ETM[] = {
+{% for x in jet_etm_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set jet_htm_math = scaleMap | getMathLut(tmGrammar.JET, tmGrammar.HTM, math) %}
+const int LUT_COS_DPHI_JET_HTM[] = {
+{% for x in jet_htm_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmEventSetup.PRECISION, tmGrammar.JET, tmGrammar.ETMHF, 'Delta'] | join("-") %}
+{% if key in scaleMap.keys() %}
+const int prec_jet_etmhf_delta = {{ scaleMap | getPrecisionByName('JET', 'ETMHF', 'Delta') }};
+const int prec_jet_etmhf_math = {{ scaleMap | getPrecisionByName('JET', 'ETMHF', 'Math') }};
+const int prec_jet_etmhf_mass = {{ scaleMap | getPrecisionByName('JET', 'ETMHF', 'Mass') }};
+const int prec_jet_etmhf_massPt = {{ scaleMap | getPrecisionByName('JET', 'ETMHF', 'MassPt') }};
+{% set jet_etmhf_math = scaleMap | getMathLut(tmGrammar.JET, tmGrammar.ETMHF, math) %}
+const int LUT_COS_DPHI_JET_ETMHF[] = {
+{% for x in jet_etmhf_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+
+{# TAU-ESUM #}
+{# delta #}
+const int prec_tau_etm_delta = {{ scaleMap | getPrecisionByName('TAU', 'ETM', 'Delta') }};
+const int prec_tau_htm_delta = {{ scaleMap | getPrecisionByName('TAU', 'HTM', 'Delta') }};
+
+{% set tau_etm_delta = scaleMap | getDeltaLut(tmGrammar.TAU, tmGrammar.ETM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_TAU_ETM[] = {
+{% for x in tau_etm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set tau_htm_delta = scaleMap | getDeltaLut(tmGrammar.TAU, tmGrammar.HTM, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_TAU_HTM[] = {
+{% for x in tau_htm_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmEventSetup.PRECISION, tmGrammar.TAU, tmGrammar.ETMHF, 'Delta'] | join("-") %}
+{% if key in scaleMap.keys() %}
+{% set tau_etmhf_delta = scaleMap | getDeltaLut(tmGrammar.TAU, tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
+const int LUT_DPHI_TAU_ETMHF[] = {
+{% for x in tau_etmhf_delta[tmGrammar.PHI] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+{# mass #}
+const int prec_tau_etm_math = {{ scaleMap | getPrecisionByName('TAU', 'ETM', 'Math') }};
+const int prec_tau_etm_mass = {{ scaleMap | getPrecisionByName('TAU', 'ETM', 'Mass') }};
+const int prec_tau_etm_massPt = {{ scaleMap | getPrecisionByName('TAU', 'ETM', 'MassPt') }};
+const int prec_tau_htm_math = {{ scaleMap | getPrecisionByName('TAU', 'HTM', 'Math') }};
+const int prec_tau_htm_mass = {{ scaleMap | getPrecisionByName('TAU', 'HTM', 'Mass') }};
+const int prec_tau_htm_massPt = {{ scaleMap | getPrecisionByName('TAU', 'HTM', 'MassPt') }};
+
+{% set tau_etm_math = scaleMap | getMathLut(tmGrammar.TAU, tmGrammar.ETM, math) %}
+const int LUT_COS_DPHI_TAU_ETM[] = {
+{% for x in tau_etm_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set tau_htm_math = scaleMap | getMathLut(tmGrammar.TAU, tmGrammar.HTM, math) %}
+const int LUT_COS_DPHI_TAU_HTM[] = {
+{% for x in tau_htm_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% if menu.getVersion() >= "0.3" %}
+{% set key = [tmEventSetup.PRECISION, tmGrammar.TAU, tmGrammar.ETMHF, 'Delta'] | join("-") %}
+{% if key in scaleMap.keys() %}
+const int prec_tau_etmhf_delta = {{ scaleMap | getPrecisionByName('TAU', 'ETMHF', 'Delta') }};
+const int prec_tau_etmhf_math = {{ scaleMap | getPrecisionByName('TAU', 'ETMHF', 'Math') }};
+const int prec_tau_etmhf_mass = {{ scaleMap | getPrecisionByName('TAU', 'ETMHF', 'Mass') }};
+const int prec_tau_etmhf_massPt = {{ scaleMap | getPrecisionByName('TAU', 'ETMHF', 'MassPt') }};
+{% set tau_etmhf_math = scaleMap | getMathLut(tmGrammar.TAU, tmGrammar.ETMHF, math) %}
+const int LUT_COS_DPHI_TAU_ETMHF[] = {
+{% for x in tau_etmhf_math[tmEventSetup.applyCos.__name__] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+{% endif %}
+
+
+{# ET #}
+{% set precision = scaleMap | getPrecisionByName(tmGrammar.EG, tmGrammar.ETM, 'MassPt') %}
+const int LUT_ETM_ET[] = {
+{% for x in scaleMap | getEtLut(tmGrammar.ETM, precision) -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+{% set precision = scaleMap | getPrecisionByName(tmGrammar.EG, tmGrammar.HTM, 'MassPt') %}
+const int LUT_HTM_ET[] = {
+{% for x in scaleMap | getEtLut(tmGrammar.HTM, precision) -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+
+{% if menu.getVersion() >= "0.3" %}
+{% set precision = scaleMap | getPrecisionByName(tmGrammar.EG, tmGrammar.ETMHF, 'MassPt') %}
+const int LUT_ETMHF_ET[] = {
+{% for x in scaleMap | getEtLut(tmGrammar.ETMHF, precision) -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+{% endif %}
+
+{# eof #}
