@@ -2,6 +2,8 @@
 
 Rate estimation tools for L1 Menu operations in CMS
 
+> See the [official twiki page](https://twiki.cern.ch/twiki/bin/view/CMS/HowToL1TriggerMenu) for updated instructions!
+
 ## Overview
 
 ### Setting up the environment
@@ -31,7 +33,7 @@ Requires:
 * Prescale table
 See docs/testMenu2016.md for more information.
 
-#### menu2lib.py
+#### menu2lib/menu2lib.py
 Converts the XML menu to C++ to be used in testMenu2016 for rate estimation.
 Do not run cmsenv before running this.
 
