@@ -1,5 +1,4 @@
-#!/usr/bin/python
-#
+#!/usr/bin/env python
 
 import sys,string,math,os,subprocess,socket
 import socket
