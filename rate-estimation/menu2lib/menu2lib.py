@@ -1,6 +1,7 @@
 """L1 trigger menu to C++ library for rate estimations."""
 
 import argparse
+import logging
 import math
 import os
 import re
@@ -318,7 +319,7 @@ def hasIndexCut(cuts):
 
 def getIndexCut(cuts):
   for cut in cuts:
-    if cut.getCutType() == tmEventSetup.Index:
+    if cut.getCutType() == tmEventSetup.Slice:
       minimum_index = int(cut.getMinimum().value);
       maximum_index = int(cut.getMaximum().value);
       return minimum_index, maximum_index
@@ -384,8 +385,10 @@ def warning(message):
 THIS_DIR = os.path.dirname(os.path.abspath(__file__)) + "/templates"
 
 
-def render(menu, template, name):
-  j2_env = Environment(loader=FileSystemLoader(THIS_DIR), trim_blocks=True)
+def render(menu, template):
+  module_dir = os.path.dirname(os.path.abspath(__file__))
+  templates_dir = os.path.join(module_dir, 'templates')
+  j2_env = Environment(loader=FileSystemLoader(templates_dir), trim_blocks=True)
 
   j2_env.add_extension('jinja2.ext.loopcontrols')
   j2_env.filters['toDecimal'] = toDecimal
@@ -411,54 +414,49 @@ def render(menu, template, name):
   j2_env.filters['getScale'] = getScale
   j2_env.filters['getLookUpTable'] = getLookUpTable
 
-  association = {
-      "tmGrammar": tmGrammar,
-      "tmEventSetup": tmEventSetup,
-      "menu": menu
-      }
+  data = {
+    "tmGrammar": tmGrammar,
+    "tmEventSetup": tmEventSetup,
+    "menu": menu
+  }
 
-  return j2_env.get_template(template).render(association)
+  return j2_env.get_template(template).render(data)
 
+def parse_args():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--menu", required=True, help="path to the level1 trigger menu xml file")
+  parser.add_argument("--output", default='menulib.cc', help="output c++ file name")
+  return parser.parse_args()
+
+def main():
+  args = parse_args()
+
+  logger = logging.getLogger().setLevel(logging.INFO)
+
+  logging.info("loading... %s", args.menu)
+  menu = tmEventSetup.getTriggerMenu(args.menu)
+
+  dirname = os.path.dirname(args.output)
+
+  content = render(menu, 'MenuTemplate.cc')
+  filename = args.output
+  logging.info("writing... %s", filename)
+  with open(filename, 'w') as fp:
+    fp.write(content)
+
+  content = render(menu, 'MenuTemplate.hh')
+  filename = os.path.join(dirname, 'menulib.hh')
+  logging.info("writing... %s", filename)
+  with open(filename, 'w') as fp:
+    fp.write(content)
+
+  content = render(menu, 'menu.txt')
+  filename = os.path.join(dirname, 'menu.txt')
+  logging.info("writing... %s", filename)
+  with open(filename, 'w') as fp:
+    fp.write(content)
+
+  logging.info("done.")
 
 if __name__ == '__main__':
-  xml = 'L1Menu_Collisions2016_v5.xml'
-  output = 'menulib.cc'
-
-  parser = argparse.ArgumentParser()
-
-  parser.add_argument("--menu", dest="xml", default=xml, type=str, action="store", required=True, help="path to the level1 trigger menu xml file")
-  parser.add_argument("--output", dest="output", default=output, type=str, action="store", help="output c++ file name")
-
-  options = parser.parse_args()
-
-  menu = tmEventSetup.getTriggerMenu(options.xml)
-
-  name = os.path.basename(output)
-  name, ext = os.path.splitext(name)
-
-  text = render(menu, 'MenuTemplate.cc', name)
-  with open(options.output, "w") as fp:
-    fp.write(text)
-
-  text = render(menu, 'MenuTemplate.hh', name)
-  path = os.path.dirname(options.output)
-  path += "menulib.hh"
-  with open(path, "w") as fp:
-    fp.write(text)
-
-
-  path = os.path.dirname(options.output)
-  path += "menu.txt"
-  fp = open(path, "w")
-
-  header = '''#============================================================================#
-#-------------------------------     Menu     -------------------------------#
-#============================================================================#
-# L1Seed                                                     Bit  Prescale POG     PAG
-'''
-  fp.write(header)
-  algorithms = menu.getAlgorithmMapPtr()
-  for name, algorithm in list(algorithms.items()):
-    fp.write('{:60} {:>3}         1\n'.format(name, algorithm.getIndex()))
-  fp.close()
-# eof
+    main()
