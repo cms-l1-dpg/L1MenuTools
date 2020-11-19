@@ -1,13 +1,11 @@
-#!/bin/env python
-#
-# @author: Takashi MATSUSHITA
-#
+"""L1 trigger menu to C++ library for rate estimations."""
 
 import argparse
 import math
 import os
 import re
 import string
+
 from jinja2 import Environment, FileSystemLoader
 
 import tmGrammar
