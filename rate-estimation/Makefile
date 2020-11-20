@@ -47,10 +47,14 @@ PROGRAM = testMenu2016
 MKBIN = $(CXX) $(CXXFLAGS) `root-config  --libs --cflags` -lMinuit -lGenVector
 
 $(ODIR)/%.o: %.C
+	@mkdir -p $(ODIR)
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
 
 $(ODIR)/%.o: %.cc
+	@mkdir -p $(ODIR)
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+
+.PHONY all clean distclean
 
 all: $(PROGRAM)
 
