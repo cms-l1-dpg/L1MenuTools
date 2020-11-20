@@ -126,17 +126,23 @@
 {#
  # get cuts for object
  #}
-{% macro getObjectCuts(prefix, idx, object, tmEventSetup, nEtaBits) %}
-  {# local variables #}
-  {% set cuts = object.getCuts() %}
-  {% set nEtaWindow = [0] %}
-  {% set nPhiWindow = [0] %}
-  {# loop over cuts #}
-  {% for cut in cuts %}
-    {# set threshold #}
-    {% if cut.getCutType() == tmEventSetup.Threshold %}
-      // {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
-      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
+{%- macro getObjectCuts(prefix, idx, object, tmEventSetup, nEtaBits) %}
+  {#- local variables #}
+  {%- set cuts = object.getCuts() %}
+  {%- set nEtaWindow = [0] %}
+  {%- set nPhiWindow = [0] %}
+  {#- loop over cuts #}
+  {%- for cut in cuts %}
+    {#- set threshold #}
+    {%- if cut.getCutType() == tmEventSetup.Threshold %}
+// {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }}))
+        continue;
+
+    {%- elif cut.getCutType() == tmEventSetup.UnconstrainedPt %}
+// {{object.getName()}}: UnconstrainedPt >= {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+      if (not ({{prefix}}IEtUnconstrained.at({{idx}}) >= {{ cut.getMinimumIndex() }}))
+        continue;
 
     {# set eta ranges #}
     {% elif cut.getCutType() == tmEventSetup.Eta %}
