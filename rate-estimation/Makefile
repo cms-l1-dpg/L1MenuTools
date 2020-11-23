@@ -54,7 +54,7 @@ $(ODIR)/%.o: %.cc
 	@mkdir -p $(ODIR)
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
 
-.PHONY all clean distclean
+.PHONY: all clean distclean
 
 all: $(PROGRAM)
 
