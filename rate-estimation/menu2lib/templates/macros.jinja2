@@ -126,8 +126,10 @@
 {#
  # get cuts for object
  #}
-{%- macro getObjectCuts(prefix, idx, object, tmEventSetup, nEtaBits) %}
-  {#- local variables #}
+{%- macro getObjectCuts(prefix, idx, object, tmEventSetup, nEtaBits) -%}
+      {
+
+  {# local variables #}
   {%- set cuts = object.getCuts() %}
   {%- set etaWindows = [] %}
   {%- set phiWindows = [] %}
@@ -135,12 +137,12 @@
   {%- for cut in cuts -%}
     {#- set threshold -#}
     {% if cut.getCutType() == tmEventSetup.Threshold -%}
-// {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+    // {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
       if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }}))
         continue;
 
     {% elif cut.getCutType() == tmEventSetup.UnconstrainedPt %}
-// {{object.getName()}}: UnconstrainedPt >= {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
+    // {{object.getName()}}: UnconstrainedPt >= {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
       if (not ({{prefix}}IEtUnconstrained.at({{idx}}) >= {{ cut.getMinimumIndex() }}))
         continue;
 
@@ -149,7 +151,7 @@
     {%- if not etaWindows -%}
       const auto eta = {{ getIEta(prefix, idx) }};
     {% endif %}
-  // {{ cut.getMinimumValue() }} <= eta <= {{ cut.getMaximumValue()}}
+    // {{ cut.getMinimumValue() }} <= eta <= {{ cut.getMaximumValue()}}
       const bool etaWindow{{etaWindows | count}} = (({{ cut.getMinimumIndex() | toDecimal(nEtaBits) }} <= eta) and (eta <= {{ cut.getMaximumIndex() | toDecimal(nEtaBits) }}));
       {% if etaWindows.append(etaWindows | count) %}{% endif %}
 
@@ -158,34 +160,37 @@
     {%- if not phiWindows -%}
       const auto phi = {{ getIPhi(prefix, idx) }};
     {% endif %}
-  // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
+    // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
       const bool phiWindow{{phiWindows | count}} = (({{ cut.getMinimumIndex() }} <= phi) and (phi <= {{ cut.getMaximumIndex() }}));
       {% if phiWindows.append(phiWindows | count) %}{% endif %}
 
     {# set quality #}
     {% elif cut.getCutType() == tmEventSetup.Quality %}
-      // quality : {{"0x%x" % cut.getData() | int }}
+    // quality : {{"0x%x" % cut.getData() | int }}
       if (not (({{cut.getData() | int}} >> {{prefix}}Qual.at({{idx}})) & 1)) continue;
 
     {# set isolation #}
     {% elif cut.getCutType() == tmEventSetup.Isolation %}
-      // isolation : {{"0x%x" % cut.getData() | int }}
+    // isolation : {{"0x%x" % cut.getData() | int }}
       if (not (({{cut.getData() | int}} >> {{prefix}}Iso.at({{idx}})) & 1)) continue;
 
     {# set charge #}
     {% elif cut.getCutType() == tmEventSetup.Charge %}
-      // charge : {{ cut.getData() }}
+    // charge : {{ cut.getData() }}
       if (not ({{cut.getData() | toCharge}} == {{prefix}}Chg.at({{idx}}))) continue;
     {% endif %}
   {% endfor %}
 
   {% if etaWindows %}
     if (not ({% for i in etaWindows %}{% if loop.index0 %} or {% endif %}etaWindow{{i}}{% endfor %})) continue;
-  {%- endif -%}
+  {%- endif %}
 
   {% if phiWindows %}
     if (not ({% for i in phiWindows %}{% if loop.index0 %} or {% endif %}phiWindow{{i}}{% endfor %})) continue;
-  {%- endif -%}
+  {%- endif %}
+
+      }
+
 {% endmacro %}
 
 
