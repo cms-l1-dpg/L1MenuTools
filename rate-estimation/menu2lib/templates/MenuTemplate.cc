@@ -1,8 +1,5 @@
-{#
- # @author: Takashi MATSUSHITA
- #}
 /* automatically generated from {{ menu.getName() }} with menu2lib.py */
-/* https://gitlab.cern.ch/cms-l1t-utm/scripts */
+/* https://github.com/cms-l1-dpg/L1MenuTools */
 
 #include <algorithm>
 #include <map>
@@ -21,11 +18,10 @@ get_missing_et(L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower,
                const double threshold)
 {
   // https://github.com/cms-sw/cmssw/blob/CMSSW_9_0_X/L1Trigger/L1TCalorimeter/src/CaloTools.cc#L13=L15
-  const int64_t cos_coeff[72] = {1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89, 0, 89, 178, 265, 350, 432, 511, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019};
+  static const int64_t cos_coeff[72] = {1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89, 0, 89, 178, 265, 350, 432, 511, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019};
+  static const int64_t sin_coeff[72] = {0, 89, 178, 265, 350, 432, 512, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019, 1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89};
 
-  const int64_t sin_coeff[72] = {0, 89, 178, 265, 350, 432, 512, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019, 1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89};
-
-  if (not calo_tower) return std::make_pair(-1., -9999.);
+  if (not calo_tower) return {-1., -9999.};
 
   double ex = 0.;
   double ey = 0.;
@@ -38,13 +34,13 @@ get_missing_et(L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower,
       if (et > threshold)
       {
         const int index = calo_tower->iphi.at(ii) - 1;
-        ex += (et*cos_coeff[index]/1024.);
-        ey += (et*sin_coeff[index]/1024.);
+        ex += (et * cos_coeff[index] / 1024.);
+        ey += (et * sin_coeff[index] / 1024.);
       }
     }
   }
 
-  return std::make_pair(sqrt(ex*ex + ey*ey), atan2(-ey, -ex));
+  return {sqrt(ex*ex + ey*ey), atan2(-ey, -ex)};
 }
 
 
@@ -127,7 +123,7 @@ get_transverse_mass(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
   while (delta_phi >= M_PI) delta_phi -= 2.*M_PI;
   while (delta_phi < -M_PI) delta_phi += 2.*M_PI;
 
-  mt = sqrt(2.*eg_et*met_et*(1. - cos(delta_phi)));
+  mt = sqrt(2. * eg_et * met_et * (1. - cos(delta_phi)));
   return mt;
 }
 
@@ -184,7 +180,7 @@ getPermutation(int N,
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
 // generate conditions
-{% for name, cond in menu.getConditionMapPtr().iteritems() %}
+{% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
   {%- if cond.getType() in (tmEventSetup.MuonMuonCorrelationWithOverlapRemoval,
                            tmEventSetup.MuonEsumCorrelationWithOverlapRemoval,
@@ -248,7 +244,7 @@ getPermutation(int N,
 
 
 // generate algorithms
-{% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
 bool
 {{ name }}(L1Analysis::L1AnalysisL1UpgradeDataFormat* data, L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower)
 {
@@ -259,75 +255,79 @@ bool
 
 std::string getNameFromId(const int index)
 {
-  static const std::pair<int, std::string> id2name[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair({{ algo.getIndex() }}, "{{ name }}"){% if not loop.last %},
-{% endif %}
-    {% endfor %}
+  static const std::map<int, std::string> id2name = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}{{ algo.getIndex() }}, "{{ name }}"{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<int, std::string> Id2Name(id2name, id2name + sizeof(id2name) / sizeof(id2name[0]));
-  const std::map<int, std::string>::const_iterator rc = Id2Name.find(index);
-  std::string name;
-  if (rc != Id2Name.end()) name = rc->second;
-  return name;
+  const auto rc = id2name.find(index);
+  if (rc != id2name.end())
+  {
+    return rc->second;
+  }
+  return std::string();
 }
 
 
 int getIdFromName(const std::string& name)
 {
-  static const std::pair<std::string, int> name2id[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", {{ algo.getIndex() }}){% if not loop.last %},
-{% endif %}
-    {% endfor %}
+  static const std::map<std::string, int> name2id = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+  {{ '{' }}"{{ name }}", {{ algo.getIndex() }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<std::string, int> Name2Id(name2id, name2id + sizeof(name2id) / sizeof(name2id[0]));
-  const std::map<std::string, int>::const_iterator rc = Name2Id.find(name);
-  int id = -1;
-  if (rc != Name2Id.end()) id = rc->second;
-  return id;
+  const auto rc = name2id.find(name);
+  if (rc != name2id.end())
+  {
+    return rc->second;
+  }
+  return -1;
 }
 
 
 AlgorithmFunction getFuncFromId(const int index)
 {
-  static const std::pair<int, AlgorithmFunction> id2func[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair({{ algo.getIndex() }}, &{{ name }}){% if not loop.last %},
-{% endif %}
-    {% endfor %}
+  static const std::map<int, AlgorithmFunction> id2func = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}{{ algo.getIndex() }}, &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<int, AlgorithmFunction> Id2Func(id2func, id2func + sizeof(id2func) / sizeof(id2func[0]));
-  const std::map<int, AlgorithmFunction>::const_iterator rc = Id2Func.find(index);
-  AlgorithmFunction fp = 0;
-  if (rc != Id2Func.end()) fp = rc->second;
-  return fp;
+  const auto rc = id2func.find(index);
+  if (rc != id2func.end())
+  {
+    return rc->second;
+  }
+  return nullptr;
 }
 
 
 AlgorithmFunction getFuncFromName(const std::string& name)
 {
-  static const std::pair<std::string, AlgorithmFunction> name2func[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},
-{% endif %}
-    {% endfor %}
+  static const std::map<std::string, AlgorithmFunction> name2func = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}"{{ name }}", &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<std::string, AlgorithmFunction> Name2Func(name2func, name2func + sizeof(name2func) / sizeof(name2func[0]));
-  const std::map<std::string, AlgorithmFunction>::const_iterator rc = Name2Func.find(name);
-  AlgorithmFunction fp = 0;
-  if (rc != Name2Func.end()) fp = rc->second;
-  if (fp == 0)
+  const auto rc = name2func.find(name);
+  if (rc != name2func.end())
+  {
+    return rc->second;
+  }
+  else
   {
     std::stringstream ss;
     ss << "fat> algorithm '" << name << "' is not defined in {{ menu.getName() }}\n";
     throw std::runtime_error(ss.str());
   }
-  return fp;
+  return nullptr;
 }
 
 
@@ -335,14 +335,14 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
                      L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
                      L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower)
 {
-  static const std::pair<std::string, AlgorithmFunction> name2func[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},
-{% endif %}
-    {% endfor %}
+  static const std::map<std::string, AlgorithmFunction> name2func = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}"{{ name }}", &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  for (auto pair : name2func)
+  for (const auto pair : name2func)
   {
     L1SeedFun[pair.first] = std::bind(pair.second, upgrade, calo_tower);
   }

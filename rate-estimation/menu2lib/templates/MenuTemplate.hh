@@ -1,10 +1,8 @@
 #ifndef menulib_hh
 #define menulib_hh
-{#
- # @author: Takashi MATSUSHITA
- #}
+
 /* automatically generated from {{ menu.getName() }} with menu2lib.py */
-/* https://gitlab.cern.ch/cms-l1t-utm/scripts */
+/* https://github.com/cms-l1-dpg/L1MenuTools */
 
 #include <string>
 #include <vector>
@@ -55,7 +53,7 @@ getPermutation(int N,
 
 const long long POW10[] =
 {
-                      1, 
+                      1,
                      10,
                     100,
                    1000,
@@ -92,7 +90,7 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
                      L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower);
 
 // algorithms
-{% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
 bool
 {{ name }}(L1Analysis::L1AnalysisL1UpgradeDataFormat*, L1Analysis::L1AnalysisL1CaloTowerDataFormat*);
 {% endfor %}

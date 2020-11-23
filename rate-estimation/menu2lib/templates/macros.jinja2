@@ -127,7 +127,7 @@
  # get cuts for object
  #}
 {%- macro getObjectCuts(prefix, idx, object, tmEventSetup, nEtaBits) -%}
-      {
+    {
 
   {# local variables #}
   {%- set cuts = object.getCuts() %}
@@ -189,7 +189,7 @@
     if (not ({% for i in phiWindows %}{% if loop.index0 %} or {% endif %}phiWindow{{i}}{% endfor %})) continue;
   {%- endif %}
 
-      }
+    }
 
 {% endmacro %}
 
@@ -198,9 +198,10 @@
  # get cuts for esum
  #}
 {% macro getEsumCuts(prefix, idx, object, tmEventSetup) %}
+    {
   {# local variables #}
   {% set cuts = object.getCuts() %}
-  {% set nPhiWindow = [0] %}
+  {% set phiWindow = [] %}
   {# loop over cuts #}
   {% for cut in cuts %}
     {% if cut.getCutType() == tmEventSetup.Threshold %}
@@ -211,21 +212,21 @@
       if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
     {# set phi ranges #}
     {% elif cut.getCutType() == tmEventSetup.Phi %}
-      // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
-      {% if nPhiWindow[0] == 0 %}
-        phiWindow1 = (({{ cut.getMinimumIndex() }} <= {{prefix}}IPhi.at({{idx}})) and ({{prefix}}IPhi.at({{idx}}) <= {{ cut.getMaximumIndex() }}));
-      {% elif nPhiWindow[0] == 1 %}
-        phiWindow2 = (({{ cut.getMinimumIndex() }} <= {{prefix}}IPhi.at({{idx}})) and ({{prefix}}IPhi.at({{idx}}) <= {{ cut.getMaximumIndex() }}));
-      {% endif %}
-      {% if nPhiWindow.append(nPhiWindow.pop() +1) %}{% endif %}
+    {%- if not phiWindows -%}
+      const auto phi = {{ getIPhi(prefix, idx) }};
+    {% endif %}
+    // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
+      const bool phiWindow{{phiWindows | count}} = (({{ cut.getMinimumIndex() }} <= phi) and (phi <= {{ cut.getMaximumIndex() }}));
+      {% if phiWindows.append(phiWindows | count) %}{% endif %}
     {% endif %}
   {% endfor %}
 
-  {%- if nPhiWindow[0] == 1 -%}
-    if (not phiWindow1) continue;
-  {%- elif nPhiWindow[0] == 2 -%}
-    if (not (phiWindow1 or phiWindow2)) continue;
-  {%- endif -%}
+  {% if phiWindows %}
+    if (not ({% for i in phiWindows %}{% if loop.index0 %} or {% endif %}phiWindow{{i}}{% endfor %})) continue;
+  {%- endif %}
+
+    }
+
 {% endmacro %}
 
 

@@ -43,10 +43,11 @@ bool
     {
       const std::vector<int>& indicies = permutation.at(jj);
       int idx = -1;
-      {%- for kk in range(nObjects) -%}
+{% for kk in range(nObjects) %}
       idx = candidates.at(set.at(indicies.at({{kk}})));
       {{ macros.getObjectCuts(prefix, 'idx', objects[kk], tmEventSetup, nEtaBits) }}
-      {% endfor %}
+
+{% endfor %}
       {{ cond.getCuts() | chkChgCor(prefix, nObjects) }}
       pass = true;
       break;
