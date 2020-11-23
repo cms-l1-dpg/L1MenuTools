@@ -141,35 +141,6 @@ def chkChgCor(cuts, prefix, nobjects):
   return text
 
 
-def hasEtaPhiCuts(objects):
-  nEtaCuts = 0
-  nPhiCuts = 0
-
-  for obj in objects:
-    nEta = 0
-    nPhi = 0
-    for cut in obj.getCuts():
-      if cut.getCutType() == tmEventSetup.Eta:
-        nEta += 1
-      elif cut.getCutType() == tmEventSetup.Phi:
-        nPhi += 1
-    nEtaCuts = max(nEtaCuts, nEta)
-    nPhiCuts = max(nPhiCuts, nPhi)
-
-  declaration = ""
-  if nEtaCuts == 1:
-    declaration += "bool etaWindow1;"
-  elif nEtaCuts == 2:
-    declaration += "bool etaWindow1, etaWindow2;"
-
-  if nPhiCuts == 1:
-    declaration += "bool phiWindow1;"
-  elif nPhiCuts == 2:
-    declaration += "bool phiWindow1, phiWindow2;"
-
-  return declaration
-
-
 def hasCorrelationCuts(condition):
   declaration = ""
   requireDeltaEta = False
@@ -393,7 +364,6 @@ def render(menu, template):
   j2_env.add_extension('jinja2.ext.loopcontrols')
   j2_env.filters['toDecimal'] = toDecimal
   j2_env.filters['toCharge'] = toCharge
-  j2_env.filters['hasEtaPhiCuts'] = hasEtaPhiCuts
   j2_env.filters['hasCorrelationCuts'] = hasCorrelationCuts
   j2_env.filters['sortObjects'] = sortObjects
   j2_env.filters['toCpp'] = toCpp

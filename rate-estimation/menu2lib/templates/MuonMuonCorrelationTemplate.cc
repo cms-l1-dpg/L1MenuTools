@@ -58,7 +58,6 @@ bool
     for (size_t jj = 0; jj < permutation.size(); jj++)
     {
       const std::vector<int>& indicies = permutation.at(jj);
-      {{ objects | hasEtaPhiCuts }}
       const int idx0 = candidates.at(set.at(indicies.at(0)));
       const int idx1 = candidates.at(set.at(indicies.at(1)));
       {{ macros.getObjectCuts(prefix, 'idx0', objects[0], tmEventSetup, nEtaBits) }}
@@ -94,7 +93,6 @@ bool
       {{ macros.removeOverlap(cond, objects[0], 'ii', reference, tmEventSetup, scaleMap, iPi) }}
     {% endif %}
     const int idx0 = ii;
-    {{ objects | hasEtaPhiCuts }}
     {{ macros.getObjectCuts(prefix, 'idx0', objects[0], tmEventSetup, nEtaBits) }}
 
     size_t nobj1 = 0;

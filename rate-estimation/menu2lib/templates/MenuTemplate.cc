@@ -70,7 +70,7 @@ get_total_ht(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
   }
 
   return sum;
-} 
+}
 
 
 double
@@ -261,7 +261,8 @@ std::string getNameFromId(const int index)
 {
   static const std::pair<int, std::string> id2name[] = {
     {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair({{ algo.getIndex() }}, "{{ name }}"){% if not loop.last %},{% endif %}
+      std::make_pair({{ algo.getIndex() }}, "{{ name }}"){% if not loop.last %},
+{% endif %}
     {% endfor %}
   };
 
@@ -277,7 +278,8 @@ int getIdFromName(const std::string& name)
 {
   static const std::pair<std::string, int> name2id[] = {
     {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", {{ algo.getIndex() }}){% if not loop.last %},{% endif %}
+      std::make_pair("{{ name }}", {{ algo.getIndex() }}){% if not loop.last %},
+{% endif %}
     {% endfor %}
   };
 
@@ -293,7 +295,8 @@ AlgorithmFunction getFuncFromId(const int index)
 {
   static const std::pair<int, AlgorithmFunction> id2func[] = {
     {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair({{ algo.getIndex() }}, &{{ name }}){% if not loop.last %},{% endif %}
+      std::make_pair({{ algo.getIndex() }}, &{{ name }}){% if not loop.last %},
+{% endif %}
     {% endfor %}
   };
 
@@ -309,7 +312,8 @@ AlgorithmFunction getFuncFromName(const std::string& name)
 {
   static const std::pair<std::string, AlgorithmFunction> name2func[] = {
     {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},{% endif %}
+      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},
+{% endif %}
     {% endfor %}
   };
 
@@ -333,7 +337,8 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
 {
   static const std::pair<std::string, AlgorithmFunction> name2func[] = {
     {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},{% endif %}
+      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},
+{% endif %}
     {% endfor %}
   };
 

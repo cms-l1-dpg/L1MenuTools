@@ -40,7 +40,6 @@ bool
   {% endif %}
   bool pass = false;
   size_t nobj = 0;
-  {{ objects | hasEtaPhiCuts }}
   for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
   {
     if (not ({{prefix}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;

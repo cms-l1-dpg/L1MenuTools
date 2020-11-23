@@ -48,7 +48,6 @@ bool
     {% if overlap_removal %}
       {{ macros.removeOverlap(cond, calo, 'ii', reference, tmEventSetup, scaleMap, iPi) }}
     {% endif %}
-    {{ objects | hasEtaPhiCuts }}
     {{ macros.getObjectCuts(prefixCalo, 'ii', calo, tmEventSetup, nEtaBitsCalo) }}
     size_t nobj1 = 0;
     for (size_t jj = 0; jj < {{prefixMuon}}Bx.size(); jj++)

@@ -37,7 +37,6 @@ bool
 {
   bool pass = false;
 
-  {{ objects | hasEtaPhiCuts }}
   for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
   {
     if (not ({{prefix}}Type.at(ii) == {{ type }})) continue;
