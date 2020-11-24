@@ -51,7 +51,7 @@ class PermutationFactory
 {
 public:
   using data_t = std::vector<std::vector<size_t>>;
-  using cache_t = std::map<size_t, Type>;
+  using cache_t = std::map<size_t, data_t>;
   static const data_t& get(const size_t n);
 protected:
   static const data_t& generate(const size_t n);
