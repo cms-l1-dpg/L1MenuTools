@@ -25,9 +25,9 @@
  #}
 {%- macro getIPhi(prefix, idx) -%}
   {%- if (prefix | isMuon) -%}
-    {{prefix}}IPhiAtVtx.at({{idx}})
+    data->{{prefix}}IPhiAtVtx.at({{idx}})
   {%- else -%}
-    {{prefix}}IPhi.at({{idx}})
+    data->{{prefix}}IPhi.at({{idx}})
   {%- endif -%}
 {%- endmacro -%}
 
@@ -37,9 +37,9 @@
  #}
 {%- macro getIEta(prefix, idx) -%}
   {%- if (prefix | isMuon) -%}
-    {{prefix}}IEtaAtVtx.at({{idx}})
+    data->{{prefix}}IEtaAtVtx.at({{idx}})
   {%- else -%}
-    {{prefix}}IEta.at({{idx}})
+    data->{{prefix}}IEta.at({{idx}})
   {%- endif -%}
 {%- endmacro -%}
 
@@ -95,8 +95,8 @@
   {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
   long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
   long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
-  long long pt0 = {{LUTS.ET0}}[{{prefix0}}IEt.at({{idx0}})];
-  long long pt1 = {{LUTS.ET1}}[{{prefix1}}IEt.at({{idx1}})];
+  long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
+  long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
   long long mass2 = pt0*pt1*(coshDeltaEta - cosDeltaPhi);
 {%- endmacro -%}
 
@@ -107,8 +107,8 @@
 {%- macro setMt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
   {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
   long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
-  long long pt0 = {{LUTS.ET0}}[{{prefix0}}IEt.at({{idx0}})];
-  long long pt1 = {{LUTS.ET1}}[{{prefix1}}IEt.at({{idx1}})];
+  long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
+  long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
   long long mt2 = pt0*pt1*(1*POW10[{{LUTS.PREC_MATH}}] - cosDeltaPhi);
 {%- endmacro -%}
 
@@ -138,12 +138,12 @@
     {#- set threshold -#}
     {% if cut.getCutType() == tmEventSetup.Threshold -%}
     // {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
-      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }}))
+      if (not (data->{{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }}))
         continue;
 
     {% elif cut.getCutType() == tmEventSetup.UnconstrainedPt %}
     // {{object.getName()}}: UnconstrainedPt >= {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
-      if (not ({{prefix}}IEtUnconstrained.at({{idx}}) >= {{ cut.getMinimumIndex() }}))
+      if (not (data->{{prefix}}IEtUnconstrained.at({{idx}}) >= {{ cut.getMinimumIndex() }}))
         continue;
 
     {# set eta ranges #}
@@ -167,17 +167,17 @@
     {# set quality #}
     {% elif cut.getCutType() == tmEventSetup.Quality %}
     // quality : {{"0x%x" % cut.getData() | int }}
-      if (not (({{cut.getData() | int}} >> {{prefix}}Qual.at({{idx}})) & 1)) continue;
+      if (not (({{cut.getData() | int}} >> data->{{prefix}}Qual.at({{idx}})) & 1)) continue;
 
     {# set isolation #}
     {% elif cut.getCutType() == tmEventSetup.Isolation %}
     // isolation : {{"0x%x" % cut.getData() | int }}
-      if (not (({{cut.getData() | int}} >> {{prefix}}Iso.at({{idx}})) & 1)) continue;
+      if (not (({{cut.getData() | int}} >> data->{{prefix}}Iso.at({{idx}})) & 1)) continue;
 
     {# set charge #}
     {% elif cut.getCutType() == tmEventSetup.Charge %}
     // charge : {{ cut.getData() }}
-      if (not ({{cut.getData() | toCharge}} == {{prefix}}Chg.at({{idx}}))) continue;
+      if (not ({{cut.getData() | toCharge}} == data->{{prefix}}Chg.at({{idx}}))) continue;
     {% endif %}
   {% endfor %}
 
@@ -206,10 +206,10 @@
   {% for cut in cuts %}
     {% if cut.getCutType() == tmEventSetup.Threshold %}
       // {{object.getName()}}: ET {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
-      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
+      if (not (data->{{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
     {% elif cut.getCutType() == tmEventSetup.Count %}
       // {{object.getName()}}: Count {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{cut.getMinimumIndex()}} at BX = {{object.getBxOffset()}}
-      if (not ({{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
+      if (not (data->{{prefix}}IEt.at({{idx}}) {{ getOperator(object.getComparisonOperator(), tmEventSetup) }} {{ cut.getMinimumIndex() }})) continue;
     {# set phi ranges #}
     {% elif cut.getCutType() == tmEventSetup.Phi %}
     {%- if not phiWindows -%}
@@ -263,15 +263,15 @@
   {% elif cut.getCutType() == tmEventSetup.ChargeCorrelation %}
     const std::string OS = "os";
     const std::string SS = "ls";
-    if ({{prefix}}Chg.at({{idx0}}) == 0) continue;  // charge valid bit not set
-    if ({{prefix}}Chg.at({{idx1}}) == 0) continue;  // charge valid bit not set
+    if (data->{{prefix}}Chg.at({{idx0}}) == 0) continue;  // charge valid bit not set
+    if (data->{{prefix}}Chg.at({{idx1}}) == 0) continue;  // charge valid bit not set
     if ("{{ cut.getData() }}" == OS)
     {
-      if (not ({{prefix}}Chg.at({{idx0}}) != {{prefix}}Chg.at({{idx1}}))) continue;
+      if (not (data->{{prefix}}Chg.at({{idx0}}) != data->{{prefix}}Chg.at({{idx1}}))) continue;
     }
     else if ("{{ cut.getData() }}" == SS)
     {
-      if (not ({{prefix}}Chg.at({{idx0}}) == {{prefix}}Chg.at({{idx1}}))) continue;
+      if (not (data->{{prefix}}Chg.at({{idx0}}) == data->{{prefix}}Chg.at({{idx1}}))) continue;
     }
   {% endif %}
   {% endfor %}
@@ -372,9 +372,9 @@
   std::vector<int> reference;
   {% set prefixRef = object | getPrefix %}
   size_t nref = 0;
-  for (size_t ii = 0; ii < {{prefixRef}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefixRef}}Bx.size(); ii++)
   {
-    if (not ({{prefixRef}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
+    if (not (data->{{prefixRef}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
     nref++;
     {% if prefixRef | isTau %}
       if (nref > {{getMaxTaus()}}) break;

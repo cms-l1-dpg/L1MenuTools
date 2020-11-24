@@ -37,9 +37,9 @@ bool
   {% endif %}
   size_t nobj0 = 0;
   std::vector<int> candidates;
-  for (size_t ii = 0; ii < {{prefix0}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix0}}Bx.size(); ii++)
   {
-    if (not ({{prefix0}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
+    if (not (data->{{prefix0}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj0++;
     {% if prefix0 | isTau %}
     if (nobj0 > {{macros.getMaxTaus()}}) break;
@@ -91,9 +91,9 @@ bool
   {% endif %}
   bool pass = false;
   size_t nobj0 = 0;
-  for (size_t ii = 0; ii < {{prefix0}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix0}}Bx.size(); ii++)
   {
-    if (not ({{prefix0}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
+    if (not (data->{{prefix0}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj0++;
     {% if prefix0 | isTau %}
       if (nobj0 > {{macros.getMaxTaus()}}) break;
@@ -106,9 +106,9 @@ bool
     {{ macros.getObjectCuts(prefix0, 'ii', objects[0], tmEventSetup, nEtaBits0) }}
 
     size_t nobj1 = 0;
-    for (size_t jj = 0; jj < {{prefix1}}Bx.size(); jj++)
+    for (size_t jj = 0; jj < data->{{prefix1}}Bx.size(); jj++)
     {
-      if (not ({{prefix1}}Bx.at(jj) == {{ objects[1].getBxOffset() }})) continue;
+      if (not (data->{{prefix1}}Bx.at(jj) == {{ objects[1].getBxOffset() }})) continue;
       nobj1++;
       {% if prefix1 | isTau %}
         if (nobj1 > {{macros.getMaxTaus()}}) break;

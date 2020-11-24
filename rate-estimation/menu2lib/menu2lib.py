@@ -17,29 +17,29 @@ import tmEventSetup
 # constants
 #
 PREFIX = {
-  tmEventSetup.Muon: "data->muon",
-  tmEventSetup.Egamma: "data->eg",
-  tmEventSetup.Tau: "data->tau",
-  tmEventSetup.Jet: "data->jet",
-  tmEventSetup.ETT: "data->sum",
-  tmEventSetup.HTT: "data->sum",
-  tmEventSetup.ETTEM: "data->sum",
-  tmEventSetup.ETM: "data->sum",
-  tmEventSetup.HTM: "data->sum",
-  tmEventSetup.ETMHF: "data->sum",
-  tmEventSetup.MBT0HFM: "data->sum",
-  tmEventSetup.MBT0HFP: "data->sum",
-  tmEventSetup.MBT1HFM: "data->sum",
-  tmEventSetup.MBT1HFP: "data->sum",
-  tmEventSetup.TOWERCOUNT: "data->sum",
+  tmEventSetup.Muon: 'muon',
+  tmEventSetup.Egamma: 'eg',
+  tmEventSetup.Tau: 'tau',
+  tmEventSetup.Jet: 'jet',
+  tmEventSetup.ETT: 'sum',
+  tmEventSetup.HTT: 'sum',
+  tmEventSetup.ETTEM: 'sum',
+  tmEventSetup.ETM: 'sum',
+  tmEventSetup.HTM: 'sum',
+  tmEventSetup.ETMHF: 'sum',
+  tmEventSetup.MBT0HFM: 'sum',
+  tmEventSetup.MBT0HFP: 'sum',
+  tmEventSetup.MBT1HFM: 'sum',
+  tmEventSetup.MBT1HFP: 'sum',
+  tmEventSetup.TOWERCOUNT: 'sum',
 }
 
 
 #
 # helpers
 #
-def getObjectName(x):
-  enum_to_name = {
+def getObjectName(key):
+  return {
     tmEventSetup.Muon: tmGrammar.MU,
     tmEventSetup.Egamma: tmGrammar.EG,
     tmEventSetup.Jet: tmGrammar.JET,
@@ -47,14 +47,11 @@ def getObjectName(x):
     tmEventSetup.ETM: tmGrammar.ETM,
     tmEventSetup.HTM: tmGrammar.HTM,
     tmEventSetup.ETMHF: tmGrammar.ETMHF,
-  }
-  return enum_to_name[x.getType()]
+  }[key.getType()]
 
 
-def isVectorSum(x):
-  if x.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF):
-    return True
-  return False
+def isVectorSum(key):
+  return key.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF)
 
 
 def getPrecision(scaleMap, obj1, obj2, kind):
@@ -75,16 +72,14 @@ def getScaleByName(scaleMap, obj, cut):
 #
 # filters
 #
-def toDecimal(value, nBit):
-  signed = 1 << (nBit - 1);
+def toDecimal(value, bits):
+  signed = 1 << (bits - 1);
   return (~signed & value) - signed if (signed & value) else value
 
 
 def toCharge(charge):
-  rc = 0
-  if charge == "positive": rc = 1
-  elif charge == "negative": rc = -1
-  return rc
+  """Return encoded charge."""
+  return {'positive': 1, 'negative': -1}.get(charge, 0)
 
 
 def chkChgCor(cuts, prefix, nobjects):
@@ -100,12 +95,12 @@ def chkChgCor(cuts, prefix, nobjects):
       {
         int idx0 = candidates.at(set.at(indicies.at(mm)));
         int idx1 = candidates.at(set.at(indicies.at(mm+1)));
-        if ((%(prefix)sChg.at(idx0) == 0) or (%(prefix)sChg.at(idx1) == 0))
+        if ((data->%(prefix)sChg.at(idx0) == 0) or (data->%(prefix)sChg.at(idx1) == 0))
         {
           invalid = true;
           break;
         }
-        if (%(prefix)sChg.at(idx0) != %(prefix)sChg.at(idx1))
+        if (data->%(prefix)sChg.at(idx0) != data->%(prefix)sChg.at(idx1))
         {
           equal = false;
           break;
@@ -123,7 +118,7 @@ def chkChgCor(cuts, prefix, nobjects):
       for (size_t mm = 0; mm < %(nobjects)s; mm++)
       {
         int idx = candidates.at(set.at(indicies.at(mm)));
-        if (%(prefix)sChg.at(idx) > 0) positives++;
+        if (data->%(prefix)sChg.at(idx) > 0) positives++;
       }
       // charge correlation: "os"
       if (positives != 2) continue;  // as in emulator
@@ -269,8 +264,8 @@ def getMathLut(scaleMap, obj1, obj2, math=None):
   return rc
 
 
-def getPrefix(x):
-  return PREFIX[x.getType()]
+def getPrefix(key):
+  return PREFIX[key.getType()]
 
 
 def isTau(prefix):
@@ -351,9 +346,6 @@ def toDeltaR(value):
 def warning(message):
   print(message)
   return ''
-
-
-THIS_DIR = os.path.dirname(os.path.abspath(__file__)) + "/templates"
 
 
 def render(menu, template):

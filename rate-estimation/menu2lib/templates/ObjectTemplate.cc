@@ -17,9 +17,9 @@ bool
 {
   size_t nobj = 0;
   std::vector<int> candidates;
-  for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix}}Bx.size(); ii++)
   {
-    if (not ({{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
+    if (not (data->{{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj++;
     {% if prefix | isTau %}
       if (nobj > {{macros.getMaxTaus()}}) break;

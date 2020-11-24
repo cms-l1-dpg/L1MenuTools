@@ -32,9 +32,9 @@ bool
   {% endif %}
   size_t nobj = 0;
   std::vector<int> candidates;
-  for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix}}Bx.size(); ii++)
   {
-    if (not ({{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
+    if (not (data->{{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj++;
     {{ macros.checkObjectIndex(objects[0], 'nobj') }} {# same indexing for all objects #}
     {% if overlap_removal %}
@@ -83,9 +83,9 @@ bool
   {% endif %}
   bool pass = false;
   size_t nobj0 = 0;
-  for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix}}Bx.size(); ii++)
   {
-    if (not ({{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
+    if (not (data->{{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj0++;
     {{ macros.checkObjectIndex(objects[0], 'nobj0') }}
     {% if overlap_removal %}
@@ -96,9 +96,9 @@ bool
     {{ macros.getObjectCuts(prefix, 'idx0', objects[0], tmEventSetup, nEtaBits) }}
 
     size_t nobj1 = 0;
-    for (size_t jj = 0; jj < {{prefix}}Bx.size(); jj++)
+    for (size_t jj = 0; jj < data->{{prefix}}Bx.size(); jj++)
     {
-      if (not ({{prefix}}Bx.at(jj) == {{ objects[1].getBxOffset() }})) continue;
+      if (not (data->{{prefix}}Bx.at(jj) == {{ objects[1].getBxOffset() }})) continue;
       nobj1++;
       {{ macros.checkObjectIndex(objects[1], 'nobj1') }}
       {% if overlap_removal %}
