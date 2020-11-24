@@ -128,63 +128,97 @@ get_transverse_mass(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
 }
 
 
-// utility methods
-void
-getCombination(int N,
-               int K,
-               std::vector<std::vector<int> >& combination)
+// utility factories
+
+const CombinationFactory::data_t& CombinationFactory::get(const size_t n, const size_t k)
 {
-  std::string bitmask(K, 1);
-  bitmask.resize(N, 0);
+  const auto& rc = cache_.find(std::make_pair(n, k));
+  if (rc != cache_.end())
+    return rc->second;
+  return insert(n, k);
+}
+
+
+void CombinationFactory::clear()
+{
+  cache_.clear();
+}
+
+
+const CombinationFactory::data_t& CombinationFactory::insert(const size_t n, const size_t k)
+{
+  data_t v;
+
+  std::string bitmask(k, 1);
+  bitmask.resize(n, 0);
 
   do
   {
-    std::vector<int> set;
-    for (int ii = 0; ii < N; ++ii)
+    std::vector<size_t> set;
+    set.reserve(n);
+    for (size_t ii = 0; ii < n; ++ii)
     {
-      if (bitmask[ii]) set.push_back(ii);
+      if (bitmask[ii])
+      {
+        set.emplace_back(ii);
+      }
     }
-    combination.push_back(set);
+    v.emplace_back(set);
   }
   while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+  const auto key = std::make_pair(n, k);
+  cache_.emplace(key, v);
+  return cache_.at(key);
 }
+
+
+CombinationFactory::cache_t CombinationFactory::cache_ = {};
 
 
 const PermutationFactory::data_t& PermutationFactory::get(const size_t n)
 {
-  const auto& rc = cache.find(n);
-  if (rc != cache.end())
+  const auto& rc = cache_.find(n);
+  if (rc != cache_.end())
     return rc->second;
-  return generate(n);
+  return insert(n);
 }
 
 
-const PermutationFactory::data_t& PermutationFactory::generate(const size_t n)
+void PermutationFactory::clear()
 {
-  cache.at(n) = data_t();
+  cache_.clear();
+}
+
+
+const PermutationFactory::data_t& PermutationFactory::insert(const size_t n)
+{
+  data_t v;
 
   std::vector<size_t> indicies(n);
-  for (int ii = 0; ii < n; ++ii)
+  for (size_t ii = 0; ii < n; ++ii)
   {
-    indicies.at(ii) = ii;
+    indicies[ii] = ii;
   }
 
   do
   {
     std::vector<size_t> set;
-    for (int ii = 0; ii < n; ++ii)
+    set.reserve(n);
+    for (size_t ii = 0; ii < n; ++ii)
     {
-      set.push_back(indicies.at(ii));
+      set.emplace_back(indicies.at(ii));
     }
-    cache.at(n).push_back(set);
+    v.emplace_back(set);
   }
   while (std::next_permutation(indicies.begin(), indicies.end()));
 
-  return cache.at(n);
+  cache_.emplace(n, v);
+  return cache_.at(n);
 }
 
 
-PermutationFactory::cache_t PermutationFactory::cache = {};
+PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
 
 {#
@@ -270,9 +304,9 @@ bool
 {% endfor %}
 
 
-std::string getNameFromId(const int index)
+std::string getNameFromId(const size_t index)
 {
-  static const std::map<int, std::string> id2name = {
+  static const std::map<size_t, std::string> id2name = {
 {% for name, algo in menu.getAlgorithmMapPtr().items() %}
     {{ '{' }}{{ algo.getIndex() }}, "{{ name }}"{{ '}' }}{% if not loop.last %},{% endif %}
 
@@ -280,11 +314,13 @@ std::string getNameFromId(const int index)
   };
 
   const auto rc = id2name.find(index);
-  if (rc != id2name.end())
+  if (rc == id2name.end())
   {
-    return rc->second;
+    std::ostringstream oss;
+    oss << "no such algorithm index: " << index << ", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
   }
-  return std::string();
+  return rc->second;
 }
 
 
@@ -298,17 +334,19 @@ int getIdFromName(const std::string& name)
   };
 
   const auto rc = name2id.find(name);
-  if (rc != name2id.end())
+  if (rc == name2id.end())
   {
-    return rc->second;
+    std::ostringstream oss;
+    oss << "no such algorithm name: \"" << name << "\", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
   }
-  return -1;
+  return rc->second;
 }
 
 
-AlgorithmFunction getFuncFromId(const int index)
+AlgorithmFunction getFuncFromId(const size_t index)
 {
-  static const std::map<int, AlgorithmFunction> id2func = {
+  static const std::map<size_t, AlgorithmFunction> id2func = {
 {% for name, algo in menu.getAlgorithmMapPtr().items() %}
     {{ '{' }}{{ algo.getIndex() }}, &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
 
@@ -316,11 +354,13 @@ AlgorithmFunction getFuncFromId(const int index)
   };
 
   const auto rc = id2func.find(index);
-  if (rc != id2func.end())
+  if (rc == id2func.end())
   {
-    return rc->second;
+    std::ostringstream oss;
+    oss << "no such algorithm index: " << index << ", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
   }
-  return nullptr;
+  return rc->second;
 }
 
 
@@ -334,17 +374,13 @@ AlgorithmFunction getFuncFromName(const std::string& name)
   };
 
   const auto rc = name2func.find(name);
-  if (rc != name2func.end())
+  if (rc == name2func.end())
   {
-    return rc->second;
+    std::ostringstream oss;
+    oss << "no such algorithm name: \"" << name << "\", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
   }
-  else
-  {
-    std::stringstream ss;
-    ss << "fat> algorithm '" << name << "' is not defined in {{ menu.getName() }}\n";
-    throw std::runtime_error(ss.str());
-  }
-  return nullptr;
+  return rc->second;
 }
 
 
