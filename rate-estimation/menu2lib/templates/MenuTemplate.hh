@@ -47,9 +47,17 @@ getCombination(int N,
                int K,
                std::vector<std::vector<int> >& combination);
 
-void
-getPermutation(int N,
-               std::vector<std::vector<int> >& permutation);
+class PermutationFactory
+{
+public:
+  using data_t = std::vector<std::vector<size_t>>;
+  using cache_t = std::map<size_t, Type>;
+  static const data_t& get(const size_t n);
+protected:
+  static const data_t& generate(const size_t n);
+private:
+  static cache_t cache;
+};
 
 const long long POW10[] =
 {

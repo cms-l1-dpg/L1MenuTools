@@ -356,11 +356,11 @@
  # check object index
  #}
 {% macro checkObjectIndex(object, index) %}
-  {% if object.getCuts() | hasIndexCut %} {# check range #}
-    {% set range = object.getCuts() | getIndexCut %}
+{% if object.getCuts() | hasIndexCut %}{# check range #}
+{% set range = object.getCuts() | getIndexCut %}
     // index : [{{ range[0] }}, {{ range[1] }}]  NB: index = {{index}} - 1
     if (not (({{range[0]}} < {{index}}) and ({{index}} <= ({{range[1]}}+1)))) continue;
-  {% endif %}
+{% endif %}
 {% endmacro %}
 
 

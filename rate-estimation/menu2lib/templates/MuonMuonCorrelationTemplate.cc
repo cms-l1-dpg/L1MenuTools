@@ -49,8 +49,7 @@ bool
 
   std::vector<std::vector<int> > combination;
   getCombination(candidates.size(), {{nObjects}}, combination);
-  std::vector<std::vector<int> > permutation;
-  getPermutation({{nObjects}}, permutation);
+  const auto& permutation = PermutationFactory::get({{nObjects}});
 
   for (size_t ii = 0; ii < combination.size(); ii++)
   {

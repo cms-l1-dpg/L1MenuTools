@@ -150,24 +150,41 @@ getCombination(int N,
 }
 
 
-void
-getPermutation(int N,
-               std::vector<std::vector<int> >& permutation)
+const PermutationFactory::data_t& PermutationFactory::get(const size_t n)
 {
-  std::vector<int> indicies(N);
-  for (int ii = 0; ii < N; ii++) indicies.at(ii) = ii;
+  const auto& rc = cache.find(n);
+  if (rc != cache.end())
+    return rc->second;
+  return generate(n);
+}
+
+
+const PermutationFactory::data_t& PermutationFactory::generate(const size_t n)
+{
+  cache.at(n) = data_t();
+
+  std::vector<size_t> indicies(n);
+  for (int ii = 0; ii < n; ++ii)
+  {
+    indicies.at(ii) = ii;
+  }
 
   do
   {
-    std::vector<int> set;
-    for (int ii = 0; ii < N; ++ii)
+    std::vector<size_t> set;
+    for (int ii = 0; ii < n; ++ii)
     {
       set.push_back(indicies.at(ii));
     }
-    permutation.push_back(set);
+    cache.at(n).push_back(set);
   }
   while (std::next_permutation(indicies.begin(), indicies.end()));
+
+  return cache.at(n);
 }
+
+
+PermutationFactory::cache_t PermutationFactory::cache = {};
 
 
 {#
