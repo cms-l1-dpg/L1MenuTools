@@ -1,0 +1,7 @@
+# virtual environments
+menu2lib.env
+
+# sources
+menulib.hh
+menulib.cc
+/menu.txt
