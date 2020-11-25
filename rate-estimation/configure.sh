@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # Configure rate estimation using menu2lib.py
 #
 # usage: bash configure.sh <filename>

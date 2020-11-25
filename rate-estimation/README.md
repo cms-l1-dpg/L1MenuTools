@@ -36,7 +36,7 @@ components required to run testMenu2016 for rate estimation.
 ### C++ conversion of a L1 Menu
 Configure rate-estimation using a L1 Menu XML file using `configure.sh`.
 ```bash
-bash configure.sh <your_menu.xml>
+./configure.sh <your_menu.xml>
 ```
 This will produce the files menulib.hh and menulib.cc.
 
