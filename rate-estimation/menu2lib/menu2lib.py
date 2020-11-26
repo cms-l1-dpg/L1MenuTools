@@ -393,7 +393,10 @@ def parse_args():
 def main():
   args = parse_args()
 
-  logger = logging.getLogger().setLevel(logging.INFO)
+  logging.basicConfig(format='%(levelname)s:menu2lib:%(message)s', level=logging.INFO)
+
+  logging.info("using... %s %s", tmEventSetup.__name__, tmEventSetup.__version__)
+  logging.info("using... %s %s", tmGrammar.__name__, tmGrammar.__version__)
 
   logging.info("loading... %s", args.menu)
   menu = tmEventSetup.getTriggerMenu(args.menu)

@@ -1,7 +1,15 @@
 # virtual environments
+env
 menu2lib.env
 
 # sources
 menulib.hh
 menulib.cc
 /menu.txt
+L1Menu_*.xml
+
+# C/C++ extensions
+*.so
+*.o
+*.d
+/objs

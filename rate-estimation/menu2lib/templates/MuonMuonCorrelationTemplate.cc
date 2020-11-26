@@ -27,20 +27,20 @@ bool
 {{ cond.getName() }}
 (L1Analysis::L1AnalysisL1UpgradeDataFormat* data)
 {
-  {% if overlap_removal %}
+{% if overlap_removal %}
     {{ macros.getReference(reference, tmEventSetup, nEtaBits) }}
-  {% endif %}
+{% endif %}
   size_t nobj = 0;
   std::vector<int> candidates;
   for (size_t ii = 0; ii < data->{{prefix}}Bx.size(); ii++)
   {
     if (not (data->{{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj++;
-    {{ macros.checkObjectIndex(objects[0], 'nobj') }} {# same indexing for all objects #}
-    {% if overlap_removal %}
+{{ macros.checkObjectIndex(objects[0], 'nobj') }} {# same indexing for all objects #}
+{% if overlap_removal %}
       {{ cond | hasCorrelationCuts() }}
       {{ macros.removeOverlap(cond, objects[0], 'ii', reference, tmEventSetup, scaleMap, iPi) }}
-    {% endif %}
+{% endif %}
     candidates.emplace_back(ii);
   }
 
@@ -50,12 +50,10 @@ bool
   const auto& combination = CombinationFactory::get(candidates.size(), {{nObjects}});
   const auto& permutation = PermutationFactory::get({{nObjects}});
 
-  for (size_t ii = 0; ii < combination.size(); ii++)
+  for (const auto& set: combination)
   {
-    const auto& set = combination.at(ii);
-    for (size_t jj = 0; jj < permutation.size(); jj++)
+    for (const auto& indicies: permutation)
     {
-      const auto& indicies = permutation.at(jj);
       const int idx0 = candidates.at(set.at(indicies.at(0)));
       const int idx1 = candidates.at(set.at(indicies.at(1)));
 {{ macros.getObjectCuts(prefix, 'idx0', objects[0], tmEventSetup, nEtaBits) }}
@@ -85,7 +83,7 @@ bool
   {
     if (not (data->{{prefix}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj0++;
-    {{ macros.checkObjectIndex(objects[0], 'nobj0') }}
+{{ macros.checkObjectIndex(objects[0], 'nobj0') }}
     {% if overlap_removal %}
       {{ cond | hasCorrelationCuts() }}
       {{ macros.removeOverlap(cond, objects[0], 'ii', reference, tmEventSetup, scaleMap, iPi) }}

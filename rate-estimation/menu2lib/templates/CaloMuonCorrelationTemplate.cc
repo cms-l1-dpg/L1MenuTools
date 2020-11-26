@@ -44,7 +44,7 @@ bool
     {% if prefixCalo | isTau %}
       if (nobj0 > {{macros.getMaxTaus()}}) continue;
     {% endif %}
-    {{ macros.checkObjectIndex(calo, 'nobj0') }}
+{{ macros.checkObjectIndex(calo, 'nobj0') }}
     {% if overlap_removal %}
       {{ macros.removeOverlap(cond, calo, 'ii', reference, tmEventSetup, scaleMap, iPi) }}
     {% endif %}
@@ -54,7 +54,7 @@ bool
     {
       if (not (data->{{prefixMuon}}Bx.at(jj) == {{ muon.getBxOffset() }})) continue;
       nobj1++;
-      {{ macros.checkObjectIndex(muon, 'nobj1') }}
+  {{ macros.checkObjectIndex(muon, 'nobj1') }}
       {% if overlap_removal %}
         {{ macros.removeOverlap(cond, muon, 'jj', reference, tmEventSetup, scaleMap, iPi) }}
       {% endif %}

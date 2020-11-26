@@ -164,12 +164,17 @@
 {# set quality #}
 {% elif cut.getCutType() == tmEventSetup.Quality %}
         // quality : {{"0x%x" % cut.getData() | int }}
-        if (not (({{cut.getData() | int}} >> data->{{prefix}}Qual.at({{idx}})) & 1)) continue;
+        if (not (({{"0x%x" % cut.getData() | int}} >> data->{{prefix}}Qual.at({{idx}})) & 1)) continue;
 
 {# set isolation #}
 {% elif cut.getCutType() == tmEventSetup.Isolation %}
         // isolation : {{"0x%x" % cut.getData() | int }}
-        if (not (({{cut.getData() | int}} >> data->{{prefix}}Iso.at({{idx}})) & 1)) continue;
+        if (not (({{"0x%x" % cut.getData() | int}} >> data->{{prefix}}Iso.at({{idx}})) & 1)) continue;
+
+{# set impact parameter #}
+{% elif cut.getCutType() == tmEventSetup.ImpactParameter %}
+        // impact parameter : {{"0x%x" % cut.getData() | int }}
+        if (not (({{"0x%x" % cut.getData() | int}} >> data->{{prefix}}Dxy.at({{idx}})) & 1)) continue;
 
 {# set charge #}
 {% elif cut.getCutType() == tmEventSetup.Charge %}
@@ -181,11 +186,11 @@
 {% if etaWindows %}
         if (not ({% for i in etaWindows %}{% if loop.index0 %} or {% endif %}etaWindow{{i}}{% endfor %})) continue;
 
-{%- endif %}
+{% endif %}
 {% if phiWindows %}
         if (not ({% for i in phiWindows %}{% if loop.index0 %} or {% endif %}phiWindow{{i}}{% endfor %})) continue;
 
-{%- endif %}
+{% endif %}
       }
 {% endmacro %}
 
