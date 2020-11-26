@@ -56,7 +56,7 @@
   unsigned int deltaIPhi = abs(iPhi - {{ getIPhi(prefix1, idx1) }});
   if (deltaIPhi >= {{iPi}}) deltaIPhi = 2*{{iPi}} - deltaIPhi;
   {% if useDelta %}
-    unsigned int deltaPhi = {{LUTS.DPHI}}[deltaIPhi];
+      const unsigned int deltaPhi = {{LUTS.DPHI}}[deltaIPhi];
   {% endif %}
 {% endmacro %}
 
@@ -81,9 +81,9 @@
  # set delta R2
  #}
 {%- macro setDeltaR2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
-  {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
-  {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
-  long long deltaR2 = deltaEta*deltaEta + deltaPhi*deltaPhi;
+    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
+    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+    const long long deltaR2 = deltaEta*deltaEta + deltaPhi*deltaPhi;
 {%- endmacro -%}
 
 
@@ -91,13 +91,13 @@
  # set mass2
  #}
 {%- macro setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
-  {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
-  {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
-  long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
-  long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
-  long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
-  long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
-  long long mass2 = pt0*pt1*(coshDeltaEta - cosDeltaPhi);
+    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
+    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+    const long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
+    const long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
+    const long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
+    const long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
+    const long long mass2 = pt0 * pt1 * (coshDeltaEta - cosDeltaPhi);
 {%- endmacro -%}
 
 
@@ -105,22 +105,24 @@
  # set mt2
  #}
 {%- macro setMt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
-  {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
-  long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
-  long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
-  long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
-  long long mt2 = pt0*pt1*(1*POW10[{{LUTS.PREC_MATH}}] - cosDeltaPhi);
+    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+    const long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
+    const long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
+    const long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
+    const long long mt2 = pt0 * pt1 * ({{10**LUTS.PREC_MATH}} - cosDeltaPhi);
 {%- endmacro -%}
 
 
 {#
  # apply function cut
  #}
-{%- macro applyFunctionCut(value, cut, precision) -%}
-  minimum = (long long)({{cut.getMinimum().value}} * POW10[{{precision}}]);
-  maximum = (long long)({{cut.getMaximum().value}} * POW10[{{precision}}]);
-  if (not ((minimum <= {{value}}) and ({{value}} <= maximum))) continue;
-{%- endmacro -%}
+{% macro applyFunctionCut(value, cut, precision) -%}
+    {
+      const long long minimum = {{(cut.getMinimum().value * 10**precision) | int}}; // {{cut.getMinimum().value}} * 10^{{precision}}
+      const long long maximum = {{(cut.getMaximum().value * 10**precision) | int}}; // {{cut.getMaximum().value}} * 10^{{precision}}
+      if (not ((minimum <= {{value}}) and ({{value}} <= maximum))) continue;
+    }
+{% endmacro -%}
 
 
 {#
@@ -235,10 +237,6 @@
  # get cuts for correlations of objects with the same type
  #}
 {% macro getSameTypeCorrelationCuts(prefix, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
-  {# local variables #}
-  long long minimum;
-  long long maximum;
-
   {{ cond | hasCorrelationCuts }}
   {% for cut in cond.getCuts() %}
   {% if cut.getCutType() == tmEventSetup.DeltaEta %}
@@ -280,9 +278,6 @@
  # get cuts for correlations of objects with the different type
  #}
 {% macro getDifferentTypeCorrelationCuts(prefix0, prefix1, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
-  {# local variables #}
-  long long minimum;
-  long long maximum;
   {% set convert = true if (prefix1 | isMuon) else false %}
   {{ cond | hasCorrelationCuts }}
   {% for cut in cond.getCuts() %}
@@ -315,9 +310,6 @@
  # get cuts for correlations of object and esum
  #}
 {% macro getEsumCorrelationCuts(object, esum, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
-  {# local variables #}
-  long long minimum;
-  long long maximum;
   {% for cut in cond.getCuts() %}
   {% if cut.getCutType() == tmEventSetup.DeltaPhi %}
     // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
@@ -332,9 +324,6 @@
  # get cuts for mT of calo object and esum
  #}
 {% macro getEsumMtCuts(object, esum, idx0, idx1, cond, tmEventSetup, LUTS, iPi) %}
-  {# local variables #}
-  long long minimum;
-  long long maximum;
   {% for cut in cond.getCuts() %}
   {% if cut.getCutType() == tmEventSetup.Mass %}
     // {{ cut.getMinimum().value | toMass }} <= Mt <= {{ cut.getMaximum().value | toMass }}
@@ -406,20 +395,20 @@
   {% if cut.getCutType() == tmEventSetup.OvRmDelta %}
   // {{cut.getMinimum().value}} <= DeltaEta <= {{cut.getMaximum().value}}
   long long minDeltaEta = std::numeric_limits<long long>::max();
-  const long long cutDeltaEtaMin = (long long)({{cut.getMinimum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
-  const long long cutDeltaEtaMax = (long long)({{cut.getMaximum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
+  const long long cutDeltaEtaMin = {{(cut.getMinimum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMinimum().value}} * 10^{{LUTS.PREC_DELTA}}
+  const long long cutDeltaEtaMax = {{(cut.getMaximum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMaximum().value}} * 10^{{LUTS.PREC_DELTA}}
 
   {% elif cut.getCutType() == tmEventSetup.OvRmDeltaPhi %}
   // {{cut.getMinimum().value}} <= DeltaPhi <= {{cut.getMaximum().value}}
   long long minDeltaPhi = std::numeric_limits<long long>::max();
-  const long long cutDeltaPhiMin = (long long)({{cut.getMinimum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
-  const long long cutDeltaPhiMax = (long long)({{cut.getMaximum().value}} * POW10[{{LUTS.PREC_DELTA}}]);
+  const long long cutDeltaPhiMin = {{(cut.getMinimum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMinimum().value}} * 10^{{LUTS.PREC_DELTA}}
+  const long long cutDeltaPhiMax = {{(cut.getMaximum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMaximum().value}} * 10^{{LUTS.PREC_DELTA}}
 
   {% elif cut.getCutType() == tmEventSetup.OvRmDeltaR %}
   // {{cut.getMinimum().value | toDeltaR}} <= DeltaR <= {{cut.getMaximum().value|toDeltaR}}
   long long minDeltaR2 = std::numeric_limits<long long>::max();
-  const long long cutDeltaR2Min = (long long)({{cut.getMinimum().value}} * POW10[{{LUTS.PREC_DR}}]);
-  const long long cutDeltaR2Max = (long long)({{cut.getMaximum().value}} * POW10[{{LUTS.PREC_DR}}]);
+  const long long cutDeltaR2Min = {{(cut.getMinimum().value * 10**LUTS.PREC_DR) | int}}; // {{cut.getMinimum().value}} * 10^{{LUTS.PREC_DR}}
+  const long long cutDeltaR2Max = {{(cut.getMaximum().value * 10**LUTS.PREC_DR) | int}}; // {{cut.getMaximum().value}} * 10^{{LUTS.PREC_DR}}
   {% endif %}
   {% endfor %}
 
