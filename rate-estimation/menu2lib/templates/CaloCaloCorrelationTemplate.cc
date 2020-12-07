@@ -44,7 +44,7 @@ bool
     {% if prefix0 | isTau %}
     if (nobj0 > {{macros.getMaxTaus()}}) break;
     {% endif %}
-    {{ macros.checkObjectIndex(objects[0], 'nobj0') }} {# same indexing for all objects #}
+{{ macros.checkObjectIndex(objects[0], 'nobj0') }} {# same indexing for all objects #}
     {% if overlap_removal %}
       {{ cond | hasCorrelationCuts() }}
       {{ macros.removeOverlap(cond, objects[0], 'ii', reference, tmEventSetup, scaleMap, iPi) }}
@@ -58,12 +58,10 @@ bool
   const auto& combination = CombinationFactory::get(candidates.size(), {{nObjects}});
   const auto& permutation = PermutationFactory::get({{nObjects}});
 
-  for (size_t ii = 0; ii < combination.size(); ii++)
+  for (const auto& set: combination)
   {
-    const auto& set = combination.at(ii);
-    for (size_t jj = 0; jj < permutation.size(); jj++)
+    for (const auto& indicies: permutation)
     {
-      const auto& indicies = permutation.at(jj);
       const int idx0 = candidates.at(set.at(indicies.at(0)));
       const int idx1 = candidates.at(set.at(indicies.at(1)));
 {{ macros.getObjectCuts(prefix0, 'idx0', objects[0], tmEventSetup, nEtaBits0) }}
@@ -84,23 +82,23 @@ bool
 {{ cond.getName() }}
 (L1Analysis::L1AnalysisL1UpgradeDataFormat* data)
 {
-  {% if overlap_removal %}
+{% if overlap_removal %}
     {{ macros.getReference(reference, tmEventSetup, nEtaBits) }}
-  {% endif %}
+{% endif %}
   bool pass = false;
   size_t nobj0 = 0;
   for (size_t ii = 0; ii < data->{{prefix0}}Bx.size(); ii++)
   {
     if (not (data->{{prefix0}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
     nobj0++;
-    {% if prefix0 | isTau %}
+{% if prefix0 | isTau %}
       if (nobj0 > {{macros.getMaxTaus()}}) break;
-    {% endif %}
-    {{ macros.checkObjectIndex(objects[0], 'nobj0') }}
-    {% if overlap_removal %}
+{% endif %}
+{{ macros.checkObjectIndex(objects[0], 'nobj0') }}
+{% if overlap_removal %}
       {{ cond | hasCorrelationCuts() }}
       {{ macros.removeOverlap(cond, objects[0], 'ii', reference, tmEventSetup, scaleMap, iPi) }}
-    {% endif %}
+{% endif %}
 {{ macros.getObjectCuts(prefix0, 'ii', objects[0], tmEventSetup, nEtaBits0) }}
 
     size_t nobj1 = 0;

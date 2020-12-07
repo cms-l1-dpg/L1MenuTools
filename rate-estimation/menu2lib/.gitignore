@@ -1,9 +1,9 @@
 # menu2lib specific files
 L1Menu_*.xml
 utm-env/
-menu.txt
-menulib.cc
-menulib.hh
+/menu.txt
+/menulib.cc
+/menulib.hh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

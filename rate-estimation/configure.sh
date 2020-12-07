@@ -30,12 +30,6 @@ if [ ! -d "$ENV_DIR" ]; then
 	echo "creating virtual environment... done."
 fi
 
-echo "executing $SCRIPT..."
-
-source $ENV_DIR/bin/activate
-
+. $ENV_DIR/bin/activate
 python $SCRIPT --menu $MENU_FILE
-
 deactivate
-
-echo "executing $SCRIPT... done."

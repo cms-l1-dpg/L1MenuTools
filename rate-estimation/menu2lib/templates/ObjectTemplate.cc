@@ -25,7 +25,8 @@ bool
 {% if prefix | isTau %}
     if (nobj > {{macros.getMaxTaus()}}) break;
 {% endif %}
-    {{ macros.checkObjectIndex(objects[0], 'nobj') }} {# same indexing for all objects #}
+{# same indexing for all objects #}
+{{ macros.checkObjectIndex(objects[0], 'nobj') }}
     candidates.emplace_back(ii);
   }
 
@@ -37,18 +38,15 @@ bool
   const auto& combination = CombinationFactory::get(candidates.size(), {{nObjects}});
   const auto& permutation = PermutationFactory::get({{nObjects}});
 
-  // match permutations
-  for (size_t ii = 0; ii < combination.size(); ii++)
+  // match combinations
+  for (const auto& set: combination)
   {
-    const auto& set = combination.at(ii);
-    for (size_t jj = 0; jj < permutation.size(); jj++)
+    for (const auto& indicies: permutation)
     {
-      const auto& indicies = permutation.at(jj);
       int idx = -1;
 {% for kk in range(nObjects) %}
       idx = candidates.at(set.at(indicies.at({{kk}})));
 {{ macros.getObjectCuts(prefix, 'idx', objects[kk], tmEventSetup, nEtaBits) }}
-
 {% endfor %}
       {{ cond.getCuts() | chkChgCor(prefix, nObjects) }}
       pass = true;
