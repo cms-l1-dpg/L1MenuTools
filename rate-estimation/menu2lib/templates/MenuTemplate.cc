@@ -1,8 +1,5 @@
-{#
- # @author: Takashi MATSUSHITA
- #}
 /* automatically generated from {{ menu.getName() }} with menu2lib.py */
-/* https://gitlab.cern.ch/cms-l1t-utm/scripts */
+/* https://github.com/cms-l1-dpg/L1MenuTools */
 
 #include <algorithm>
 #include <map>
@@ -21,11 +18,10 @@ get_missing_et(L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower,
                const double threshold)
 {
   // https://github.com/cms-sw/cmssw/blob/CMSSW_9_0_X/L1Trigger/L1TCalorimeter/src/CaloTools.cc#L13=L15
-  const int64_t cos_coeff[72] = {1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89, 0, 89, 178, 265, 350, 432, 511, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019};
+  static const int64_t cos_coeff[72] = {1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89, 0, 89, 178, 265, 350, 432, 511, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019};
+  static const int64_t sin_coeff[72] = {0, 89, 178, 265, 350, 432, 512, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019, 1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89};
 
-  const int64_t sin_coeff[72] = {0, 89, 178, 265, 350, 432, 512, 587, 658, 723, 784, 838, 886, 927, 961, 988, 1007, 1019, 1023, 1019, 1007, 988, 961, 927, 886, 838, 784, 723, 658, 587, 512, 432, 350, 265, 178, 89, 0, -89, -178, -265, -350, -432, -512, -587, -658, -723, -784, -838, -886, -927, -961, -988, -1007, -1019, -1023, -1019, -1007, -988, -961, -927, -886, -838, -784, -723, -658, -587, -512, -432, -350, -265, -178, -89};
-
-  if (not calo_tower) return std::make_pair(-1., -9999.);
+  if (not calo_tower) return {-1., -9999.};
 
   double ex = 0.;
   double ey = 0.;
@@ -38,13 +34,13 @@ get_missing_et(L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower,
       if (et > threshold)
       {
         const int index = calo_tower->iphi.at(ii) - 1;
-        ex += (et*cos_coeff[index]/1024.);
-        ey += (et*sin_coeff[index]/1024.);
+        ex += (et * cos_coeff[index] / 1024.);
+        ey += (et * sin_coeff[index] / 1024.);
       }
     }
   }
 
-  return std::make_pair(sqrt(ex*ex + ey*ey), atan2(-ey, -ex));
+  return {sqrt(ex*ex + ey*ey), atan2(-ey, -ex)};
 }
 
 
@@ -70,7 +66,7 @@ get_total_ht(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
   }
 
   return sum;
-} 
+}
 
 
 double
@@ -127,51 +123,102 @@ get_transverse_mass(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
   while (delta_phi >= M_PI) delta_phi -= 2.*M_PI;
   while (delta_phi < -M_PI) delta_phi += 2.*M_PI;
 
-  mt = sqrt(2.*eg_et*met_et*(1. - cos(delta_phi)));
+  mt = sqrt(2. * eg_et * met_et * (1. - cos(delta_phi)));
   return mt;
 }
 
 
-// utility methods
-void
-getCombination(int N,
-               int K,
-               std::vector<std::vector<int> >& combination)
+// utility factories
+
+const CombinationFactory::data_t& CombinationFactory::get(const size_t n, const size_t k)
 {
-  std::string bitmask(K, 1);
-  bitmask.resize(N, 0);
+  const auto& rc = cache_.find(std::make_pair(n, k));
+  if (rc != cache_.end())
+    return rc->second;
+  return insert(n, k);
+}
+
+
+void CombinationFactory::clear()
+{
+  cache_.clear();
+}
+
+
+const CombinationFactory::data_t& CombinationFactory::insert(const size_t n, const size_t k)
+{
+  data_t v;
+
+  std::string bitmask(k, 1);
+  bitmask.resize(n, 0);
 
   do
   {
-    std::vector<int> set;
-    for (int ii = 0; ii < N; ++ii)
+    std::vector<size_t> set;
+    set.reserve(n);
+    for (size_t ii = 0; ii < n; ++ii)
     {
-      if (bitmask[ii]) set.push_back(ii);
+      if (bitmask[ii])
+      {
+        set.emplace_back(ii);
+      }
     }
-    combination.push_back(set);
+    v.emplace_back(set);
   }
   while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+  const auto key = std::make_pair(n, k);
+  cache_.emplace(key, v);
+  return cache_.at(key);
 }
 
 
-void
-getPermutation(int N,
-               std::vector<std::vector<int> >& permutation)
+CombinationFactory::cache_t CombinationFactory::cache_ = {};
+
+
+const PermutationFactory::data_t& PermutationFactory::get(const size_t n)
 {
-  std::vector<int> indicies(N);
-  for (int ii = 0; ii < N; ii++) indicies.at(ii) = ii;
+  const auto& rc = cache_.find(n);
+  if (rc != cache_.end())
+    return rc->second;
+  return insert(n);
+}
+
+
+void PermutationFactory::clear()
+{
+  cache_.clear();
+}
+
+
+const PermutationFactory::data_t& PermutationFactory::insert(const size_t n)
+{
+  data_t v;
+
+  std::vector<size_t> indicies(n);
+  for (size_t ii = 0; ii < n; ++ii)
+  {
+    indicies[ii] = ii;
+  }
 
   do
   {
-    std::vector<int> set;
-    for (int ii = 0; ii < N; ++ii)
+    std::vector<size_t> set;
+    set.reserve(n);
+    for (size_t ii = 0; ii < n; ++ii)
     {
-      set.push_back(indicies.at(ii));
+      set.emplace_back(indicies.at(ii));
     }
-    permutation.push_back(set);
+    v.emplace_back(set);
   }
   while (std::next_permutation(indicies.begin(), indicies.end()));
+
+  cache_.emplace(n, v);
+  return cache_.at(n);
 }
+
+
+PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
 
 {#
@@ -184,7 +231,7 @@ getPermutation(int N,
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
 // generate conditions
-{% for name, cond in menu.getConditionMapPtr().iteritems() %}
+{% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
   {%- if cond.getType() in (tmEventSetup.MuonMuonCorrelationWithOverlapRemoval,
                            tmEventSetup.MuonEsumCorrelationWithOverlapRemoval,
@@ -248,7 +295,7 @@ getPermutation(int N,
 
 
 // generate algorithms
-{% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
 bool
 {{ name }}(L1Analysis::L1AnalysisL1UpgradeDataFormat* data, L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower)
 {
@@ -257,73 +304,83 @@ bool
 {% endfor %}
 
 
-std::string getNameFromId(const int index)
+std::string getNameFromId(const size_t index)
 {
-  static const std::pair<int, std::string> id2name[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair({{ algo.getIndex() }}, "{{ name }}"){% if not loop.last %},{% endif %}
-    {% endfor %}
+  static const std::map<size_t, std::string> id2name = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}{{ algo.getIndex() }}, "{{ name }}"{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<int, std::string> Id2Name(id2name, id2name + sizeof(id2name) / sizeof(id2name[0]));
-  const std::map<int, std::string>::const_iterator rc = Id2Name.find(index);
-  std::string name;
-  if (rc != Id2Name.end()) name = rc->second;
-  return name;
+  const auto rc = id2name.find(index);
+  if (rc == id2name.end())
+  {
+    std::ostringstream oss;
+    oss << "no such algorithm index: " << index << ", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
+  }
+  return rc->second;
 }
 
 
 int getIdFromName(const std::string& name)
 {
-  static const std::pair<std::string, int> name2id[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", {{ algo.getIndex() }}){% if not loop.last %},{% endif %}
-    {% endfor %}
+  static const std::map<std::string, int> name2id = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+  {{ '{' }}"{{ name }}", {{ algo.getIndex() }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<std::string, int> Name2Id(name2id, name2id + sizeof(name2id) / sizeof(name2id[0]));
-  const std::map<std::string, int>::const_iterator rc = Name2Id.find(name);
-  int id = -1;
-  if (rc != Name2Id.end()) id = rc->second;
-  return id;
+  const auto rc = name2id.find(name);
+  if (rc == name2id.end())
+  {
+    std::ostringstream oss;
+    oss << "no such algorithm name: \"" << name << "\", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
+  }
+  return rc->second;
 }
 
 
-AlgorithmFunction getFuncFromId(const int index)
+AlgorithmFunction getFuncFromId(const size_t index)
 {
-  static const std::pair<int, AlgorithmFunction> id2func[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair({{ algo.getIndex() }}, &{{ name }}){% if not loop.last %},{% endif %}
-    {% endfor %}
+  static const std::map<size_t, AlgorithmFunction> id2func = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}{{ algo.getIndex() }}, &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<int, AlgorithmFunction> Id2Func(id2func, id2func + sizeof(id2func) / sizeof(id2func[0]));
-  const std::map<int, AlgorithmFunction>::const_iterator rc = Id2Func.find(index);
-  AlgorithmFunction fp = 0;
-  if (rc != Id2Func.end()) fp = rc->second;
-  return fp;
+  const auto rc = id2func.find(index);
+  if (rc == id2func.end())
+  {
+    std::ostringstream oss;
+    oss << "no such algorithm index: " << index << ", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
+  }
+  return rc->second;
 }
 
 
 AlgorithmFunction getFuncFromName(const std::string& name)
 {
-  static const std::pair<std::string, AlgorithmFunction> name2func[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},{% endif %}
-    {% endfor %}
+  static const std::map<std::string, AlgorithmFunction> name2func = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}"{{ name }}", &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  static const std::map<std::string, AlgorithmFunction> Name2Func(name2func, name2func + sizeof(name2func) / sizeof(name2func[0]));
-  const std::map<std::string, AlgorithmFunction>::const_iterator rc = Name2Func.find(name);
-  AlgorithmFunction fp = 0;
-  if (rc != Name2Func.end()) fp = rc->second;
-  if (fp == 0)
+  const auto rc = name2func.find(name);
+  if (rc == name2func.end())
   {
-    std::stringstream ss;
-    ss << "fat> algorithm '" << name << "' is not defined in {{ menu.getName() }}\n";
-    throw std::runtime_error(ss.str());
+    std::ostringstream oss;
+    oss << "no such algorithm name: \"" << name << "\", in menu: {{ menu.getName() }}\n";
+    throw std::runtime_error(oss.str());
   }
-  return fp;
+  return rc->second;
 }
 
 
@@ -331,13 +388,14 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
                      L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
                      L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower)
 {
-  static const std::pair<std::string, AlgorithmFunction> name2func[] = {
-    {% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
-      std::make_pair("{{ name }}", &{{ name }}){% if not loop.last %},{% endif %}
-    {% endfor %}
+  static const std::map<std::string, AlgorithmFunction> name2func = {
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
+    {{ '{' }}"{{ name }}", &{{ name }}{{ '}' }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
   };
 
-  for (auto pair : name2func)
+  for (const auto pair : name2func)
   {
     L1SeedFun[pair.first] = std::bind(pair.second, upgrade, calo_tower);
   }

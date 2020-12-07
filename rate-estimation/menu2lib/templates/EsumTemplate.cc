@@ -37,11 +37,10 @@ bool
 {
   bool pass = false;
 
-  {{ objects | hasEtaPhiCuts }}
-  for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix}}Bx.size(); ii++)
   {
-    if (not ({{prefix}}Type.at(ii) == {{ type }})) continue;
-    if (not ({{prefix}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
+    if (not (data->{{prefix}}Type.at(ii) == {{ type }})) continue;
+    if (not (data->{{prefix}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
     {{ macros.getEsumCuts(prefix, 'ii', object, tmEventSetup) }}
 
     pass = true;

@@ -1,10 +1,8 @@
 #ifndef menulib_hh
 #define menulib_hh
-{#
- # @author: Takashi MATSUSHITA
- #}
+
 /* automatically generated from {{ menu.getName() }} with menu2lib.py */
-/* https://gitlab.cern.ch/cms-l1t-utm/scripts */
+/* https://github.com/cms-l1-dpg/L1MenuTools */
 
 #include <string>
 #include <vector>
@@ -43,36 +41,32 @@ get_transverse_mass(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
                     const double threshold_met=30.);
 
 
-// utility methods
-void
-getCombination(int N,
-               int K,
-               std::vector<std::vector<int> >& combination);
+// utility factories
 
-void
-getPermutation(int N,
-               std::vector<std::vector<int> >& permutation);
-
-const long long POW10[] =
+class CombinationFactory
 {
-                      1, 
-                     10,
-                    100,
-                   1000,
-                  10000,
-                 100000,
-                1000000,
-               10000000,
-              100000000,
-             1000000000,
-            10000000000,
-           100000000000,
-          1000000000000,
-         10000000000000,
-        100000000000000,
-       1000000000000000,
-      10000000000000000,
-     100000000000000000
+public:
+  using data_t = std::vector<std::vector<size_t>>;
+  using cache_t = std::map<std::pair<size_t, size_t>, data_t>;
+  static const data_t& get(const size_t n, const size_t k);
+  static void clear();
+protected:
+  static const data_t& insert(const size_t n, const size_t k);
+private:
+  static cache_t cache_;
+};
+
+class PermutationFactory
+{
+public:
+  using data_t = std::vector<std::vector<size_t>>;
+  using cache_t = std::map<size_t, data_t>;
+  static const data_t& get(const size_t n);
+  static void clear();
+protected:
+  static const data_t& insert(const size_t n);
+private:
+  static cache_t cache_;
 };
 
 
@@ -92,7 +86,7 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
                      L1Analysis::L1AnalysisL1CaloTowerDataFormat* calo_tower);
 
 // algorithms
-{% for name, algo in menu.getAlgorithmMapPtr().iteritems() %}
+{% for name, algo in menu.getAlgorithmMapPtr().items() %}
 bool
 {{ name }}(L1Analysis::L1AnalysisL1UpgradeDataFormat*, L1Analysis::L1AnalysisL1CaloTowerDataFormat*);
 {% endfor %}

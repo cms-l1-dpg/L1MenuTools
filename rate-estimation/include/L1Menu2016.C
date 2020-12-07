@@ -1369,19 +1369,20 @@ bool L1Menu2016::L1SeedFunc()
     
   for(auto &L1Seed : mL1Seed)
   {
-/*    if (L1SeedFun.find(L1Seed.first) != L1SeedFun.end())
+#ifndef UTM_MENULIB
+    if (L1SeedFun.find(L1Seed.first) != L1SeedFun.end())
       continue;
 
     if(ParseL1Seed(L1Seed.first))
       continue;
-*/	//this part is commented, so that seeds' algo are always added from menulib, NOT L1AlgoFactory
+#else
     if (L1SeedFun_temp.find(L1Seed.first) != L1SeedFun_temp.end())
     {
       std::cout << "Add from Menulib " << L1Seed.first << std::endl;
       L1SeedFun[L1Seed.first] = L1SeedFun_temp[L1Seed.first];
       continue;
     }
-
+#endif
     std::cout << "No function call for " << L1Seed.first <<"; setting to no fire"<< std::endl;
   }
 
