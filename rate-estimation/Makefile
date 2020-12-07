@@ -11,7 +11,7 @@ CXXFLAGS  += $(subst -I, -isystem , $(shell root-config --cflags))
 
 LD         = g++
 LDFLAGS    =
-LIBS       = $(shell root-config --libs) 
+LIBS       = $(shell root-config --libs)
 
 ifneq ($(shell echo $$CMSSW_BASE), )
   CXXFLAGS  += -isystem $(CMSSW_BASE)/src/
@@ -23,7 +23,14 @@ ifneq ($(shell echo $$CMSSW_BASE), )
 		  -lboost_program_options -lboost_system -lboost_filesystem
 endif
 
-TestOBJS = include/L1Ntuple include/L1AlgoFactory include/L1Menu2016 include/L1Plot include/L1TnP include/L1uGT include/PreColumn
+TestOBJS = \
+	include/L1Ntuple \
+	include/L1AlgoFactory \
+	include/L1Menu2016 \
+	include/L1Plot \
+	include/L1TnP \
+	include/L1uGT \
+	include/PreColumn
 
 ifeq ($(wildcard menulib.cc)$(wildcard menulib.hh), menulib.ccmenulib.hh)
   CXXFLAGS += -DUTM_MENULIB
@@ -39,20 +46,25 @@ PROGRAM = testMenu2016
 
 MKBIN = $(CXX) $(CXXFLAGS) `root-config  --libs --cflags` -lMinuit -lGenVector
 
-$(ODIR)/%.o : %.C
+$(ODIR)/%.o: %.C
+	@mkdir -p $(ODIR)
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
 
-$(ODIR)/%.o : %.cc
+$(ODIR)/%.o: %.cc
+	@mkdir -p $(ODIR)
 	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
 
-all : $(PROGRAM)
+.PHONY: all clean distclean
 
-testMenu2016 : $(ODIR)/testMenu2016.o $(OBJS)
+all: $(PROGRAM)
+
+$(PROGRAM): $(ODIR)/testMenu2016.o $(OBJS)
 	@echo "Linking $(PROGRAM) ..."
 	$(LD) $^ $(LIBS)  -o $@
 	@echo "done"
 
 clean:
-	rm -f *exe *.o $(PROGRAM) $(OBJS) $(ODIR)/*.o
+	$(RM) -f *exe *.o $(PROGRAM) $(OBJS) $(ODIR)/*.o
 
-
+distclean: clean
+	$(RM) -f menulib.hh menulib.cc menu.txt

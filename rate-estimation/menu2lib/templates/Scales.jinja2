@@ -67,7 +67,8 @@ const std::vector<double> {{key | replace("-", "_")}}_MAX = {
 {% endfor %}
 
 {# MU #}
-{% for key in ('MU-ET', 'MU-ETA', 'MU-PHI') -%}
+{% for key in ('MU-ET', 'MU-UPT', 'MU-ETA', 'MU-PHI') -%}
+{% if key in scaleMap.keys() -%}
   {% set es_scale = scaleMap[key] %}
   {% if key == 'MU-PHI' %}
 const int mu_phi_ipi = {{(0.5*(es_scale.getMaximum() - es_scale.getMinimum())/es_scale.getStep()) | int}};
@@ -83,6 +84,7 @@ const std::vector<double> {{key | replace("-", "_")}}_MAX = {
     {{FORMAT % x.maximum}}{% if not loop.last %},{% endif %}
   {% endfor %}
 };
+{% endif %}
 {% endfor %}
 
 {# ESUM #}
