@@ -37,9 +37,9 @@ bool
   {% endif %}
   bool pass = false;
   size_t nobj0 = 0;
-  for (size_t ii = 0; ii < {{prefixCalo}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefixCalo}}Bx.size(); ii++)
   {
-    if (not ({{prefixCalo}}Bx.at(ii) == {{ calo.getBxOffset() }})) continue;
+    if (not (data->{{prefixCalo}}Bx.at(ii) == {{ calo.getBxOffset() }})) continue;
     nobj0++;
     {% if prefixCalo | isTau %}
       if (nobj0 > {{macros.getMaxTaus()}}) continue;
@@ -48,12 +48,11 @@ bool
     {% if overlap_removal %}
       {{ macros.removeOverlap(cond, calo, 'ii', reference, tmEventSetup, scaleMap, iPi) }}
     {% endif %}
-    {{ objects | hasEtaPhiCuts }}
     {{ macros.getObjectCuts(prefixCalo, 'ii', calo, tmEventSetup, nEtaBitsCalo) }}
     size_t nobj1 = 0;
-    for (size_t jj = 0; jj < {{prefixMuon}}Bx.size(); jj++)
+    for (size_t jj = 0; jj < data->{{prefixMuon}}Bx.size(); jj++)
     {
-      if (not ({{prefixMuon}}Bx.at(jj) == {{ muon.getBxOffset() }})) continue;
+      if (not (data->{{prefixMuon}}Bx.at(jj) == {{ muon.getBxOffset() }})) continue;
       nobj1++;
       {{ macros.checkObjectIndex(muon, 'nobj1') }}
       {% if overlap_removal %}

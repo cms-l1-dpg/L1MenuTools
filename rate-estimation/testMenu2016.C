@@ -1,23 +1,23 @@
 // ===========================================================================
-// 
+//
 //       Filename:  testMenu2016.C
-// 
-//    Description:  
-// 
+//
+//    Description:
+//
 //        Version:  1.0
 //        Created:  01/14/2016 10:04:16
 //       Compiler:  g++ -std=c++11
-// 
+//
 //         Author:  Zhenbin Wu (benwu)
 //          Email:  zhenbin.wu@gmail.com
 //        Company:  UIC, CMS@LPC, CDF@FNAL
-// 
+//
 // ===========================================================================
 //
 #include "include/L1Menu2016.h"
 
 #include <cstdlib>
-#include <iostream>  
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -28,13 +28,13 @@
 
 // ===  FUNCTION  ============================================================
 //         Name:  main
-//  Description:  
+//  Description:
 // ===========================================================================
 int main ( int argc, char *argv[] )
 {
   namespace po = boost::program_options;
   // Declare the supported options.
-  boost::program_options::options_description desc("Allowed options");
+  po::options_description desc("Allowed options");
   const std::string defaultMenu = "menu/Slim2E34.txt";
   const std::string defaultntuple = "ntuple/Train_v87p3_PU55.list";
   const std::string defaultLumi = "menu/TrainPLTZ.csv";
@@ -52,7 +52,7 @@ int main ( int argc, char *argv[] )
     ("doPlotRate",     po::bool_switch()->default_value(false),                "save rate plot to output")
     ("doPlotEff",      po::bool_switch()->default_value(false),                "save efficiency plot to output")
     ("doPlotTest",     po::bool_switch()->default_value(false),                "save testing plot to output")
-    ("doPlotuGt",      po::bool_switch()->default_value(false),                "save uGT histograms to output")        
+    ("doPlotuGt",      po::bool_switch()->default_value(false),                "save uGT histograms to output")
     ("doPlotLS",       po::bool_switch()->default_value(false),                "save count per LS plot to output")
     ("doTnPMuon",      po::bool_switch()->default_value(false),                "use tag & probe for muon efficiency")
     ("doPrintPU",      po::bool_switch()->default_value(false),                "print out rate per PU to file")
@@ -89,7 +89,7 @@ int main ( int argc, char *argv[] )
 
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
-  po::notify(vm);    
+  po::notify(vm);
 
   if (vm.count("help")) {
     std::cout << desc << std::endl;
@@ -107,11 +107,13 @@ int main ( int argc, char *argv[] )
 
   L1Menu2016 men(vm["menufile"].as<std::string>(), vm["filelist"].as<std::string>());
 
-  men.ConfigOutput(vm["writetext"].as<bool>(), 
-      vm["writecsv"].as<bool>(), 
-      vm["writeplot"].as<bool>(), 
-      vm["outputdir"].as<std::string>(),
-      vm["outfilename"].as<std::string>());
+  men.ConfigOutput(
+    vm["writetext"].as<bool>(),
+    vm["writecsv"].as<bool>(),
+    vm["writeplot"].as<bool>(),
+    vm["outputdir"].as<std::string>(),
+    vm["outfilename"].as<std::string>()
+  );
 
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get the running time config ~~~~~
@@ -136,4 +138,5 @@ int main ( int argc, char *argv[] )
   men.PostLoop();
 
   return EXIT_SUCCESS;
-}				// ----------  end of function main  ----------
+}
+// ----------  end of function main  ----------

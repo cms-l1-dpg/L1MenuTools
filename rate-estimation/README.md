@@ -6,22 +6,6 @@ Rate estimation tools for L1 Menu operations in CMS
 
 ## Overview
 
-### Setting up the environment
-
-In order to prepare a development environment, run
-```bash
-python3 -m venv env
-source env/bin/activate
-pip install --upgrade pip
-pip install -r menu2lib/requirements.txt
-```
-This creates a virtual environment and installs all the necessary dependencies.
-
-Please do not run `cmsenv` between activating the environment and running
-`menu2lib.py`. Doing so will lead to an error stating that there is no
-`tmGrammar` module found. Other tools do expect to be run in a CMSSW
-environment, and you must run `cmsenv` before setting up `testMenu2016`.
-
 ### Available tools
 
 #### testMenu2016
@@ -50,11 +34,9 @@ After setting up the environment as discussed above, prepare the set of
 components required to run testMenu2016 for rate estimation.
 
 ### C++ conversion of a L1 Menu
-Place a copy of your L1 Menu XML in the rate-estimation directory. Make sure you
-are in your virtual environment and have not run `cmsenv`.
-Then run the command:
+Configure rate-estimation using a L1 Menu XML file using `configure.sh`.
 ```bash
-python menu2lib.py --menu <your_menu.xml>
+./configure.sh <your_menu.xml>
 ```
 This will produce the files menulib.hh and menulib.cc.
 

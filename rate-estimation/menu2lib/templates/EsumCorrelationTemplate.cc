@@ -40,10 +40,9 @@ bool
   {% endif %}
   bool pass = false;
   size_t nobj = 0;
-  {{ objects | hasEtaPhiCuts }}
-  for (size_t ii = 0; ii < {{prefix}}Bx.size(); ii++)
+  for (size_t ii = 0; ii < data->{{prefix}}Bx.size(); ii++)
   {
-    if (not ({{prefix}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
+    if (not (data->{{prefix}}Bx.at(ii) == {{ object.getBxOffset() }})) continue;
     nobj++;
     {% if prefix | isTau %}
       if (nobj > {{macros.getMaxTaus()}}) break;
@@ -55,10 +54,10 @@ bool
     {% endif %}
     {{ macros.getObjectCuts(prefix, 'ii', object, tmEventSetup, nEtaBitsObject) }}
 
-    for (size_t jj = 0; jj < {{prefixEsum}}Bx.size(); jj++)
+    for (size_t jj = 0; jj < data->{{prefixEsum}}Bx.size(); jj++)
     {
-      if (not ({{prefixEsum}}Type.at(jj) == {{ type }})) continue;
-      if (not ({{prefixEsum}}Bx.at(jj) == {{ esum.getBxOffset() }})) continue;
+      if (not (data->{{prefixEsum}}Type.at(jj) == {{ type }})) continue;
+      if (not (data->{{prefixEsum}}Bx.at(jj) == {{ esum.getBxOffset() }})) continue;
       {{ macros.getEsumCuts(prefixEsum, 'jj', esum, tmEventSetup) }}
       {{ macros.getEsumCorrelationCuts(prefix, prefixEsum, 'ii', 'jj', cond, tmEventSetup, LUTS, iPi) }}
       pass = true;

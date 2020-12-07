@@ -1,18 +1,37 @@
-######### GENERAL STUFF: DON NOT CONSIDER
-ODIR     =  objs
+# Makefile for rate estimation
+
+PROGRAM = testMenu2016
+PLUGIN = menulib
+
+SRCS = \
+	include/L1Ntuple \
+	include/L1AlgoFactory \
+	include/L1Menu2016 \
+	include/L1Plot \
+	include/L1TnP \
+	include/L1uGT \
+	include/PreColumn
+
+# Compiler
 CXX      =  g++
-CXXFLAGS =  -std=c++11
+#CXXFLAGS =  -std=c++11
 CXXFLAGS += -Wall -fPIC -O3
 #CXXFLAGS  += -g -pg
 #CXXFLAGS  += -Wextra
-#CXXFLAGS += -Wextra -Weffc++ #Asking for troubles
-#CXXFLAGS += -Wno-reorder #Dirty fix
-CXXFLAGS  += $(subst -I, -isystem , $(shell root-config --cflags))
+#CXXFLAGS += -Wextra -Weffc++ # asking for troubles
+#CXXFLAGS += -Wno-reorder # dirty fix
+CXXFLAGS += $(subst -I, -isystem , $(shell root-config --cflags))
 
-LD         = g++
-LDFLAGS    =
-LIBS       = $(shell root-config --libs)
+# Linker
+LD       = g++
+LDFLAGS  =
+LIBS     = $(shell root-config --libs)
 
+# Commands
+MD       = mkdir -p
+RM       = rm -rf
+
+# CMSSW
 ifneq ($(shell echo $$CMSSW_BASE), )
   CXXFLAGS  += -isystem $(CMSSW_BASE)/src/
   CXXFLAGS  += -isystem $(CMSSW_RELEASE_BASE)/src
@@ -23,48 +42,41 @@ ifneq ($(shell echo $$CMSSW_BASE), )
 		  -lboost_program_options -lboost_system -lboost_filesystem
 endif
 
-TestOBJS = \
-	include/L1Ntuple \
-	include/L1AlgoFactory \
-	include/L1Menu2016 \
-	include/L1Plot \
-	include/L1TnP \
-	include/L1uGT \
-	include/PreColumn
-
-ifeq ($(wildcard menulib.cc)$(wildcard menulib.hh), menulib.ccmenulib.hh)
+# Detect plugin
+ifeq ($(wildcard $(PLUGIN).cc)$(wildcard $(PLUGIN).hh), $(PLUGIN).cc$(PLUGIN).hh)
   CXXFLAGS += -DUTM_MENULIB
-  TestOBJS += menulib
+  SRCS += $(PLUGIN)
 endif
 
-## Whether to use Muon Eta/Phi at Vtx
+# Whether to use Muon Eta/Phi at Vtx
 CXXFLAGS += -DL1NTUPLE_MUONCORATVTX
 
-OBJS := $(TestOBJS:%=$(ODIR)/%.o)
+SRCS += $(PROGRAM)
 
-PROGRAM = testMenu2016
+OBJSDIR = objs
+OBJS := $(SRCS:%=$(OBJSDIR)/%.o)
 
-MKBIN = $(CXX) $(CXXFLAGS) `root-config  --libs --cflags` -lMinuit -lGenVector
-
-$(ODIR)/%.o: %.C
-	@mkdir -p $(ODIR)
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
-
-$(ODIR)/%.o: %.cc
-	@mkdir -p $(ODIR)
-	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+# MKBIN = $(CXX) $(CXXFLAGS) `root-config  --libs --cflags` -lMinuit -lGenVector
 
 .PHONY: all clean distclean
 
+$(OBJSDIR)/%.o: %.C
+	$(MD) $(dir $@)
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+
+$(OBJSDIR)/%.o: %.cc
+	$(MD) $(dir $@)
+	$(CXX) $(CXXFLAGS) $(CXXDEPFLAGS) -o $@ -c $<
+
 all: $(PROGRAM)
 
-$(PROGRAM): $(ODIR)/testMenu2016.o $(OBJS)
+$(PROGRAM): $(OBJS)
 	@echo "Linking $(PROGRAM) ..."
 	$(LD) $^ $(LIBS)  -o $@
 	@echo "done"
 
 clean:
-	$(RM) -f *exe *.o $(PROGRAM) $(OBJS) $(ODIR)/*.o
+	$(RM) $(OBJS) $(OBJSDIR)/*.o *.o
 
 distclean: clean
-	$(RM) -f menulib.hh menulib.cc menu.txt
+	$(RM) $(PROGRAM) $(OBJSDIR) menulib.hh menulib.cc menu.txt
