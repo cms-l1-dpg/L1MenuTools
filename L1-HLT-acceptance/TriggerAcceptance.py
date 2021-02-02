@@ -12,6 +12,7 @@ import sys
 import math
 import subprocess
 import collections
+import pdb
 
 ## User-defined constants
 MAX_FILE = 1      ## Maximum number of input files to process
@@ -19,7 +20,7 @@ MAX_EVT  = 500000 ## Maximum number of events to process
 PRT_EVT  = 10000  ## Print to screen every Nth event
 VERBOSE  = False  ## Print extra info about each event
 
-PU_MIN   = 0      ## Minimum number of good reconstructed vertices
+PU_MIN   = 50      ## Minimum number of good reconstructed vertices
 
 
 def main():
@@ -27,7 +28,6 @@ def main():
 ###################
 ## Initialize files
 ###################
-
     ## Location of input files
     in_file_names = []
     in_dir = '/afs/cern.ch/user/m/mmatthew/public/'
@@ -59,6 +59,7 @@ def main():
 ####################
 ## L1T and HLT paths
 ####################
+    
     print(in_chains)
     ## List of branches in the tree
     branch_list = [key.GetName() for key in in_chains[0].GetListOfBranches()]
@@ -163,7 +164,7 @@ def main():
             if iEvt % PRT_EVT is 0: print 'Event #%d / %d' % (iEvt, MAX_EVT)
 
             ch.GetEntry(jEvt)
-
+            
             if ch.PV_npvsGood < PU_MIN: continue
             iPass += 1
 
@@ -288,6 +289,7 @@ def main():
 
     ## Configure the rate histograms
     for hname in hists.keys():
+        hists[hname].SetMinimum(0)
         ## Label the L1T and HLT histogram axes
         if hname.startswith('HLT') and hists[hname].GetNbinsX() == len(HLT_paths):
             for iHLT in range(len(HLT_paths)):
@@ -301,6 +303,8 @@ def main():
         ## Scale counts by 30 MHz to get trigger rate
         if (hname.startswith('HLT') or hname.startswith('L1T')) and '_rate_' in hname:
             hists[hname].Scale(30000. / iPass)
+
+
 
 
     ## Draw the HLT rate histograms
@@ -328,6 +332,7 @@ def main():
         hists['L1T_%s_rate_pure'  % group].Draw('histsame')
         hists['L1T_%s_rate_pure'  % group].Write()
         hists['L1T_%s_rate_total' % group].SetTitle('L1T rates')
+
         c0.SaveAs(png_dir+'h_L1T_%s_rate.png' % group)
 
         ## HLT acceptance rate histograms, including purity w.r.t. HLT acceptance
@@ -390,7 +395,8 @@ def main():
         c0.SaveAs(png_dir+'h_L1T_%s_acc_frac.png' % group)
 
     ## End loop: for group in L1T_unpr.keys()
-
+    
+    
 
     ## Delete the output ROOT file from local memory
     del out_file
