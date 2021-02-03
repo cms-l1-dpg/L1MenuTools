@@ -16,7 +16,7 @@ import pdb
 
 ## User-defined constants
 MAX_FILE = 1      ## Maximum number of input files to process
-MAX_EVT  = 500000 ## Maximum number of events to process
+MAX_EVT  = 10000 ## Maximum number of events to process
 PRT_EVT  = 10000  ## Print to screen every Nth event
 VERBOSE  = False  ## Print extra info about each event
 
@@ -299,10 +299,14 @@ def main():
             if hname.startswith('L1T_%s' % group) and hists[hname].GetNbinsX() == len(L1T_unpr[group]):
                 for iL1T in range(len(L1T_unpr[group])):
                     hists[hname].GetXaxis().SetBinLabel(iL1T+1, L1T_unpr[group][iL1T])
+                    
                     hists[hname].GetYaxis().SetTitle('Rate (kHz)')
+
+
         ## Scale counts by 30 MHz to get trigger rate
         if (hname.startswith('HLT') or hname.startswith('L1T')) and '_rate_' in hname:
-            hists[hname].Scale(30000. / iPass)
+#            hists[hname].Scale(30000. / iPass)
+            print("Re-insert Scaling!!!!")
 
 
 
@@ -376,18 +380,21 @@ def main():
         hists['L1T_%s_acc_rate_total' % group].Divide  (hists['L1T_%s_rate_total' % group])
         hists['L1T_%s_acc_rate_total' % group].SetName ('h_L1T_%s_acc_frac_total' % group )
         hists['L1T_%s_acc_rate_total' % group].SetTitle('h_L1T_%s_acc_frac_total' % group )
+        hists['L1T_%s_acc_rate_total' % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_acc_rate_total' % group].Draw('histe')
         hists['L1T_%s_acc_rate_total' % group].Write()
         hists['L1T_%s_acc_rate_prop'  % group].Divide  (hists['L1T_%s_rate_prop' % group])
         hists['L1T_%s_acc_rate_prop'  % group].SetName ('h_L1T_%s_acc_frac_prop' % group )
         hists['L1T_%s_acc_rate_prop'  % group].SetTitle('h_L1T_%s_acc_frac_prop' % group )
+        hists['L1T_%s_acc_rate_prop'  % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_acc_rate_prop'  % group].Draw('histesame')
         hists['L1T_%s_acc_rate_prop'  % group].Write()
         hists['L1T_%s_acc_rate_pure'  % group].Divide  (hists['L1T_%s_rate_pure' % group])
         hists['L1T_%s_acc_rate_pure'  % group].SetName ('h_L1T_%s_acc_frac_pure' % group )
         hists['L1T_%s_acc_rate_pure'  % group].SetTitle('h_L1T_%s_acc_frac_pure' % group )
+        hists['L1T_%s_acc_rate_pure'  % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_acc_rate_pure'  % group].Draw('histesame')
         hists['L1T_%s_acc_rate_pure'  % group].Write()
