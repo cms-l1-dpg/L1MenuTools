@@ -16,11 +16,11 @@ import pdb
 
 ## User-defined constants
 MAX_FILE = 1      ## Maximum number of input files to process
-MAX_EVT  = 10000 ## Maximum number of events to process
+MAX_EVT  = 500000 ## Maximum number of events to process
 PRT_EVT  = 10000  ## Print to screen every Nth event
 VERBOSE  = False  ## Print extra info about each event
 
-PU_MIN   = 50      ## Minimum number of good reconstructed vertices
+PU_MIN   = 0      ## Minimum number of good reconstructed vertices
 
 
 def main():
@@ -283,8 +283,8 @@ def main():
 
         ## Scale counts by 30 MHz to get trigger rate
         if (hname.startswith('HLT') or hname.startswith('L1T')) and '_rate_' in hname:
-#            hists[hname].Scale(30000. / iPass)
-            print("Re-insert Scaling!!!!")
+            hists[hname].Scale(30000. / iPass)
+#            print("Re-insert Scaling!!!!")
 
 
 ######################
@@ -357,13 +357,13 @@ def main():
         hists['L1T_%s_acc_rate_total' % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_acc_rate_total' % group].Draw('hist')
-        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total accepted rate', 'l')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total acc. rate', 'l')
         legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].Write()
         hists['L1T_%s_acc_rate_prop'  % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_acc_rate_prop'  % group].Draw('histsame')
-        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T proportional accepted rate', 'l')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T prop. acc. rate', 'l')
         legend.Draw()
         hists['L1T_%s_acc_rate_prop'  % group].Write()
         hists['L1T_%s_acc_rate_pure'  % group].SetLineWidth(2)
