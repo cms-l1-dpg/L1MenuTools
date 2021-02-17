@@ -101,11 +101,23 @@ def main():
         L1T_unpr_all += L1T_unpr[group]
 
     ## Check that user-entered L1T paths exist in ZeroBias NanoAOD file
+    L1T_missing = []
+    groups = list(L1T_unpr.keys())
     for path in L1T_unpr_all:
         if not path in L1T_paths:
-            print '\nSUPER WEIRD!!! Path %s from group %s not in TTree!!! Quitting.' % (path, group)
-            sys.exit()
+            for group in groups:
+                if path in L1T_unpr[group]: break
+            print '\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group)
+            L1T_missing.append(path)
 
+    ## Remove missing paths to avoid errors when calling ch.GetLeaf(path)
+    for ele in L1T_missing:
+        L1T_unpr_all.remove(ele)
+
+
+    if L1T_unpr_all ==[]:
+        print 'None of the user defined unprescaled seeds can be found in TTree. System exit'
+        sys.exit()
 
 #############
 ## Histograms
@@ -445,6 +457,11 @@ def main():
 
     ## End loop: for group in L1T_unpr.keys()
     
+    ## Display the unprescaled seeds defined by the user which are not present in the root file again
+    if L1T_missing !=[]:
+        print '\nThe missing seeds are:'
+        for ele in L1T_missing:
+            print ele
     
 
     ## Delete the output ROOT file from local memory
