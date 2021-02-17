@@ -263,33 +263,11 @@ def main():
     print 'Finished with loop over %d events' % iEvt
 
 
-######################
-## Save the histograms
-######################
-
-    ## Navigate to the output ROOT file
-    out_file.cd()
-
-    ## Create the canvas for drawing histograms
-    c0 = R.TCanvas('c0')
-    c0.cd()
-
-
-    ## Draw the number of primary vertices
-    hists['nPV_good'].SetLineWidth(2)
-    hists['nPV_good'].SetLineColor(R.kBlue)
-    hists['nPV_good'].Draw('hist')
-    hists['nPV_good'].Write()
-    hists['nPV'].SetLineWidth(2)
-    hists['nPV'].SetLineColor(R.kBlack)
-    hists['nPV'].Draw('histsame')
-    hists['nPV'].Write()
-    c0.SaveAs(png_dir+'h_nPV.png')
-
 
     ## Configure the rate histograms
     for hname in hists.keys():
         hists[hname].SetMinimum(0)
+        hists[hname].SetStats(0)
         ## Label the L1T and HLT histogram axes
         if hname.startswith('HLT') and hists[hname].GetNbinsX() == len(HLT_paths):
             for iHLT in range(len(HLT_paths)):
@@ -309,9 +287,37 @@ def main():
             print("Re-insert Scaling!!!!")
 
 
+######################
+## Save the histograms
+######################
+
+    ## Navigate to the output ROOT file
+    out_file.cd()
+
+    ## Create the canvas for drawing histograms
+    c0 = R.TCanvas('c0')
+    c0.cd()
+
+
+    ## Draw the number of primary vertices
+    legend = R.TLegend(0.78,0.78,0.98,0.93)
+    hists['nPV_good'].SetLineWidth(2)
+    hists['nPV_good'].SetLineColor(R.kBlue)
+    hists['nPV_good'].Draw('hist')
+    legend.AddEntry(hists['nPV_good'], 'Good primary vertices', 'l')
+    legend.Draw()
+    hists['nPV_good'].Write()
+    hists['nPV'].SetLineWidth(2)
+    hists['nPV'].SetLineColor(R.kBlack)
+    hists['nPV'].Draw('histsame')
+    legend.AddEntry(hists['nPV'], 'Primary vertices', 'l')
+    legend.Draw()
+    hists['nPV'].Write()
+    c0.SaveAs(png_dir+'h_nPV.png')
 
 
     ## Draw the HLT rate histograms
+
     hists['HLT_rate_total'].SetLineWidth(2)
     hists['HLT_rate_total'].SetLineColor(R.kBlack)
     hists['HLT_rate_total'].Draw('hist')
@@ -323,66 +329,98 @@ def main():
     for group in L1T_unpr.keys():
 
         ## Raw L1T rate histograms, including purity w.r.t. other L1T seeds
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_total' % group].SetLineWidth(2)
         hists['L1T_%s_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_rate_total' % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_total' % group], 'L1T total rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_total' % group].Write()
         hists['L1T_%s_rate_prop'  % group].SetLineWidth(2)
         hists['L1T_%s_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_rate_prop'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_rate_prop' % group], 'L1T prop. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_prop'  % group].Write()
         hists['L1T_%s_rate_pure'  % group].SetLineWidth(2)
         hists['L1T_%s_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_rate_pure'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_rate_pure' % group], 'L1T pure rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_pure'  % group].Write()
         hists['L1T_%s_rate_total' % group].SetTitle('L1T rates')
 
         c0.SaveAs(png_dir+'h_L1T_%s_rate.png' % group)
 
         ## HLT acceptance rate histograms, including purity w.r.t. HLT acceptance
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_acc_rate_total' % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_acc_rate_total' % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total accepted rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].Write()
         hists['L1T_%s_acc_rate_prop'  % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_acc_rate_prop'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T proportional accepted rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_prop'  % group].Write()
         hists['L1T_%s_acc_rate_pure'  % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_acc_rate_pure'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_pure' % group], 'L1T pure acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_pure'  % group].Write()
         hists['L1T_%s_acc_rate_total' % group].SetTitle('L1T HLT-accepted rates')
         c0.SaveAs(png_dir+'h_L1T_%s_acc_rate.png' % group)
 
         ## Total rate and HLT acceptance overlaid
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_total'     % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_total' % group], 'L1T total rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kViolet)
         hists['L1T_%s_acc_rate_total' % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_total'     % group].SetTitle('L1T net and HLT-accepted total rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_total.png' % group)
 
         ## Proportional rate and HLT acceptance overlaid
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_prop'     % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_prop' % group], 'L1T prop. acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_prop' % group].SetLineColor(R.kGreen)
         hists['L1T_%s_acc_rate_prop' % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T prop. acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_prop'     % group].SetTitle('L1T net and HLT-accepted proportional rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_prop.png' % group)
 
         ## Pure rate and HLT acceptance overlaid
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_pure'     % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_pure' % group], 'L1T pure rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_pure' % group].SetLineColor(R.kMagenta)
         hists['L1T_%s_acc_rate_pure' % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_pure' % group], 'L1T pure acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_pure'     % group].SetTitle('L1T net and HLT-accepted pure rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_pure.png' % group)
 
         ## HLT acceptance fraction histograms, including purity w.r.t. HLT acceptance
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_acc_rate_total' % group].Divide  (hists['L1T_%s_rate_total' % group])
         hists['L1T_%s_acc_rate_total' % group].SetName ('h_L1T_%s_acc_frac_total' % group )
         hists['L1T_%s_acc_rate_total' % group].SetTitle('h_L1T_%s_acc_frac_total' % group )
         hists['L1T_%s_acc_rate_total' % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_acc_rate_total' % group].Draw('histe')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total fraction', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].Write()
         hists['L1T_%s_acc_rate_prop'  % group].Divide  (hists['L1T_%s_rate_prop' % group])
         hists['L1T_%s_acc_rate_prop'  % group].SetName ('h_L1T_%s_acc_frac_prop' % group )
@@ -390,6 +428,8 @@ def main():
         hists['L1T_%s_acc_rate_prop'  % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_acc_rate_prop'  % group].Draw('histesame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T prop. fraction', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_prop'  % group].Write()
         hists['L1T_%s_acc_rate_pure'  % group].Divide  (hists['L1T_%s_rate_pure' % group])
         hists['L1T_%s_acc_rate_pure'  % group].SetName ('h_L1T_%s_acc_frac_pure' % group )
@@ -397,6 +437,8 @@ def main():
         hists['L1T_%s_acc_rate_pure'  % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_acc_rate_pure'  % group].Draw('histesame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_pure' % group], 'L1T pure fraction', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_pure'  % group].Write()
         hists['L1T_%s_acc_rate_total' % group].SetTitle('L1T fraction of HLT-accepted events')
         c0.SaveAs(png_dir+'h_L1T_%s_acc_frac.png' % group)
