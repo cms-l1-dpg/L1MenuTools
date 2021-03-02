@@ -13,6 +13,15 @@ echo "Activating virtual environment..."
 . env/bin/activate
 
 echo ""
+echo "Updating pip..."
+pip install -U pip
+if [ $? -ne 0 ]; then
+	echo "Error updating pip."
+	exit 1
+fi
+
+
+echo ""
 echo "Installing requirements..."
 pip install -r requirements.txt
 if [ $? -ne 0 ]; then
