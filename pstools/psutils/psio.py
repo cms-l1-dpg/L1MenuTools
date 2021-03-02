@@ -111,15 +111,17 @@ def write_prescale_table(PStable: pd.DataFrame, filepath: str = 'PStable_new',
 
     """
 
-    supported_formats = ['xlsx']
-
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
-    if output_format in supported_formats:
-        PStable.to_excel(filepath, index=False)
-    else:
+    supported_formats = ['xlsx', 'csv']
+    if output_format not in supported_formats:
         raise NotImplementedError('Invalid output file format: {}'.format(
             output_format))
+
+    if output_format == 'xlsx':
+        PStable.to_excel(filepath, index=False)
+    elif output_format == 'csv':
+        PStable.to_csv(filepath, sep='\t', index=False, header=True)
 
     return
 
