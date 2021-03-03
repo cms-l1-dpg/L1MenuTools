@@ -4,7 +4,7 @@ import wget
 from typing import Union, Any
 import pandas as pd
 import xml.etree.ElementTree as ET
-
+from decimal import Decimal
 
 def download_file(url: str) -> Union[str, None]:
     """
@@ -60,6 +60,17 @@ def read_prescale_table(filepath: Any) -> pd.DataFrame:
             print('\nFile downloaded: {}'.format(filepath))
 
     data = pd.read_excel(filepath, convert_float=True, engine="openpyxl")
+
+ 
+    #Make sure the prescale column naming is correct
+    newColumns = []
+    for col_name in data.columns:
+        if isinstance(col_name, int):
+           col_name='%E' % Decimal(col_name)
+           col_name = col_name.split('E')[0].rstrip('0').rstrip('.') + 'E' + col_name.split('E')[1]
+        newColumns.append(col_name)
+    data.columns = newColumns
+
     return data
 
 
@@ -111,15 +122,18 @@ def write_prescale_table(PStable: pd.DataFrame, filepath: str = 'PStable_new',
 
     """
 
-    supported_formats = ['xlsx']
-
     if not filepath.endswith(output_format): filepath += '.' + output_format
 
-    if output_format in supported_formats:
-        PStable.to_excel(filepath, index=False)
-    else:
+    supported_formats = ['xlsx', 'csv']
+    if output_format not in supported_formats:
         raise NotImplementedError('Invalid output file format: {}'.format(
             output_format))
 
+    if output_format == 'xlsx':
+        PStable.to_excel(filepath, index=False)
+    elif output_format == 'csv':
+        PStable.to_csv(filepath, sep=',', index=False, header=True)
+
     return
+
 
