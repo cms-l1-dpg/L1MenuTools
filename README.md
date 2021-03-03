@@ -4,15 +4,18 @@ Codebase for L1 Menu tools
 
 ## Available tools
 
+### Rate estimation tools ([rate-estimation/](rate-estimation/))
+Collection of tools used for rate estimation of a new menu.
+
+### Piechart tool ([piechart-tool/](piechart-tool/))
+Create piecharts from a L1 Menu rate table.
+
+### L1Ntuples production recipe ([L1Ntuples/](L1Ntuples/))
+Latest snapshop of a recipe to produce L1Ntuples on HTCondor.
+
 ### PS-tools ([pstools/](pstools/))
 Collection of prescale table tools for offline L1 Menu operations in CMS. 
 
 Contains the following tools:
 * `ps-generate` (prescale table generation tool): create a new prescale table according to a L1 Menu, using information from an existing prescale table ([documentation](pstools/docs/ps-generate.md))
 * `ps-diff` (prescale table comparison tool): create diffs between two PS table in various output formats ([documentation](pstools/docs/ps-diff.md))
-
-### Piechart tool ([piechart-tool/](piechart-tool/))
-Create piecharts from a L1 Menu rate table.
-
-### Rate estimation tools ([rate-estimation/](rate-estimation/))
-Collection of tools used for rate estimation of a new menu.
