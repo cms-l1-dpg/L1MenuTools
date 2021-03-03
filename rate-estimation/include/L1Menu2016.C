@@ -583,7 +583,7 @@ bool L1Menu2016::ReadMenuTXT(std::ifstream &menufile)
     int prescale;
     std::string pog, pag;
 
-    iss >> bit >> seed >> prescale >> pog >> pag;
+    iss >> seed >> bit >> prescale >> pog >> pag;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Form L1Seed ~~~~~
     L1Seed temp;
