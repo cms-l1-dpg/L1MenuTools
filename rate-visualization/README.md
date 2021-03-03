@@ -53,7 +53,8 @@ Jet| Jet| EG,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias| |
 Tau| Tau| EG,Mu,Jet,ETM,HTT,ETT,ETMHF,ZeroBias| |
 LepJet| Tau| ZeroBias| EG,Mu,Jet,ETM,HTT,ETT,ETMHF|
 Sums| | EG,Mu,Tau,ZeroBias| ETM,HTT,ETT,ETMHF|
-|ZeroBias| ZeroBias| EG,Mu,Tau,Jet,ETM,HTT,ETT,ETMHF| |
+ZeroBias| ZeroBias| EG,Mu,Tau,Jet,ETM,HTT,ETT,ETMHF| |
+Calibration| EG,Mu,Tau,Jet,ETM,HTT,ETT,ETMHF,ZeroBias| | |
 
 For Calibration Seed, we take everything with prescale value > 1.
 
