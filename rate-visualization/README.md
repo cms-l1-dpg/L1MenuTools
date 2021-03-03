@@ -40,18 +40,19 @@ So, per category, we define identifiers and vetoes, which as their names suggest
 In addition, for some seeds with jets e.g., isMuJetSeed we add another selection criterion on top of identifiers and vetoes, Jetsums, which will contain "Jet", "HTT","EMT" etc. 
 If the seed has identifier(Mu) and any of the Jetsums in it's name that seed is categorized as isMuJetSeed. 
 
-|Category | Identifiers | Vetoes | additional requirements |
-|SingleMu | SingleMu | Jet,EG,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
-|MultiMu | DoubleMu, TripleMu, QuadMu |Jet,EG,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
-|MuEG | Mu,EG | Jet,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
-|MuJet | Mu | EG,Tau,ZeroBias| Jet,ETM,HTT,ETMHF|
-|SingleEG| SingleEG,SingleIsoEG,SingleLooseEG,SingleLooseIsoEG,IsoEG| Jet,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias,Double| |
-|MultiEG| DoubleEG,TripleEG,DoubleIsoEG,DoubleLooseIsoEG| Jet,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias,Double| |
-|EGJet| EG| Mu,Tau,ZeroBias| Jet,ETM,HTT,ETT,ETMHF|
-|Jet| Jet| EG,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias| |
-|Tau| Tau| EG,Mu,Jet,ETM,HTT,ETT,ETMHF,ZeroBias| |
-|LepJet| Tau| ZeroBias| EG,Mu,Jet,ETM,HTT,ETT,ETMHF|
-|Sums| | EG,Mu,Tau,ZeroBias| ETM,HTT,ETT,ETMHF|
+Category | Identifiers | Vetoes | additional requirements |
+---|---|---|---|
+SingleMu | SingleMu | Jet,EG,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
+MultiMu | DoubleMu, TripleMu, QuadMu |Jet,EG,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
+MuEG | Mu,EG | Jet,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
+MuJet | Mu | EG,Tau,ZeroBias| Jet,ETM,HTT,ETMHF|
+SingleEG| SingleEG,SingleIsoEG,SingleLooseEG,SingleLooseIsoEG,IsoEG| Jet,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias,Double| |
+MultiEG| DoubleEG,TripleEG,DoubleIsoEG,DoubleLooseIsoEG| Jet,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias,Double| |
+EGJet| EG| Mu,Tau,ZeroBias| Jet,ETM,HTT,ETT,ETMHF|
+Jet| Jet| EG,Mu,Tau,ETM,HTT,ETT,ETMHF,ZeroBias| |
+Tau| Tau| EG,Mu,Jet,ETM,HTT,ETT,ETMHF,ZeroBias| |
+LepJet| Tau| ZeroBias| EG,Mu,Jet,ETM,HTT,ETT,ETMHF|
+Sums| | EG,Mu,Tau,ZeroBias| ETM,HTT,ETT,ETMHF|
 |ZeroBias| ZeroBias| EG,Mu,Tau,Jet,ETM,HTT,ETT,ETMHF| |
 
 For Calibration Seed, we take everything with prescale value > 1.
