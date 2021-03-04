@@ -7,8 +7,8 @@ Codebase for L1 Menu tools
 ### Rate estimation tools ([rate-estimation/](rate-estimation/))
 Collection of tools used for rate estimation of a new menu.
 
-### Piechart tool ([piechart-tool/](piechart-tool/))
-Create piecharts from a L1 Menu rate table.
+### Rate visualization tool ([rate-visualization/](rate-visualization/))
+Create pie charts and bar charts from L1 Menu rate tables.
 
 ### L1Ntuples production recipe ([L1Ntuples/](L1Ntuples/))
 Latest snapshop of a recipe to produce L1Ntuples on HTCondor.
