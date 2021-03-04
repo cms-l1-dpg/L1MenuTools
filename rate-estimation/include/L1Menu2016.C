@@ -527,9 +527,9 @@ bool L1Menu2016::ReadMenu()
   if (writefiles)
     *outfile <<  "---------------------------- Input Menu -------------------------" << std::endl;
 
-  if (menufilename.find_last_of("txt")!= std::string::npos)
+  if (menufilename.find("txt")!= std::string::npos)
     ReadMenuTXT(menufile);
-  else if (menufilename.find_last_of("csv")!= std::string::npos)
+  else if (menufilename.find("csv")!= std::string::npos)
     ReadMenuCSV(menufile);
   else
   {
@@ -729,7 +729,7 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
       std::advance(t, k.first);
       std::string it = std::regex_replace(*t, std::regex("^ +|\t+$| +$|( ) +"), "$1");
       
-      if (k.second == "n")
+      if (k.second == "Index")
       {
         ss << std::setw(4) << it <<" "; 
         try
@@ -741,7 +741,7 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
           std::cout << "Can't cast bit " << it<< " to int type in line: " << line << std::endl;
         }
       }
-      if (k.second == "L1AlgoName")
+      if (k.second == "Name")
       {
         ss << std::setw(65) << it <<" "; 
         temp.name = it;
