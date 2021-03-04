@@ -11,8 +11,9 @@ Contains the following tools:
 * `ps-generate` (prescale table generation tool): create a new prescale table according to a L1 Menu, using information from an existing prescale table ([documentation](pstools/docs/ps-generate.md))
 * `ps-diff` (prescale table comparison tool): create diffs between two PS table in various output formats ([documentation](pstools/docs/ps-diff.md))
 
-### Piechart tool ([piechart-tool/](piechart-tool/))
-Create piecharts from a L1 Menu rate table.
-
 ### Rate estimation tools ([rate-estimation/](rate-estimation/))
 Collection of tools used for rate estimation of a new menu.
+
+
+### Rate visualization tool ([rate-visualization/](rate-visualization/))
+Create piecharts and bar charts from a L1 Menu rate table.

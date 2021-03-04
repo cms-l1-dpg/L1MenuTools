@@ -2,20 +2,33 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import tempfile
+import argparse
+import wget
+import random
 
-# fetching the rate table
-csv_rate_table = "menu_v2_1_0_rate2.txt"
+# define CLI elements
+parser = argparse.ArgumentParser()
+parser.add_argument('--rateTable',
+	help='Existing rate table',
+	type=str)
+parser.add_argument('--output',
+	help='Name of created output file',
+	default='output_RateViz',
+	type=str)
+args = parser.parse_args()
+
+csv_rate_table = args.rateTable
+outputFileName = args.output
+
 if not os.path.exists(csv_rate_table):
-    os.system(
-        "wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuTools/master/piechart-tool/{}".format(
-            csv_rate_table
-        )
-    )
+	os.system( "wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuTools/master/piechart-tool/{}".format(csv_rate_table) ) 
 else:
-    print("Rate table exists, no need to download it")
+	print("Rate table exists, no need to download it")
 
 # reading the rate table
-df = pd.read_csv("menu_v2_1_0_rate2.txt", sep="\t")
+df = pd.read_csv(csv_rate_table, sep="\t")
 
 # preparing a dataframe with PS==1 seeds only (only for the sake of this example), using some Boolean slicing of the df dataframe
 df_PS1 = df[df["PS"] >= 1]
@@ -210,16 +223,16 @@ df_PS["isCalibration"] = isCalibrationSeed(df_PS["L1SeedName"])
 # df_PS1["isCalibration"] = isCalibrationSeed(df_PS1["L1SeedName"])
 
 # inspect the newly added column(s)
-df_PS1
+#df_PS1
 
 # Eventually, one should also automatically check and make sure that there is
 # only one "True" value per row for each row in the dataframe (ie, each seed
 # can only be in a single category)!
 
 # Example: inspect all (PS==1) seeds that have been identified as SingleMu seeds
-df_PS1[df_PS1["isSingleMu"] == True]
-df_PS1[df_PS1["isSingleEG"] == True]
-df_PS[df_PS["isCalibration"] == True]
+#df_PS1[df_PS1["isSingleMu"] == True]
+#df_PS1[df_PS1["isSingleEG"] == True]
+#df_PS[df_PS["isCalibration"] == True]
 
 # extracting the sum of proportional rates for all seeds which have isSingleMu == True
 # in this dummy example, we should add up 3960.02 + 2610.46 = 6570.48
@@ -253,7 +266,7 @@ for rate_type in ["PS_rate", "pure_rate", "prop_rate"]:
         df_PS[df_PS["isCalibration"] == True][rate_type]
     ).sum()
 # check the results
-from pprint import pprint
+#from pprint import pprint
 
 # pprint(sums)
 # pprint(sumCalib)
@@ -263,16 +276,43 @@ from pprint import pprint
 # plotting step...
 labels = []
 rates = []
+percnt = []
 for x, y in sums["prop_rate"].items():
-    print(x, y)
-    labels.append(x)
+    print("prop_rate: ",x, y)
+    labels.append(x[2:])
     rates.append(y)
 for x, y in sums["PS_rate"].items():
     print("PS_rate: ", x, y)
-plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=0.5, pctdistance=1.2)
-# plt.legend(labels)
+
+wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
+for label, pct_text in zip(lab, pct_text):
+	pct_text.set_rotation(label.get_rotation())
+
 plt.axis("equal")
+fig=plt.gcf()
 plt.show()
+ext=['png','pdf']
+for e in ext:
+	fig.savefig("{}_pieChart.{}".format(outputFileName,e),transparent=True)
+	print ("File saved: {}_pieChart.{}".format(outputFileName,e))
+
+## for getting percentages
+tot = sum(rates)
+figbar, ax = plt.subplots() 
+ax.barh(labels, rates,edgecolor='black',color='None',align='center', alpha=0.5)
+for i, v in enumerate(rates):
+	ax.text(v , i, '  {:.1f}'.format(v), color='black', va='center')
+	ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+plt.ylabel('Seeds')
+plt.xlabel('Rates of Seeds')
+plt.title('Rates for Various Seeds')
+plt.box(False)
+ax.get_xaxis().set_ticks([])
+barfig = plt.gcf()
+plt.show()
+for e in ext:
+	barfig.savefig("{}_barPlot.{}".format(outputFileName,e),transparent=True)
+	print ("File saved: {}_barPlot.{}".format(outputFileName,e))
 
 # df_PS1[df_PS1["isSingleEG"] == True]
 df_PS1[df_PS1["isMultiEG"] == True]
@@ -280,6 +320,8 @@ df_PS1[df_PS1["isMultiEG"] == True]
 # make sure that each seed is in only one category
 for i in range(len(df_PS1)):
     if list((df_PS1.iloc[i][7:])).count(True) != 1:
+    #if list((df_PS1.iloc[i][7:])).count(True) == 0:
+        #print ( (df_PS1.iloc[i][7:]) )
         print(
             "Inconsistent categorization: {} PS: {}, prop_rate: {}".format(
                 (df_PS1.iloc[i, 1]), df_PS1.iloc[i, 2], df_PS1.iloc[i, 6]
