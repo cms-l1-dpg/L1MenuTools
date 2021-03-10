@@ -1,45 +1,27 @@
 # L1 Rate Visualization Tool
 
-## Setup
-
+## Usage
+To get the L1 menu rates visualized in form of a pie chart and a bar chart, run the following command:
 ```
-python3 -m venv env
-source env/bin/activate
-pip install -U pip
-pip install -r requirements.txt
-```
-
-## User Guideline
-
-
-
-To get the rates visualized in form of a pie chart and a bar chart, run the following command:
-```
-python visualize.py --rateTable <rateTable.txt> --output <output name>
+bash run-visualize.py --rateTable <rateTable.txt> --output <output name>
 
 ```
 * ` --rateTable`: Downloaded rate table from which the rates should be visualized. The rate table is obtained by the L1MenuTools rate-estimation framework.
 		 menu_v2_1_0_rate2.txt is an example rate table obtained from late 2018 menu (L1Menu_Collisions2018_v2_1_0).
 * ` --output`   : Specify name of pieChart and barPlot to be saved.
 
-It will save 4 plots, "output_pieChart"(png,pdf) and "output_barPlot"(png,pdf).
+It will save four plots, `output_pieChart.{png,pdf}` and `output_barPlot.{png,pdf}`.
 
 
+## Seed Categorization Logic
+**Seeds are categorized by their names.** Each category is formed by some commonalities in the names, e.g., the "isSingleMuSeed" category should include seeds which have "SingleMu" in the name but should exclude seeds containing "Jet", "EG", "Tau", "HTT" etc.
 
+So, per category, *identifiers* and *vetoes* are defined, which define strings that should or should not be contained in the L1 seed name, respectively.
 
-## Seed Categorization
+In addition, for some seeds with jets (e.g., "isMuJetSeed") other selection criteria are added on top of the identifiers and vetoes (e.g., "Jetsums", which will contain "Jet", "HTT","EMT" etc.)
+If the seed has identifier(Mu) and any of the Jetsums in its name, that seed is categorized as "isMuJetSeed". 
 
-
-
-Seeds are categorize by their names. Each category is formed by some commonalities in the names, e.g., isSingleMuSeed category should include seeds which have "SingleMu" in the name 
-but should exclude the seeds which contain "Jet","EG", "Tau","HTT" etc in addition to "SingleMu".
-
-So, per category, we define identifiers and vetoes, which as their names suggest help us define what the name should have and what we skip if found.
-
-In addition, for some seeds with jets e.g., isMuJetSeed we add another selection criterion on top of identifiers and vetoes, Jetsums, which will contain "Jet", "HTT","EMT" etc. 
-If the seed has identifier(Mu) and any of the Jetsums in it's name that seed is categorized as isMuJetSeed. 
-
-Category | Identifiers | Vetoes | additional requirements |
+Category | Identifiers | Vetoes | Additional requirements |
 ---|---|---|---|
 SingleMu | SingleMu | Jet,EG,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
 MultiMu | DoubleMu, TripleMu, QuadMu |Jet,EG,Tau,ETM,HTT,ETT,ETMHF,ZeroBias | |
@@ -55,4 +37,4 @@ Sums| | EG,Mu,Tau,ZeroBias| ETM,HTT,ETT,ETMHF|
 ZeroBias| ZeroBias| EG,Mu,Tau,Jet,ETM,HTT,ETT,ETMHF| |
 Calibration| EG,Mu,Tau,Jet,ETM,HTT,ETT,ETMHF,ZeroBias| | |
 
-For Calibration Seed, we take everything with prescale value > 1.
+"Calibration" seeds are all seeds with prescale value > 1.

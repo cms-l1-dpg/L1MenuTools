@@ -2,7 +2,7 @@
 
 echo ""
 echo "Creating virtual environment..."
-virtualenv -p python3 env
+python3 -m venv env
 if [ $? -ne 0 ]; then
 	echo "Error creating virtual environment."
 	exit 1
