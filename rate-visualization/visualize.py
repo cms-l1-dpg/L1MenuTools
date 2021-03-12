@@ -300,8 +300,6 @@ for x, y in sums["{}".format(rateType)].items():
 #for x, y in sums["rate0"].items():
 #    print("pure rate: ", x, y)
 
-#colors = random.choices(list(mcolors.CSS4_COLORS.values()),k = len(labels))
-#colors = random.choices(list(mcolors.TABLEAU_COLORS.values()),k = len(labels))
 wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
 #wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=mcolors.TABLEAU_COLORS)
 for label, pct_text in zip(lab, pct_text):
@@ -325,7 +323,6 @@ for i, v in enumerate(rates):
 	ax.text(v , i, '             {:.1f} Hz'.format(v), color='black', va='center')
 	## rates in percentages displyed within the bars of plot, not the best solution , as they get jumbled up when the bar is too small
 	#ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
-#plt.figure(figsize=(8,4))
 plt.ylabel('Seeds')
 plt.xlabel('Rates of Seeds')
 plt.title('L1 Rates for Seed Categories\n(Total rate: {} kHz)'.format(df_PS1.iloc[-1,3]) )
@@ -344,11 +341,11 @@ df_PS1[df_PS1["isMultiEG"] == True]
 
 # make sure that each seed is in only one category
 for i in range(len(df_PS1)):
-    if list((df_PS1.iloc[i][7:])).count(True) != 1:
+    if list((df_PS1.iloc[i][7:])).count(True) > 1:
     #if list((df_PS1.iloc[i][7:])).count(True) == 0:
         #print ( (df_PS1.iloc[i][7:]) )
         print(
-            "Inconsistent categorization: {} PS: {}, prop_rate: {}".format(
+            "Inconsistent categorization: {} PS1: {}, prop_rate: {}".format(
                 (df_PS1.iloc[i, 1]), df_PS1.iloc[i, 2], df_PS1.iloc[i, 6]
             )
         )
