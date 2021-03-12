@@ -12,7 +12,7 @@ import random
 parser = argparse.ArgumentParser()
 parser.add_argument('--rateTable',
 	help='Existing rate table',
-    default="rateOutput.csv",
+    default="example-inputs/output_Run2unpacked.csv",
 	type=str,
 )
 parser.add_argument('--output',
