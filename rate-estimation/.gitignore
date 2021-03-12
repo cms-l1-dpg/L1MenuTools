@@ -8,6 +8,12 @@ menulib.cc
 /menu.txt
 L1Menu_*.xml
 
+# binaries
+testMenu2016
+
+# outputs
+results/
+
 # C/C++ extensions
 *.so
 *.o

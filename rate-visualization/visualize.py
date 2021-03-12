@@ -12,20 +12,28 @@ import random
 parser = argparse.ArgumentParser()
 parser.add_argument('--rateTable',
 	help='Existing rate table',
-	type=str)
+    default="rateOutput.csv",
+	type=str,
+)
 parser.add_argument('--output',
 	help='Name of created output file',
-	default='output_RateViz',
-	type=str)
+	default='rates',
+	type=str,
+)
 parser.add_argument('--rate',
 	help='Type of rate used in plots',
 	default='propotional0',
-	type=str)
+	type=str,
+)
 args = parser.parse_args()
 
 csv_rate_table = args.rateTable
-outputFileName = args.output
 rateType       = args.rate 
+outputFolder = "output/"
+outputFileName = os.path.join(outputFolder, args.output)
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+
 if not os.path.exists(csv_rate_table):
 	os.system( "wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuTools/master/piechart-tool/{}".format(csv_rate_table) ) 
 else:
@@ -299,7 +307,7 @@ for label, pct_text in zip(lab, pct_text):
 
 plt.axis("equal")
 fig=plt.gcf()
-plt.show()
+fig.tight_layout()
 ext=['png','pdf']
 for e in ext:
 	fig.savefig("{}_pieChart.{}".format(outputFileName,e),transparent=True)
@@ -308,20 +316,21 @@ for e in ext:
 ## for getting percentages
 tot = sum(rates)
 #print ("sum of all rate: ", tot)
-figbar, ax = plt.subplots(figsize=(11,4)) 
+figbar, ax = plt.subplots(figsize=(10,5)) 
 ax.barh(labels, rates,edgecolor='black',color='None',align='center', alpha=0.5)
 for i, v in enumerate(rates):
 	ax.text(v, i, '{:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
-	ax.text(v , i, '            {:.1f}{}'.format(v,'Hz'), color='black', va='center')
+	ax.text(v , i, '             {:.1f} Hz'.format(v), color='black', va='center')
 	## rates in percentages displyed within the bars of plot, not the best solution , as they get jumbled up when the bar is too small
 	#ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
 plt.ylabel('Seeds')
 plt.xlabel('Rates of Seeds')
-plt.title('Rates for Various Seeds.\n Total rate: {} {}'.format(df_PS1.iloc[-1,3], 'kHz') )
+plt.title('L1 Rates for Seed Categories\n(Total rate: {} kHz)'.format(df_PS1.iloc[-1,3]) )
 plt.box(False)
 ax.get_xaxis().set_ticks([])
+#ax.axis('off')
 barfig = plt.gcf()
-plt.show()
+barfig.tight_layout()
 for e in ext:
 	barfig.savefig("{}_barPlot.{}".format(outputFileName,e),transparent=True)
 	print ("File saved: {}_barPlot.{}".format(outputFileName,e))
