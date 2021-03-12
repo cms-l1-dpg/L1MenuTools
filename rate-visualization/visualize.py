@@ -10,38 +10,44 @@ import random
 
 # define CLI elements
 parser = argparse.ArgumentParser()
-parser.add_argument('--rateTable',
-	help='Existing rate table',
-    default="rateOutput.csv",
-	type=str,
+parser.add_argument(
+    "--rateTable",
+    help="Existing rate table",
+    default="example-inputs/output_Run2unpacked.csv",
+    type=str,
 )
-parser.add_argument('--output',
-	help='Name of created output file',
-	default='rates',
-	type=str,
+parser.add_argument(
+    "--output",
+    help="Name of created output file",
+    default="rates",
+    type=str,
 )
-parser.add_argument('--rate',
-	help='Type of rate used in plots',
-	default='propotional0',
-	type=str,
+parser.add_argument(
+    "--rate",
+    help="Type of rate used in plots",
+    default="propotional0",
+    type=str,
 )
 args = parser.parse_args()
 
 csv_rate_table = args.rateTable
-rateType       = args.rate 
+rateType = args.rate
 outputFolder = "output/"
 outputFileName = os.path.join(outputFolder, args.output)
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 
 if not os.path.exists(csv_rate_table):
-	os.system( "wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuTools/master/piechart-tool/{}".format(csv_rate_table) ) 
+    os.system(
+        "wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuTools/master/piechart-tool/{}".format(
+            csv_rate_table
+        )
+    )
 else:
-	print("Rate table exists, no need to download it")
+    print("Rate table exists, no need to download it")
 
 # reading the rate table
 df = pd.read_csv(csv_rate_table, sep=",")
-
 
 
 # preparing a dataframe with PS==1 seeds only (only for the sake of this example), using some Boolean slicing of the df dataframe
@@ -237,21 +243,21 @@ df_PS["isCalibration"] = isCalibrationSeed(df_PS["L1SeedName"])
 # df_PS1["isCalibration"] = isCalibrationSeed(df_PS1["L1SeedName"])
 
 # inspect the newly added column(s)
-#df_PS1
+# df_PS1
 
 # Eventually, one should also automatically check and make sure that there is
 # only one "True" value per row for each row in the dataframe (ie, each seed
 # can only be in a single category)!
 
 # Example: inspect all (PS==1) seeds that have been identified as SingleMu seeds
-#df_PS1[df_PS1["isSingleMu"] == True]
-#df_PS1[df_PS1["isSingleEG"] == True]
-#df_PS[df_PS["isCalibration"] == True]
+# df_PS1[df_PS1["isSingleMu"] == True]
+# df_PS1[df_PS1["isSingleEG"] == True]
+# df_PS[df_PS["isCalibration"] == True]
 
 # extracting the sum of proportional rates for all seeds which have isSingleMu == True
 # in this dummy example, we should add up 3960.02 + 2610.46 = 6570.48
 sums = {}
-#for rate_type in ["rate0", "pure0", "propotional0"]:
+# for rate_type in ["rate0", "pure0", "propotional0"]:
 for rate_type in ["{}".format(rateType)]:
     sums[rate_type] = {}
     # calculating calibration for PS_rate as done in Aloke's script
@@ -276,13 +282,13 @@ for rate_type in ["{}".format(rateType)]:
         sums[rate_type][category] = (df_PS1[df_PS1[category] == True][rate_type]).sum()
 sumCalib = {}
 for rate_type in ["{}".format(rateType)]:
-#for rate_type in ["rate0", "pure0", "propotional0"]:
+    # for rate_type in ["rate0", "pure0", "propotional0"]:
     sumCalib[rate_type] = {}
     sumCalib[rate_type]["isCalibration"] = (
         df_PS[df_PS["isCalibration"] == True][rate_type]
     ).sum()
 # check the results
-#from pprint import pprint
+# from pprint import pprint
 
 # pprint(sums)
 # pprint(sumCalib)
@@ -294,56 +300,74 @@ labels = []
 rates = []
 percnt = []
 for x, y in sums["{}".format(rateType)].items():
-    print("{}: ".format(rateType),x, y)
+    print("{}: ".format(rateType), x, y)
     labels.append(x[2:])
     rates.append(y)
-#for x, y in sums["rate0"].items():
+# for x, y in sums["rate0"].items():
 #    print("pure rate: ", x, y)
 
-wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
-#wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=mcolors.TABLEAU_COLORS)
+wedges, lab, pct_text = plt.pie(
+    rates,
+    labels=labels,
+    autopct="%1.1f%%",
+    labeldistance=1.0,
+    pctdistance=0.6,
+    rotatelabels=True,
+    colors=plt.cm.tab20.colors,
+)
+# wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=mcolors.TABLEAU_COLORS)
 for label, pct_text in zip(lab, pct_text):
-	pct_text.set_rotation(label.get_rotation())
+    pct_text.set_rotation(label.get_rotation())
 
 plt.axis("equal")
-fig=plt.gcf()
+fig = plt.gcf()
 fig.tight_layout()
-ext=['png','pdf']
+ext = ["png", "pdf"]
 for e in ext:
-	fig.savefig("{}_pieChart.{}".format(outputFileName,e),transparent=True)
-	print ("File saved: {}_pieChart.{}".format(outputFileName,e))
+    fig.savefig("{}_pieChart.{}".format(outputFileName, e), transparent=True)
+    print("File saved: {}_pieChart.{}".format(outputFileName, e))
 
 ## for getting percentages
 tot = sum(rates)
-#print ("sum of all rate: ", tot)
-figbar, ax = plt.subplots(figsize=(10,5)) 
-ax.barh(labels, rates,edgecolor='black',color='None',align='center', alpha=0.5)
+# print ("sum of all rate: ", tot)
+figbar, ax = plt.subplots(figsize=(10, 5))
+ax.barh(labels, rates, edgecolor="black", color="None", align="center", alpha=0.5)
 for i, v in enumerate(rates):
-	ax.text(v, i, '{:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
-	ax.text(v , i, '             {:.1f} Hz'.format(v), color='black', va='center')
-	## rates in percentages displyed within the bars of plot, not the best solution , as they get jumbled up when the bar is too small
-	#ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
-plt.ylabel('Seeds')
-plt.xlabel('Rates of Seeds')
-plt.title('L1 Rates for Seed Categories\n(Total rate: {} kHz)'.format(df_PS1.iloc[-1,3]) )
+    ax.text(
+        v,
+        i,
+        "{:.1f}{}".format((v / tot) * 100, "%"),
+        horizontalalignment="left",
+        color="black",
+        va="center",
+        fontweight="bold",
+    )
+    ax.text(v, i, "             {:.1f} Hz".format(v), color="black", va="center")
+    ## rates in percentages displyed within the bars of plot, not the best solution , as they get jumbled up when the bar is too small
+    # ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+plt.ylabel("Seeds")
+plt.xlabel("Rates of Seeds")
+plt.title(
+    "L1 Rates for Seed Categories\n(Total rate: {} kHz)".format(df_PS1.iloc[-1, 3])
+)
 plt.box(False)
 ax.get_xaxis().set_ticks([])
-#ax.axis('off')
+# ax.axis('off')
 barfig = plt.gcf()
 barfig.tight_layout()
 for e in ext:
-	barfig.savefig("{}_barPlot.{}".format(outputFileName,e),transparent=True)
-	print ("File saved: {}_barPlot.{}".format(outputFileName,e))
+    barfig.savefig("{}_barPlot.{}".format(outputFileName, e), transparent=True)
+    print("File saved: {}_barPlot.{}".format(outputFileName, e))
 
-#print ("last line of df: ", df_PS1.iloc[-1,3])
+# print ("last line of df: ", df_PS1.iloc[-1,3])
 # df_PS1[df_PS1["isSingleEG"] == True]
 df_PS1[df_PS1["isMultiEG"] == True]
 
 # make sure that each seed is in only one category
 for i in range(len(df_PS1)):
     if list((df_PS1.iloc[i][7:])).count(True) > 1:
-    #if list((df_PS1.iloc[i][7:])).count(True) == 0:
-        #print ( (df_PS1.iloc[i][7:]) )
+        # if list((df_PS1.iloc[i][7:])).count(True) == 0:
+        # print ( (df_PS1.iloc[i][7:]) )
         print(
             "Inconsistent categorization: {} PS1: {}, prop_rate: {}".format(
                 (df_PS1.iloc[i, 1]), df_PS1.iloc[i, 2], df_PS1.iloc[i, 6]

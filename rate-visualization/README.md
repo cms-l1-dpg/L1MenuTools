@@ -8,7 +8,7 @@ bash run-visualize.sh --rateTable <rateTable.txt> --output <output name>
 ```
 * `--rateTable`: Downloaded a rate table from which the rates should be visualized.
   The rate table is obtained by the L1MenuTools rate-estimation/ framework.
-  (`rateOutput.csv` is an example rate table.)
+  (default: `example-inputs/output_Run2unpacked.csv`)
 * `--rate`     : Type of rate to be plotted (must correspond to a column header of the
   input rate table file)
 * `--output`   : Specify the name of pieChart and barPlot to be saved.
