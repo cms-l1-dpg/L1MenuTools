@@ -1,2 +1,4 @@
 # Don't track content of these folders
 plots/
+hlt_l1_seeds/
+temp/
