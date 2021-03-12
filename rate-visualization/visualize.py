@@ -17,22 +17,28 @@ parser.add_argument('--output',
 	help='Name of created output file',
 	default='output_RateViz',
 	type=str)
+parser.add_argument('--rate',
+	help='Type of rate used in plots',
+	default='propotional0',
+	type=str)
 args = parser.parse_args()
 
 csv_rate_table = args.rateTable
 outputFileName = args.output
-
+rateType       = args.rate 
 if not os.path.exists(csv_rate_table):
 	os.system( "wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuTools/master/piechart-tool/{}".format(csv_rate_table) ) 
 else:
 	print("Rate table exists, no need to download it")
 
 # reading the rate table
-df = pd.read_csv(csv_rate_table, sep="\t")
+df = pd.read_csv(csv_rate_table, sep=",")
+
+
 
 # preparing a dataframe with PS==1 seeds only (only for the sake of this example), using some Boolean slicing of the df dataframe
-df_PS1 = df[df["PS"] >= 1]
-df_PS = df[df["PS"] > 1]
+df_PS1 = df[df["pre-scale0"] >= 1]
+df_PS = df[df["pre-scale0"] > 1]
 
 # definition of one of the categorization functions
 # (mind the extra @np.vectorize decorator - this is necessary to parallelize the function application call for entire columns later on)
@@ -237,12 +243,13 @@ df_PS["isCalibration"] = isCalibrationSeed(df_PS["L1SeedName"])
 # extracting the sum of proportional rates for all seeds which have isSingleMu == True
 # in this dummy example, we should add up 3960.02 + 2610.46 = 6570.48
 sums = {}
-for rate_type in ["PS_rate", "pure_rate", "prop_rate"]:
+#for rate_type in ["rate0", "pure0", "propotional0"]:
+for rate_type in ["{}".format(rateType)]:
     sums[rate_type] = {}
     # calculating calibration for PS_rate as done in Aloke's script
     # sums[rate_type]["isCalibration"] = (df_PS[df_PS["isCalibration"] == True][rate_type]).sum()
     sums[rate_type]["isCalibration"] = (
-        df_PS[df_PS["isCalibration"] == True]["PS_rate"]
+        df_PS[df_PS["isCalibration"] == True]["rate0"]
     ).sum()
     for category in [
         "isSingleMu",
@@ -260,7 +267,8 @@ for rate_type in ["PS_rate", "pure_rate", "prop_rate"]:
     ]:  # can be extended later: ["isSingleMu", "isMultiMu",...]
         sums[rate_type][category] = (df_PS1[df_PS1[category] == True][rate_type]).sum()
 sumCalib = {}
-for rate_type in ["PS_rate", "pure_rate", "prop_rate"]:
+for rate_type in ["{}".format(rateType)]:
+#for rate_type in ["rate0", "pure0", "propotional0"]:
     sumCalib[rate_type] = {}
     sumCalib[rate_type]["isCalibration"] = (
         df_PS[df_PS["isCalibration"] == True][rate_type]
@@ -277,14 +285,17 @@ for rate_type in ["PS_rate", "pure_rate", "prop_rate"]:
 labels = []
 rates = []
 percnt = []
-for x, y in sums["prop_rate"].items():
-    print("prop_rate: ",x, y)
+for x, y in sums["{}".format(rateType)].items():
+    print("{}: ".format(rateType),x, y)
     labels.append(x[2:])
     rates.append(y)
-for x, y in sums["PS_rate"].items():
-    print("PS_rate: ", x, y)
+#for x, y in sums["rate0"].items():
+#    print("pure rate: ", x, y)
 
+#colors = random.choices(list(mcolors.CSS4_COLORS.values()),k = len(labels))
+#colors = random.choices(list(mcolors.TABLEAU_COLORS.values()),k = len(labels))
 wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
+#wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=mcolors.TABLEAU_COLORS)
 for label, pct_text in zip(lab, pct_text):
 	pct_text.set_rotation(label.get_rotation())
 
@@ -298,22 +309,29 @@ for e in ext:
 
 ## for getting percentages
 tot = sum(rates)
-figbar, ax = plt.subplots() 
+#print ("sum of all rate: ", tot)
+figbar, ax = plt.subplots(figsize=(10,4)) 
 ax.barh(labels, rates,edgecolor='black',color='None',align='center', alpha=0.5)
 for i, v in enumerate(rates):
-	ax.text(v , i, '  {:.1f}'.format(v), color='black', va='center')
-	ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+	ax.text(v, i, '{:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+	ax.text(v , i, '             {:.1f}'.format(v), color='black', va='center')
+	## rates in percentages displyed within the bars of plot, not the best solution , as they get jumbled up when the bar is too small
+	#ax.text(v*0.1 , i, '  {:.1f}{}'.format((v/tot)*100,'%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+#plt.figure(figsize=(8,4))
 plt.ylabel('Seeds')
 plt.xlabel('Rates of Seeds')
-plt.title('Rates for Various Seeds')
+plt.title('Rates for Various Seeds.\n Total rate: {}'.format(df_PS1.iloc[-1,3]) )
 plt.box(False)
 ax.get_xaxis().set_ticks([])
+#ax.axis('off')
+#plt.show()
 barfig = plt.gcf()
 plt.show()
 for e in ext:
 	barfig.savefig("{}_barPlot.{}".format(outputFileName,e),transparent=True)
 	print ("File saved: {}_barPlot.{}".format(outputFileName,e))
 
+#print ("last line of df: ", df_PS1.iloc[-1,3])
 # df_PS1[df_PS1["isSingleEG"] == True]
 df_PS1[df_PS1["isMultiEG"] == True]
 
