@@ -13,6 +13,7 @@ import math
 import subprocess
 import collections
 import pdb
+import csv
 
 ## User-defined constants
 MAX_FILE = 1      ## Maximum number of input files to process
@@ -110,6 +111,20 @@ def main():
             print '\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group)
             L1T_missing.append(path)
 
+    HLT_L1_seeds = {}
+    HLT_missing = []
+    path = './hlt_l1_seeds/test.csv'
+    with open(path,'r') as csvfile:
+        reader = csv.reader(csvfile,delimiter=',')
+        header = next(reader)
+        for j in range(1,len(header)):
+            HLT_L1_seeds[header[j]] = {}
+        for row in reader:
+            for j in range(1,len(row)):
+		
+                HLT_L1_seeds[header[j]][row[0]] = row[j].split(' OR ')
+
+
     ## Remove missing paths to avoid errors when calling ch.GetLeaf(path)
     for ele in L1T_missing:
         L1T_unpr_all.remove(ele)
@@ -176,7 +191,8 @@ def main():
             if iEvt % PRT_EVT is 0: print 'Event #%d / %d' % (iEvt, MAX_EVT)
 
             ch.GetEntry(jEvt)
-            
+            run = str(ch.GetLeaf('run').GetValue()).split('.')[0]           
+
             if ch.PV_npvsGood < PU_MIN: continue
             iPass += 1
 
@@ -228,9 +244,17 @@ def main():
                     ###  Should have a conditional that this L1T path seeds the firing HLT path  ###
                     ###           e.g. if not seed in HLT_L1_seeds[path]: continue               ###
                     ################################################################################
-                    L1T_acc       [seed].append(path)
-                    HLT_seed_fired[path].append(seed)
-                    if VERBOSE: print '  * %s also fired' % seed
+                    try:
+                        if not seed in HLT_L1_seeds[run][path]: continue
+        
+                        L1T_acc[seed].append(path)
+                        HLT_seed_fired[path].append(seed)
+                        if VERBOSE: print '  * %s fires %s' % (seed,path)
+
+                    except KeyError:
+                        HLT_missing.append(path)
+                        print '\n%s not in user defined HLT-L1-seeds!!! Program will continue.' % (path)
+                        
                 ## End loop: for seed in L1T_pass:
             ## End loop: for iHLT in range(len(HLT_paths))
 
@@ -461,6 +485,11 @@ def main():
     if L1T_missing !=[]:
         print '\nThe missing seeds are:'
         for ele in L1T_missing:
+            print ele
+
+    if HLT_missing !=[]:
+        print '\nThe missing paths are:'
+        for ele in HLT_missing:
             print ele
     
 
