@@ -1,3 +1,6 @@
+### custom exludes ###
+output/
+
 ### Linux ###
 *~
 
