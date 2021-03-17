@@ -17,7 +17,7 @@ import csv
 
 ## User-defined constants
 MAX_FILE = 1      ## Maximum number of input files to process
-MAX_EVT  = 500000 ## Maximum number of events to process
+MAX_EVT  = 10000 ## Maximum number of events to process
 PRT_EVT  = 10000  ## Print to screen every Nth event
 VERBOSE  = False  ## Print extra info about each event
 
@@ -121,7 +121,6 @@ def main():
             HLT_L1_seeds[header[j]] = {}
         for row in reader:
             for j in range(1,len(row)):
-		
                 HLT_L1_seeds[header[j]][row[0]] = row[j].split(' OR ')
 
 
@@ -245,10 +244,13 @@ def main():
                     ###           e.g. if not seed in HLT_L1_seeds[path]: continue               ###
                     ################################################################################
                     try:
-                        if not seed in HLT_L1_seeds[run][path]: continue
+                        if not seed in HLT_L1_seeds[run][path]: 
+                            print '%s not in %s!!!' % (seed,path)
+                            continue
         
                         L1T_acc[seed].append(path)
                         HLT_seed_fired[path].append(seed)
+                        print '  * %s fires %s' % (seed,path)
                         if VERBOSE: print '  * %s fires %s' % (seed,path)
 
                     except KeyError:
@@ -271,6 +273,7 @@ def main():
                     hists['L1T_%s_rate_pure'  % group].Fill(iL1T+1, (len(L1T_pass) == 1))
                     hists['L1T_%s_rate_prop'  % group].Fill(iL1T+1, 1.0 / len(L1T_pass))
 
+
                     ## Require that L1T path seeded at least one HLT path which fired
                     if len(L1T_acc[seed]) == 0: continue
                     ## For each fired HLT path seeded by this L1T path, count the number of other
@@ -289,6 +292,7 @@ def main():
                     hists['L1T_%s_acc_rate_pure'  % group].Fill(iL1T+1, (nAcc_L1T == 1))
                     hists['L1T_%s_acc_rate_prop'  % group].Fill(iL1T+1, 1.0 / nAcc_L1T)
 
+
                 ## End loop: for iL1T in range(len(L1T_unpr[group])):
             ## End loop: for group in L1T_unpr.keys():
 
@@ -297,8 +301,6 @@ def main():
     ## End loop over chains (ch)
 
     print 'Finished with loop over %d events' % iEvt
-
-
 
     ## Configure the rate histograms
     for hname in hists.keys():
@@ -322,6 +324,33 @@ def main():
             hists[hname].Scale(30000. / iPass)
 #            print("Re-insert Scaling!!!!")
 
+
+    ## Two 2D Tables
+
+    from prettytable import PrettyTable
+
+    x = PrettyTable()
+    y = PrettyTable()
+
+    x.field_names = ['group', 'total rate', 'prop rate', 'pure rate']
+    y.field_names = ['group', 'total acc rate', 'prop acc rate', 'pure acc rate']
+
+    for group in L1T_unpr.keys():
+        
+        total_x = hists['L1T_%s_rate_total' % group].Integral()
+        total_y = hists['L1T_%s_acc_rate_total' % group].Integral()
+
+        prop_x = hists['L1T_%s_rate_prop' % group].Integral()
+        prop_y = hists['L1T_%s_acc_rate_prop' % group].Integral()
+
+        pure_x = hists['L1T_%s_rate_pure' % group].Integral()
+        pure_y = hists['L1T_%s_acc_rate_pure' % group].Integral()
+
+        x.add_row([group, total_x, prop_x, pure_x])
+        y.add_row([group, total_y, prop_y, pure_y])
+
+    print(x)
+    print(y)
 
 ######################
 ## Save the histograms
@@ -480,7 +509,8 @@ def main():
         c0.SaveAs(png_dir+'h_L1T_%s_acc_frac.png' % group)
 
     ## End loop: for group in L1T_unpr.keys()
-    
+
+
     ## Display the unprescaled seeds defined by the user which are not present in the root file again
     if L1T_missing !=[]:
         print '\nThe missing seeds are:'
