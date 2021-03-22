@@ -17,11 +17,12 @@ import csv
 
 ## User-defined constants
 MAX_FILE = 1      ## Maximum number of input files to process
-MAX_EVT  = 10000 ## Maximum number of events to process
+MAX_EVT  = 500000 ## Maximum number of events to process
 PRT_EVT  = 10000  ## Print to screen every Nth event
 VERBOSE  = False  ## Print extra info about each event
 
 PU_MIN   = 0      ## Minimum number of good reconstructed vertices
+
 
 
 def main():
@@ -34,11 +35,19 @@ def main():
     in_dir = '/afs/cern.ch/user/m/mmatthew/public/'
 
     ## Loop through available input files
-    for file_name in subprocess.check_output(['ls', in_dir]).splitlines():
-        if not '.root' in file_name: continue
-        in_file_names.append(in_dir+file_name)
-        print 'Opening file: '+in_file_names[-1]
-        if len(in_file_names) >= MAX_FILE: break
+    #for file_name in subprocess.check_output(['ls', in_dir]).splitlines():
+    #    if not '.root' in file_name: continue
+    #    in_file_names.append(in_dir+file_name)
+    #    print 'Opening file: '+in_file_names[-1]
+    #    if len(in_file_names) >= MAX_FILE: break
+
+
+    ## Read input files from list
+    txtfile = 'rootfiles/test.txt'
+    redirector = 'root://xrootd-cms.infn.it/'
+    for ele in open(txtfile,'r'):
+        in_file_names.append(redirector + ele.split('\n')[0])
+        if len(in_file_names) >= MAX_FILE:break
 
     ## Chain together trees from input files
     in_chains = []
@@ -173,6 +182,7 @@ def main():
 #############
 ## Event loop
 #############
+
 
     iEvt  = 0  ## Event index
     iPass = 0  ## Number of events passing pileup cut 

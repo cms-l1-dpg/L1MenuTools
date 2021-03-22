@@ -4,12 +4,19 @@ import os
 import time
 
 
-def hlt_GetConfig(directory, rootfiles):
-    for rootfile in rootfiles:
+def hlt_GetConfig(directory, txtfile, MAXFILES, redirector):
 
+    start = time.time()
+
+    rootfiles = []
+    for fdir in open(txtfile,'r'):
+        rootfiles.append(fdir.split('\n')[0])
+        if len(rootfiles)>MAXFILES:break
+    
+    for rootfile in rootfiles:
         runs = []
 
-        f = R.TFile.Open(rootfile)
+        f = R.TFile.Open(redirector + rootfile)
         branch = f.Get('Runs')
         for irun in range(branch.GetEntries()):
             branch.GetEntry(irun)
@@ -18,20 +25,20 @@ def hlt_GetConfig(directory, rootfiles):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        commands = []
+    runs = set(runs)
+    commands = []
 
-        for run in runs:
-            command = 'hltGetConfiguration run:' + run + '>' + directory +run + '.py'
-            commands.append(command)
+    for run in runs:
+        command = 'hltGetConfiguration run:' + run + '>' + directory +run + '.py'
+        commands.append(command)
 
-        start = time.time()
-        # run in parallel
-        processes = [Popen(cmd, shell=True,stdout=PIPE, stderr=PIPE) for cmd in commands]
+    # run in parallel
+    processes = [Popen(cmd, shell=True,stdout=PIPE, stderr=PIPE) for cmd in commands]
 
-        # wait for completion
+    # wait for completion
 
-        for p in processes:
-            p.wait()
+    for p in processes:
+        p.wait()
 
-	print('HLT menu generation process took ' + str(time.time()-start) + ' seconds')
-        print('HLT menus stored in '+ directory)
+    print('HLT menu generation process took ' + str(time.time()-start) + ' seconds')
+    print('HLT menus stored in '+ directory)

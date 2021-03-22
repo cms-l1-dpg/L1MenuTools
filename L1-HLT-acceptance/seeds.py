@@ -7,27 +7,32 @@ import time
 
 parser = argparse.ArgumentParser(description = 'Generate run specific HLT-L1 information from either ROOT files or HLT menus')
 parser.add_argument('--from_menus', action= 'store_false', default = True, help = 'create HLT-L1 information from ROOT file (True) or from directory containing HLT menus (False)', dest = 'fromroot')
-parser.add_argument('--ROOT_files', type = list, default = ['/afs/cern.ch/user/m/mmatthew/public/5613275E-184E-9A43-AA73-ACB61275D947.root'], dest = 'rootfiles', help = 'list of root files from which run specific HLT menus are created')
-parser.add_argument('--temp_dir', type = str, default = 'temp/', dest = 'rootdir', help = 'define temporary directory where HLT menus created from root files are stored')
+parser.add_argument('--ROOT_fnames', type = str, default = 'rootfiles/test.txt', dest = 'fnames', help = 'list of root filenames from which run specific HLT menus are created')
+parser.add_argument('--temp_dir', type = str, default = 'temp/', dest = 'tempdir', help = 'define temporary directory where HLT menus created from root files are stored')
 parser.add_argument('--keep_temp_dir', action = 'store_false', default=True, dest = 'delete', help = 'set False to keep the temporary directory')
 parser.add_argument('--dir_menus', type = str, default = 'temp/', dest = 'menudir', help = 'define directory with HLT menus from which the HLT-L1 information is extracted')
 parser.add_argument('--dir_hlt_l1', type = str, default = 'hlt_l1_seeds/', dest = 'savedir', help = 'define directory where HLT-L1 information is stored as a csv file with the header: HLT, run1, run2, ...')
+parser.add_argument('--redirector', type = str, default = 'root://xrootd-cms.infn.it/', dest = 'redirector', help = 'set redirector to load root files from')
+parser.add_argument('--MAXFILES', type = int, default = 10, dest = 'maxfiles', help = '# of root files to process from list')
 
 args = parser.parse_args()
 
 fromroot = args.fromroot
-rootdir = args.rootdir
+tempdir = args.tempdir
 menudir = args.menudir
-rootfiles = args.rootfiles
+fnames = args.fnames
 savedir = args.savedir
 delete = args.delete
+redirector = args.redirector
+maxfiles= args.maxfiles
+
 
 if not fromroot:
     delete = False
 
 if fromroot:
-    directory = rootdir
-    utils.automate.hlt_GetConfig(directory, rootfiles)
+    directory = tempdir
+    utils.automate.hlt_GetConfig(directory, fnames, maxfiles, redirector)
     files = os.listdir(directory)
 
 if not fromroot:
