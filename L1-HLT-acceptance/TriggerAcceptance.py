@@ -14,16 +14,30 @@ import subprocess
 import collections
 import pdb
 import csv
+import argparse
+
+parser = argparse.ArgumentParser(description = 'A script to compute the fraction of passing Level-1 Trigger paths accepted by HLT')
+
+parser.add_argument('--MAX_FILE', type = int, default = 1, help = 'Maximum number of input files to process')
+parser.add_argument('--MAX_EVT', type = int, default = 500000, help = 'Maximum number of events to process')
+parser.add_argument('--PRT_EVT', type = int, default = 10000, help = 'Print to screen every Nth event')
+parser.add_argument('--VERBOSE', action = 'store_true', default = False, help = 'Print extra info about each event')
+parser.add_argument('--PU_MIN', type = int, default = 0, help = 'Minimum number of good reconstructed vertices')
+parser.add_argument('--ROOTFILES', type =str, default = 'rootfiles/test.txt', help = 'Location of txt file containing ROOT file names' )
+parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', help = 'Redirector used to load ROOT files from')
+parser.add_argument('--HLT_L1_SEEDS', type = str, default = './hlt_l1_seeds/test.csv', help = 'csv file containing run specific HLT-L1 combinations')
+
+args = parser.parse_args()
 
 ## User-defined constants
-MAX_FILE = 1      ## Maximum number of input files to process
-MAX_EVT  = 500000 ## Maximum number of events to process
-PRT_EVT  = 10000  ## Print to screen every Nth event
-VERBOSE  = False  ## Print extra info about each event
+MAX_FILE = args.MAX_FILE      ## Maximum number of input files to process
+MAX_EVT  = args.MAX_EVT ## Maximum number of events to process
+PRT_EVT  = args.PRT_EVT  ## Print to screen every Nth event
+VERBOSE  = args.VERBOSE  ## Print extra info about each event
 
-PU_MIN   = 0      ## Minimum number of good reconstructed vertices
+PU_MIN   = args.PU_MIN      ## Minimum number of good reconstructed vertices
 
-
+from IPython import embed;embed()
 
 def main():
 
@@ -43,8 +57,8 @@ def main():
 
 
     ## Read input files from list
-    txtfile = 'rootfiles/test.txt'
-    redirector = 'root://xrootd-cms.infn.it/'
+    txtfile = args.ROOTFILES
+    redirector = args.REDIRECTOR
     for ele in open(txtfile,'r'):
         in_file_names.append(redirector + ele.split('\n')[0])
         if len(in_file_names) >= MAX_FILE:break
@@ -61,9 +75,12 @@ def main():
     ## Set output directories (create if they do not exist)
     if not os.path.exists('plots/png/%s/' % BASE_STR):
         os.makedirs('plots/png/%s/' % BASE_STR)
+    if not os.path.exists('plots/pdf/%s/' % BASE_STR):
+        os.makedirs('plots/pdf/%s/' % BASE_STR)
         
     out_file = R.TFile('plots/%s.root' % BASE_STR, 'recreate')
     png_dir  = 'plots/png/%s/' % BASE_STR
+    pdf_dir  = 'plots/pdf/%s/' % BASE_STR
 
     
 ####################
@@ -122,7 +139,7 @@ def main():
 
     HLT_L1_seeds = {}
     HLT_missing = []
-    path = './hlt_l1_seeds/test.csv'
+    path = args.HLT_L1_SEEDS
     with open(path,'r') as csvfile:
         reader = csv.reader(csvfile,delimiter=',')
         header = next(reader)
@@ -389,6 +406,7 @@ def main():
     legend.Draw()
     hists['nPV'].Write()
     c0.SaveAs(png_dir+'h_nPV.png')
+    c0.SaveAs(pdf_dir+'h_nPV.pdf')
 
 
     ## Draw the HLT rate histograms
@@ -398,7 +416,7 @@ def main():
     hists['HLT_rate_total'].Draw('hist')
     hists['HLT_rate_total'].Write()
     c0.SaveAs(png_dir+'h_HLT_rate.png')
-
+    c0.SaveAs(pdf_dir+'h_HLT_rate.pdf')
 
     ## Draw the L1T rate and acceptance histograms for each group
     for group in L1T_unpr.keys():
@@ -426,6 +444,7 @@ def main():
         hists['L1T_%s_rate_total' % group].SetTitle('L1T rates')
 
         c0.SaveAs(png_dir+'h_L1T_%s_rate.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate.pdf' % group)
 
         ## HLT acceptance rate histograms, including purity w.r.t. HLT acceptance
         legend = R.TLegend(0.78,0.78,0.98,0.93)
@@ -449,6 +468,7 @@ def main():
         hists['L1T_%s_acc_rate_pure'  % group].Write()
         hists['L1T_%s_acc_rate_total' % group].SetTitle('L1T HLT-accepted rates')
         c0.SaveAs(png_dir+'h_L1T_%s_acc_rate.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_acc_rate.pdf' % group)
 
         ## Total rate and HLT acceptance overlaid
         legend = R.TLegend(0.78,0.78,0.98,0.93)
@@ -461,6 +481,7 @@ def main():
         legend.Draw()
         hists['L1T_%s_rate_total'     % group].SetTitle('L1T net and HLT-accepted total rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_total.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate_acc_total.pdf' % group)
 
         ## Proportional rate and HLT acceptance overlaid
         legend = R.TLegend(0.78,0.78,0.98,0.93)
@@ -473,6 +494,7 @@ def main():
         legend.Draw()
         hists['L1T_%s_rate_prop'     % group].SetTitle('L1T net and HLT-accepted proportional rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_prop.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate_acc_prop.pdf' % group)
 
         ## Pure rate and HLT acceptance overlaid
         legend = R.TLegend(0.78,0.78,0.98,0.93)
@@ -485,6 +507,7 @@ def main():
         legend.Draw()
         hists['L1T_%s_rate_pure'     % group].SetTitle('L1T net and HLT-accepted pure rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_pure.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate_acc_pure.pdf' % group)
 
         ## HLT acceptance fraction histograms, including purity w.r.t. HLT acceptance
         legend = R.TLegend(0.78,0.78,0.98,0.93)
@@ -517,6 +540,7 @@ def main():
         hists['L1T_%s_acc_rate_pure'  % group].Write()
         hists['L1T_%s_acc_rate_total' % group].SetTitle('L1T fraction of HLT-accepted events')
         c0.SaveAs(png_dir+'h_L1T_%s_acc_frac.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_acc_frac.pdf' % group)
 
     ## End loop: for group in L1T_unpr.keys()
 
