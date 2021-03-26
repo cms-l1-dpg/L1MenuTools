@@ -37,8 +37,6 @@ VERBOSE  = args.VERBOSE  ## Print extra info about each event
 
 PU_MIN   = args.PU_MIN      ## Minimum number of good reconstructed vertices
 
-from IPython import embed;embed()
-
 def main():
 
 ###################
@@ -331,7 +329,6 @@ def main():
 
     ## Configure the rate histograms
     for hname in hists.keys():
-        hists[hname].SetMinimum(0)
         hists[hname].SetStats(0)
         ## Label the L1T and HLT histogram axes
         if hname.startswith('HLT') and hists[hname].GetNbinsX() == len(HLT_paths):
@@ -351,6 +348,7 @@ def main():
             hists[hname].Scale(30000. / iPass)
 #            print("Re-insert Scaling!!!!")
 
+        hists[hname].SetMinimum(0) # Necessary to set at end otherwise command is ignored due to scaling
 
     ## Two 2D Tables
 
