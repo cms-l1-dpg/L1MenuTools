@@ -1,3 +1,5 @@
+
+
 from subprocess import Popen,PIPE
 import ROOT as R
 import os
@@ -21,17 +23,19 @@ def hlt_GetConfig(directory, txtfile, MAXFILES, redirector):
     rootfiles = []
     for fdir in open(txtfile,'r'):
         rootfiles.append(fdir.split('\n')[0])
-        if len(rootfiles)>MAXFILES:break
+        if len(rootfiles)>=MAXFILES:break
     
     ## Get runs from ROOT files
 
     runs = []
     for rootfile in rootfiles:
+        print(rootfile)
         f = R.TFile.Open(redirector + rootfile)
         branch = f.Get('Runs')
         for irun in range(branch.GetEntries()):
             branch.GetEntry(irun)
             runs.append(str(branch.GetLeaf('run').GetValue()).split('.')[0])
+        f.Close()
 
     runs = set(runs)
 
