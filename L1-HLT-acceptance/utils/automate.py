@@ -58,7 +58,7 @@ def hlt_GetConfig(directory, txtfile, MAXFILES, redirector):
     ## wait for completion
 
     for p in processes:
-        p.wait()
+        p.communicate()
 
     print('HLT menu generation process took ' + str(time.time()-start) + ' seconds')
     print('HLT menus stored in '+ directory)
