@@ -6,10 +6,10 @@ import argparse
 import time
 
 parser = argparse.ArgumentParser(description = 'Generate run specific HLT-L1 information from either ROOT files or HLT menus')
-parser.add_argument('--FROM_ROOT', action= 'store_true', default = True, help = 'create HLT-L1 information from ROOT files (True) or from directory containing HLT menus (False)', dest = 'fromroot')
+parser.add_argument('--FROM_MENU', action= 'store_true', help = 'use flag to create HLT-L1 information from directory (MENUDIR) containing HLT menus instead of from the ROOT_FILES themselves ', dest = 'frommenu')
 parser.add_argument('--ROOT_FILES', type = str, default = 'rootfiles/test.txt', dest = 'rootfiles', help = 'list of ROOT filenames from which run specific HLT menus are created')
 parser.add_argument('--TEMPDIR', type = str, default = 'temp/', dest = 'tempdir', help = 'define temporary directory where HLT menus created from ROOT files are stored')
-parser.add_argument('--KEEP_TEMPDIR', action = 'store_false', default=True, dest = 'keep', help = 'delete (False) or keep (True) the temporary directory')
+parser.add_argument('--KEEP_TEMPDIR', action = 'store_true', dest = 'keep', help = 'use flag to keep the temporary directory')
 parser.add_argument('--MENUDIR', type = str, default = 'temp/', dest = 'menudir', help = 'define directory with HLT menus from which the HLT-L1 information is extracted')
 parser.add_argument('--SAVEDIR', type = str, default = 'hlt_l1_seeds/', dest = 'savedir', help = 'define directory where HLT-L1 information is stored as a csv file with the header: HLT, run1, run2, ...')
 parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', dest = 'redirector', help = 'set redirector to load ROOT files from')
@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 ## For ease of debugging
 
-fromroot = args.fromroot
+frommenu = args.frommenu
 tempdir = args.tempdir
 menudir = args.menudir
 fnames = args.rootfiles
@@ -28,16 +28,18 @@ keep = args.keep
 redirector = args.redirector
 maxfiles= args.maxfiles
 
+from IPython import embed; embed()
+
 ## Create the HLT menus using the hlt_GetConfig command
 
-if fromroot:
+if not frommenu:
     directory = tempdir
     utils.automate.hlt_GetConfig(directory, fnames, maxfiles, redirector)
     files = os.listdir(directory)
 
 ## Load the HLT menus directly from menudir
 
-if not fromroot:
+if frommenu:
     keep = True
     directory = menudir
     files = os.listdir(directory)
