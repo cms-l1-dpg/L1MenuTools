@@ -120,7 +120,7 @@ with open(savedir+"test.csv","w") as csv_file:
 
 print("HLT_L1_seeds generated.")
 
-if delete:
+if not keep:
     shutil.rmtree(directory)
     print("Deleted temporary directory: " + directory)
 print("Process finished.")
