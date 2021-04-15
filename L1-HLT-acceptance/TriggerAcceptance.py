@@ -23,9 +23,9 @@ parser.add_argument('--MAX_EVT', type = int, default = 500000, help = 'Maximum n
 parser.add_argument('--PRT_EVT', type = int, default = 10000, help = 'Print to screen every Nth event')
 parser.add_argument('--VERBOSE', action = 'store_true', default = False, help = 'Print extra info about each event')
 parser.add_argument('--PU_MIN', type = int, default = 0, help = 'Minimum number of good reconstructed vertices')
-parser.add_argument('--ROOTFILES', type =str, default = 'rootfiles/test.txt', help = 'Location of txt file containing ROOT file names' )
+parser.add_argument('--ROOTFILES', type =str, default = 'rootfiles/fnames.txt', help = 'Location of txt file containing ROOT file names' )
 parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', help = 'Redirector used to load ROOT files from')
-parser.add_argument('--HLT_L1_SEEDS', type = str, default = './hlt_l1_seeds/test.csv', help = 'csv file containing run specific HLT-L1 combinations')
+parser.add_argument('--HLT_L1_SEEDS', type = str, default = './hlt_l1_seeds/hlt_l1.csv', help = 'Name of csv file containing run specific HLT-L1 combinations')
 
 args = parser.parse_args()
 

@@ -6,27 +6,29 @@ import argparse
 import time
 
 parser = argparse.ArgumentParser(description = 'Generate run specific HLT-L1 information from either ROOT files or HLT menus')
-parser.add_argument('--FROM_MENU', action= 'store_true', help = 'use flag to create HLT-L1 information from directory (MENUDIR) containing HLT menus instead of from the ROOT_FILES themselves ', dest = 'frommenu')
-parser.add_argument('--ROOT_FILES', type = str, default = 'rootfiles/test.txt', dest = 'rootfiles', help = 'list of ROOT filenames from which run specific HLT menus are created')
-parser.add_argument('--TEMPDIR', type = str, default = 'temp/', dest = 'tempdir', help = 'define temporary directory where HLT menus created from ROOT files are stored')
-parser.add_argument('--KEEP_TEMPDIR', action = 'store_true', dest = 'keep', help = 'use flag to keep the temporary directory')
-parser.add_argument('--MENUDIR', type = str, default = 'temp/', dest = 'menudir', help = 'define directory with HLT menus from which the HLT-L1 information is extracted')
-parser.add_argument('--SAVEDIR', type = str, default = 'hlt_l1_seeds/', dest = 'savedir', help = 'define directory where HLT-L1 information is stored as a csv file with the header: HLT, run1, run2, ...')
-parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', dest = 'redirector', help = 'set redirector to load ROOT files from')
-parser.add_argument('--MAX_FILE', type = int, default = 10, dest = 'maxfiles', help = '# of root files to process from list')
+parser.add_argument('--FROM_MENU', action= 'store_true', help = 'Create HLT-L1 information from HLT menus stored as python files in MENUDIR')
+parser.add_argument('--ROOTFILES', type =str, default = 'rootfiles/fnames.txt', help = 'txt file containing ROOT fnames')
+parser.add_argument('--TEMPDIR', type = str, default = 'temp/', help = 'Temporary directory where HLT menus are stored as python files')
+parser.add_argument('--KEEP_TEMPDIR', action = 'store_true', help = 'Keep the temporary directory with HLT menus as python files')
+parser.add_argument('--MENUDIR', type = str, default = 'temp/', help = 'Directory with HLT menus as python files')
+parser.add_argument('--SAVEDIR', type = str, default = 'hlt_l1_seeds/', help = 'Directory to save csv file to.')
+parser.add_argument('--REDIRECTOR', type=str, default='root://xrootd-cms.infn.it/', help='Redirector used to access ROOT files')
+parser.add_argument('--MAX_FILE', type = int, default = 1, help = 'Maximum number of input files to process')
+parser.add_argument('--CSV_NAME', type = str, default = 'hlt_l1.csv',  help = 'Name of csv file where run specific HLT-L1 combinations will be stored')
 
 args = parser.parse_args()
 
 ## For ease of debugging
 
-frommenu = args.frommenu
-tempdir = args.tempdir
-menudir = args.menudir
-fnames = args.rootfiles
-savedir = args.savedir
-keep = args.keep
-redirector = args.redirector
-maxfiles= args.maxfiles
+frommenu = args.FROM_MENU
+tempdir = args.TEMPDIR
+menudir = args.MENUDIR
+fnames = args.ROOTFILES
+savedir = args.SAVEDIR
+keep = args.KEEP_TEMPDIR
+redirector = args.REDIRECTOR
+maxfiles = args.MAX_FILE
+csvname = args.CSV_NAME
 
 ## Create the HLT menus using the hlt_GetConfig command
 
@@ -93,7 +95,7 @@ keys = set([hlt for run in runs for hlt in runs[run]])
 if not os.path.exists(savedir):
     os.mkdir(savedir)
 
-with open(savedir+"test.csv","w") as csv_file:
+with open(savedir+csvname,"w") as csv_file:
     writer = csv.writer(csv_file)
     writer.writerow(["HLT"] + runs.keys())
 
