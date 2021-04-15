@@ -53,12 +53,14 @@ def hlt_GetConfig(directory, txtfile, MAXFILES, redirector):
 
     ## run in parallel
 
-    processes = [Popen(cmd, shell=True,stdout=PIPE, stderr=PIPE) for cmd in commands]
+
+    processes = [Popen(cmd, shell=True) for cmd in commands]
 
     ## wait for completion
 
     for p in processes:
-        p.communicate()
+        p.wait()
 
-    print('HLT menu generation process took ' + str(time.time()-start) + ' seconds')
+
     print('HLT menus stored in '+ directory)
+    print('HLT menu generation process took ' + str(time.time()-start) + ' seconds')

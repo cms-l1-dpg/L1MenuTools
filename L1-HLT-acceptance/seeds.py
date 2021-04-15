@@ -28,8 +28,6 @@ keep = args.keep
 redirector = args.redirector
 maxfiles= args.maxfiles
 
-from IPython import embed; embed()
-
 ## Create the HLT menus using the hlt_GetConfig command
 
 if not frommenu:
