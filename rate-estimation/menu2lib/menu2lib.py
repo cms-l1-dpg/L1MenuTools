@@ -240,6 +240,11 @@ def getEtLut(scaleMap, obj, precision):
   tmEventSetup.getLut(lut, scale, precision)
   return lut
 
+def getUptLut(scaleMap, obj, precision):
+  lut = tmEventSetup.LlongVec()
+  scale = getScaleByName(scaleMap, obj, 'UPT')
+  tmEventSetup.getLut(lut, scale, precision)
+  return lut
 
 def getMathLut(scaleMap, obj1, obj2, math=None):
   precision_math = getPrecisionByName(scaleMap, obj1, obj2, 'Math')
@@ -260,6 +265,28 @@ def getMathLut(scaleMap, obj1, obj2, math=None):
     key = '-'.join([obj1, 'ET'])
     rc['Key'] = key
     rc[key] = getEtLut(scaleMap, obj1, precision_pt)
+
+  return rc
+
+def getMathUptLut(scaleMap, obj1, obj2, math=None):
+  precision_math = getPrecisionByName(scaleMap, obj1, obj2, 'Math')
+
+  rc = {}
+  for cut, func in list(math.items()):
+    scale1 = getScaleByName(scaleMap, obj1, cut)
+    scale2 = getScaleByName(scaleMap, obj2, cut)
+    vec = tmEventSetup.DoubleVec()
+    lut = tmEventSetup.LlongVec()
+    n = tmEventSetup.getDeltaVector(vec, scale1, scale2)
+    func(vec, n)
+    tmEventSetup.setLut(lut, vec, precision_math)
+    rc[func.__name__] = lut
+
+  precision_pt = getPrecisionByName(scaleMap, obj1, obj2, 'MassPt')
+  if obj1 == obj2:
+    key = '-'.join([obj1, 'UPT'])
+    rc['Key'] = key
+    rc[key] = getUptLut(scaleMap, obj1, precision_pt)
 
   return rc
 
@@ -306,6 +333,7 @@ def getLookUpTable(scaleMap, obj1, obj2):
   convert = ((obj1.getType() != obj2.getType())
              and
              ((obj1.getType() == tmEventSetup.Muon) or (obj2.getType() == tmEventSetup.Muon)))
+  has_unconstrained_pt = obj1.getType() == tmEventSetup.Muon and obj2.getType() == tmEventSetup.Muon
 
   rc = {}
   rc['DPHI'] = "LUT_DPHI_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
@@ -315,6 +343,10 @@ def getLookUpTable(scaleMap, obj1, obj2):
   rc['PREC_MATH'] = precisionMath
   rc['PREC_MASS'] = 2*precisionPt + precisionMath
   rc['COS_DPHI'] = "LUT_COS_DPHI_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
+
+  if has_unconstrained_pt:
+    rc['UPT0'] = "LUT_%s_UPT" % getObjectName(obj1)
+    rc['UPT1'] = "LUT_%s_UPT" % getObjectName(obj2)
 
   if has_deta:
     rc['DETA'] = "LUT_DETA_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
@@ -363,6 +395,7 @@ def render(menu, template):
   j2_env.filters['getPrecisionByName'] = getPrecisionByName
   j2_env.filters['getEtLut'] = getEtLut
   j2_env.filters['getMathLut'] = getMathLut
+  j2_env.filters['getMathUptLut'] = getMathUptLut
   j2_env.filters['getCaloMuonConversionLut'] = getCaloMuonConversionLut
   j2_env.filters['warning'] = warning
   j2_env.filters['toMass'] = toMass

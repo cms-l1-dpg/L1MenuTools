@@ -230,7 +230,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 //
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
-// generate conditions
+// generate conditions {{tmEventSetup.MuonMuonCorrelationWithOverlapRemoval}}
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
   {%- if cond.getType() in (tmEventSetup.MuonMuonCorrelationWithOverlapRemoval,
@@ -279,6 +279,13 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       {% include 'CaloMuonCorrelationTemplate.cc' %}
     {% elif combination == tmEventSetup.CaloCaloCombination %}
       {% include 'CaloCaloCorrelationTemplate.cc' %}
+    {% endif %}
+
+  {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, ) %}
+    {% set objects = cond.getObjects() %}
+    {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
+    {% if combination == tmEventSetup.MuonMuonCombination %}
+      {% include 'MuonMuonCorrelationTemplate.cc' %}
     {% endif %}
 
   {% elif cond.getType() in (tmEventSetup.TransverseMass, tmEventSetup.TransverseMassOvRm) %}

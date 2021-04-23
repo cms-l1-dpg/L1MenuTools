@@ -26,6 +26,7 @@ const int prec_mu_mu_mass = {{ scaleMap | getPrecisionByName('MU', 'MU', 'Mass')
 const int prec_mu_mu_massPt = {{ scaleMap | getPrecisionByName('MU', 'MU', 'MassPt') }};
 
 {% set mu_mu_math = scaleMap | getMathLut(tmGrammar.MU, tmGrammar.MU, math) %}
+{% set mu_mu_upt_math = scaleMap | getMathUptLut(tmGrammar.MU, tmGrammar.MU, math) %}
 const int LUT_COSH_DETA_MU_MU[] = {
 {% for x in mu_mu_math[tmEventSetup.applyCosh.__name__] -%}
   {{x}}{% if not loop.last %},{% endif %}
@@ -41,6 +42,13 @@ const int LUT_COS_DPHI_MU_MU[] = {
 const int LUT_MU_ET[] = {
 {% set key = mu_mu_math['Key'] %}
 {% for x in mu_mu_math[key] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
+const int LUT_MU_UPT[] = {
+{% set key = mu_mu_upt_math['Key'] %}
+{% for x in mu_mu_upt_math[key] -%}
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
