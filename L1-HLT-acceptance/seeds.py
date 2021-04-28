@@ -7,7 +7,7 @@ import time
 
 parser = argparse.ArgumentParser(description = 'Generate run specific HLT-L1 information from either ROOT files or HLT menus')
 parser.add_argument('--FROM_MENU', action= 'store_true', help = 'Create HLT-L1 information from HLT menus stored as python files in MENUDIR')
-parser.add_argument('--ROOTFILES', type =str, default = 'rootfiles/fnames.txt', help = 'txt file containing ROOT fnames')
+parser.add_argument('--ROOTFILES', type =str, default = 'example-inputs/fnames.txt', help = 'txt file containing ROOT fnames')
 parser.add_argument('--TEMPDIR', type = str, default = 'temp/', help = 'Temporary directory where HLT menus are stored as python files')
 parser.add_argument('--KEEP_TEMPDIR', action = 'store_true', help = 'Keep the temporary directory with HLT menus as python files')
 parser.add_argument('--MENUDIR', type = str, default = 'temp/', help = 'Directory with HLT menus as python files')
