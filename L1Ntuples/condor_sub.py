@@ -5,18 +5,18 @@ print '\nSTART\n'
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-jobName = "menu_Nu_11_0_X"
-jobCfg = "mc.py"
+jobName = "YOUR_JOB_NAME"  # fixme
+jobCfg = "pfa1p.py"
 jobScript = "cmsRun.sh"
 rel = "CMSSW_11_2_0"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
-rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
+rootDir = os.environ["CMSSW_BASE"] + "/src/condor/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-fileList = rootDir + "nu.list"
-nEvents = 1140
-nJobs = 86
+fileList = rootDir + "nu.list" 
+nEvents = 11400 
+nJobs = 86 
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
@@ -26,7 +26,7 @@ while ret == 0:
    ret = os.system("mkdir " + eosDir)
    ret = os.chdir(os.environ["CMSSW_BASE"]+"/../")
    print('Tarballing ' + rel + "/ into " + jobName + ".tgz...")
-   ret = os.system("tar --exclude='L1Ntuple.root' --exclude='.git' " + 
+   ret = os.system("tar --exclude='L1Ntuple.root' --exclude='ignore' --exclude='.git' " + 
                    "-zcf " + jobName + ".tgz " + rel)
    print 'Done!'
    ret = os.system("mv " + jobName + ".tgz " + eosDir) 
