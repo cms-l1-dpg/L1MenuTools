@@ -2,8 +2,9 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: l1Ntuple -s RAW2DIGI --python_filename=mc.py -n 20 --no_output --era=Run3 --mc --conditions=112X_mcRun3_2021_realistic_v15 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAW --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2018_v1_3 --filein=/store/mc/Run3Winter20DRPremixMiniAOD/Nu_E10-pythia8-gun/GEN-SIM-RAW/SNB_110X_mcRun3_2021_realistic_v6-v1/10000/51FBC4DC-D5C7-824F-9AFA-3025F04F96FA.root
+# with command line options: l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=112X_mcRun3_2021_realistic_v13 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2018_v1_3 --customise_commands=process.HcalTPGCoderULUT.LUTGenerationMode=cms.bool(False) --filein=/store/mc/Run3Winter20DRPremixMiniAOD/Nu_E10-pythia8-gun/GEN-SIM-RAW/SNB_110X_mcRun3_2021_realistic_v6-v1/10000/51FBC4DC-D5C7-824F-9AFA-3025F04F96FA.root
 import FWCore.ParameterSet.Config as cms
+
 from Configuration.Eras.Era_Run3_cff import Run3
 import FWCore.ParameterSet.VarParsing as VarParsing # ADDED
 import FWCore.Utilities.FileUtils as FileUtils # ADDED
@@ -66,7 +67,6 @@ process.source = cms.Source("PoolSource",
 
 # end ADDED
 
-
 process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring(),
     IgnoreCompletely = cms.untracked.vstring(),
@@ -96,7 +96,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('l1Ntuple nevts:20'),
+    annotation = cms.untracked.string('l1Ntuple nevts:-1'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -107,17 +107,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '112X_mcRun3_2021_realistic_v15', '')
-
-import os
-base = os.environ["CMSSW_BASE"]
-process.GlobalTag.toGet = cms.VPSet(
-        cms.PSet(record = cms.string("GEMeMapRcd"),
-                       tag = cms.string("GEMeMapDummy"),
-                       connect = cms.string("sqlite_file:" + base + "/src/L1Trigger/Configuration/test/GEMeMapDummy.db")
-                )
-)
-process.muonGEMDigis.useDBEMap = True
+process.GlobalTag = GlobalTag(process.GlobalTag, '112X_mcRun3_2021_realistic_v13', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -128,63 +118,19 @@ process.schedule = cms.Schedule(process.raw2digi_step,process.endjob_step)
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
-process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
-
-process.simHcalTriggerPrimitiveDigis.numberOfFilterPresamplesHBQIE11 = 1
-process.simHcalTriggerPrimitiveDigis.numberOfFilterPresamplesHEQIE11 = 1
-process.simHcalTriggerPrimitiveDigis.weightsQIE11 = (
-    "ieta1",  [-0.51, 1.0],
-    "ieta2",  [-0.51, 1.0],
-    "ieta3",  [-0.51, 1.0],
-    "ieta4",  [-0.51, 1.0],
-    "ieta5",  [-0.51, 1.0],
-    "ieta6",  [-0.51, 1.0],
-    "ieta7",  [-0.51, 1.0],
-    "ieta8",  [-0.51, 1.0],
-    "ieta9",  [-0.51, 1.0],
-    "ieta10", [-0.51, 1.0],
-    "ieta11", [-0.51, 1.0],
-    "ieta12", [-0.51, 1.0],
-    "ieta13", [-0.51, 1.0],
-    "ieta14", [-0.51, 1.0],
-    "ieta15", [-0.51, 1.0],
-    "ieta16", [-0.51, 1.0],
-    "ieta17", [-0.49, 1.0],
-    "ieta18", [-0.49, 1.0],
-    "ieta19", [-0.49, 1.0],
-    "ieta20", [-0.49, 1.0],
-    "ieta21", [-0.45, 1.0],
-    "ieta22", [-0.45, 1.0],
-    "ieta23", [-0.45, 1.0],
-    "ieta24", [-0.45, 1.0],
-    "ieta25", [-0.45, 1.0],
-    "ieta26", [-0.45, 1.0],
-    "ieta27", [-0.45, 1.0],
-    "ieta28", [-0.45, 1.0]
-)
-
-process.HcalTPGCoderULUT.contain1TSHB = True
-process.HcalTPGCoderULUT.contain1TSHE = True
-
-# Pick one of the pairs of lines below based on the intended scenario for running
-process.HcalTPGCoderULUT.containPhaseNSHB = 3.0 # For Run3 MC
-process.HcalTPGCoderULUT.containPhaseNSHE = 3.0 # For Run3 MC
-
-# process.HcalTPGCoderULUT.containPhaseNSHB = 0.0 # For Run2 2018 Data
-# process.HcalTPGCoderULUT.containPhaseNSHE = 0.0 # For Run2 2018 Data
-
+# customisation of the process.
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
-from L1Trigger.Configuration.customiseReEmul import L1TReEmulMCFromRAW 
+from L1Trigger.Configuration.customiseReEmul import L1TReEmulMCFromRAWSimHcalTP 
 
-#call to customisation function L1TReEmulMCFromRAW imported from L1Trigger.Configuration.customiseReEmul
-process = L1TReEmulMCFromRAW(process)
+#call to customisation function L1TReEmulMCFromRAWSimHcalTP imported from L1Trigger.Configuration.customiseReEmul
+process = L1TReEmulMCFromRAWSimHcalTP(process)
 
 # Automatic addition of the customisation function from L1Trigger.L1TNtuples.customiseL1Ntuple
-from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleEMU 
+from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
 
-#call to customisation function L1NtupleEMU imported from L1Trigger.L1TNtuples.customiseL1Ntuple
-process = L1NtupleEMU(process)
+#call to customisation function L1NtupleRAWEMU imported from L1Trigger.L1TNtuples.customiseL1Ntuple
+process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
 from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3 
@@ -196,7 +142,49 @@ process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 
 # Customisation from command line
+process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
 
+process.simHcalTriggerPrimitiveDigis.numberOfFilterPresamplesHBQIE11 = 1
+process.simHcalTriggerPrimitiveDigis.numberOfFilterPresamplesHEQIE11 = 1
+process.simHcalTriggerPrimitiveDigis.weightsQIE11 = {
+    "ieta1" :  [-0.47, 1.0],
+    "ieta2" :  [-0.47, 1.0],
+    "ieta3" :  [-0.47, 1.0],
+    "ieta4" :  [-0.47, 1.0],
+    "ieta5" :  [-0.47, 1.0],
+    "ieta6" :  [-0.47, 1.0],
+    "ieta7" :  [-0.47, 1.0],
+    "ieta8" :  [-0.47, 1.0],
+    "ieta9" :  [-0.47, 1.0],
+    "ieta10" : [-0.47, 1.0],
+    "ieta11" : [-0.47, 1.0],
+    "ieta12" : [-0.47, 1.0],
+    "ieta13" : [-0.47, 1.0],
+    "ieta14" : [-0.47, 1.0],
+    "ieta15" : [-0.47, 1.0],
+    "ieta16" : [-0.47, 1.0],
+    "ieta17" : [-0.47, 1.0],
+    "ieta18" : [-0.47, 1.0],
+    "ieta19" : [-0.47, 1.0],
+    "ieta20" : [-0.47, 1.0],
+    "ieta21" : [-0.43, 1.0],
+    "ieta22" : [-0.43, 1.0],
+    "ieta23" : [-0.43, 1.0],
+    "ieta24" : [-0.43, 1.0],
+    "ieta25" : [-0.43, 1.0],
+    "ieta26" : [-0.43, 1.0],
+    "ieta27" : [-0.43, 1.0],
+    "ieta28" : [-0.43, 1.0]
+}
+
+process.HcalTPGCoderULUT.contain1TSHB = True
+process.HcalTPGCoderULUT.contain1TSHE = True
+
+# Pick one of the pairs of lines below based on the intended scenario for running
+process.HcalTPGCoderULUT.containPhaseNSHB = 1.0 # For Run3 MC
+process.HcalTPGCoderULUT.containPhaseNSHE = 1.0 # For Run3 MC
+
+process.HcalTPGCoderULUT.LUTGenerationMode=cms.bool(False)
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
 process = customiseEarlyDelete(process)
