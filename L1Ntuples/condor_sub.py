@@ -5,12 +5,12 @@ print '\nSTART\n'
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-jobName = "YOUR_JOB_NAME"  # fixme
-jobCfg = "pfa1p.py"
+jobName = "menu_Nu_11_0_X"
+jobCfg = "mc.py"
 jobScript = "cmsRun.sh"
 rel = "CMSSW_11_2_0"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
-rootDir = os.environ["CMSSW_BASE"] + "/src/condor/"
+rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
