@@ -20,7 +20,7 @@ cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline l1t-integration-CMSSW_11_2_0
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v105.3
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v105.12
 git cms-addpkg L1Trigger/Configuration
 git cms-addpkg L1Trigger/L1TMuon
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TMuon.git L1Trigger/L1TMuon/data
@@ -29,9 +29,6 @@ git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trig
 
 git cms-checkdeps -A -a
 
-# temporary fix to fill BMTF muons
-git remote add panoskatsoulis https://github.com/panoskatsoulis/cmssw.git
-git cms-merge-topic panoskatsoulis:fix_empty_bmtf_ntuples
 
 scram b -j 8
 ```
