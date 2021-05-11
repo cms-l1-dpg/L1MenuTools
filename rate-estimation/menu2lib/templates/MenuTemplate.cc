@@ -230,15 +230,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 //
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
-// generate conditions {{tmEventSetup.MuonMuonCorrelationWithOverlapRemoval}}
+// generate conditions
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
-  {%- if cond.getType() in (tmEventSetup.MuonMuonCorrelationWithOverlapRemoval,
-                           tmEventSetup.MuonEsumCorrelationWithOverlapRemoval,
-                           tmEventSetup.CaloEsumCorrelationWithOverlapRemoval,
-                           tmEventSetup.CaloMuonCorrelationWithOverlapRemoval,
-                           tmEventSetup.CaloCaloCorrelationOvRm,
-                           tmEventSetup.InvariantMassOvRm) %}
+  {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm,
+                            tmEventSetup.InvariantMassOvRm) %}
     {% set overlap_removal = 1 %}
   {% endif -%}
 
@@ -258,13 +254,13 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() == tmEventSetup.Externals %}
     {% include 'Externals.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.MuonMuonCorrelation, tmEventSetup.MuonMuonCorrelationWithOverlapRemoval) %}
+  {% elif cond.getType() in (tmEventSetup.MuonMuonCorrelation, ) %}
     {% include 'MuonMuonCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.MuonEsumCorrelation, tmEventSetup.CaloEsumCorrelation, tmEventSetup.MuonEsumCorrelationWithOverlapRemoval, tmEventSetup.CaloEsumCorrelationWithOverlapRemoval) %}
+  {% elif cond.getType() in (tmEventSetup.MuonEsumCorrelation, tmEventSetup.CaloEsumCorrelation) %}
     {% include 'EsumCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, tmEventSetup.CaloMuonCorrelationWithOverlapRemoval) %}
+  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, ) %}
     {% include 'CaloMuonCorrelationTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm) %}
