@@ -14,9 +14,9 @@ rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-fileList = rootDir + "nu.list"
-nEvents = 1140
-nJobs = 86
+fileList = rootDir + "nu.list" 
+nEvents = 11400 
+nJobs = 86 
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
@@ -26,7 +26,7 @@ while ret == 0:
    ret = os.system("mkdir " + eosDir)
    ret = os.chdir(os.environ["CMSSW_BASE"]+"/../")
    print('Tarballing ' + rel + "/ into " + jobName + ".tgz...")
-   ret = os.system("tar --exclude='L1Ntuple.root' --exclude='.git' " + 
+   ret = os.system("tar --exclude='L1Ntuple.root' --exclude='ignore' --exclude='.git' " + 
                    "-zcf " + jobName + ".tgz " + rel)
    print 'Done!'
    ret = os.system("mv " + jobName + ".tgz " + eosDir) 

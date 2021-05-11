@@ -348,7 +348,7 @@ for i, v in enumerate(rates):
 plt.ylabel("Seeds")
 plt.xlabel("Rates of Seeds")
 plt.title(
-    "L1 Rates for Seed Categories\n(Total rate: {} kHz)".format(df_PS1.iloc[-1, 3])
+    "L1 Rates for Seed Categories\n(Total rate: {:.2f} kHz)".format(df_PS1.iloc[-1, 3])
 )
 plt.box(False)
 ax.get_xaxis().set_ticks([])
