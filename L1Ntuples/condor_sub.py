@@ -16,7 +16,12 @@ ret = 0
 
 fileList = rootDir + "nu.list" 
 nEvents = 11400 
-nJobs = 86 
+nJobs = 88
+
+
+
+
+ 
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
