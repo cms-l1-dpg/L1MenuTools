@@ -8,6 +8,8 @@
 {% set objects = cond.getObjects() %}
 {% if overlap_removal %}
   {% set reference = objects[objects|length -1] %}
+  {% set etaScaleRef = scaleMap | getScale(reference, tmGrammar.ETA) %}
+  {% set nEtaBits = etaScaleRef.getNbits() %}  
 {% endif %}
 {% set nObjects = 2 %}
 {% set objects = objects[0] | sortObjects(objects[1]) %}
@@ -20,6 +22,7 @@
 
 {% set etaScale1 = scaleMap | getScale(objects[1], tmGrammar.ETA) %}
 {% set nEtaBits1 = etaScale1.getNbits() %}
+
 {# assume phiScale is the same for calo objects #}
 
 {% set LUTS = scaleMap | getLookUpTable(objects[0], objects[1]) %}
