@@ -3,7 +3,7 @@
 ## Usage
 To get the L1 menu rates visualized in form of a pie chart and a bar chart, run the following command:
 ```
-bash run-visualize.sh --rateTable <rateTable.txt> --output <output name>
+bash run-visualize.sh --rateTable <rateTable.txt> --output <output name> --textOnBarPlot <select an option>
 
 ```
 * `--rateTable`: Downloaded a rate table from which the rates should be visualized.
@@ -12,6 +12,11 @@ bash run-visualize.sh --rateTable <rateTable.txt> --output <output name>
 * `--rate`     : Type of rate to be plotted (must correspond to a column header of the
   input rate table file)
 * `--output`   : Specify the name of pieChart and barPlot to be saved.
+
+* `--textOnBarPlot`   : Specify what you want to plot on the bar plot. 
+  You can choose from four options, "percentage","percentage+totalrate", "percentage+rates+totalrate" and "rates+totalrate".
+  (default is `percentage+totalrate`)
+
 
 It will save four plots, `output_pieChart.{png,pdf}` and `output_barPlot.{png,pdf}`.
 
