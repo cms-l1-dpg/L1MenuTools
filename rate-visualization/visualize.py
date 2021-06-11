@@ -363,7 +363,8 @@ for i, v in enumerate(rates):
 		ax.text(v+1250, i, '{:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
 	if text == "percentage+rates+totalrate" or text == "rates+totalrate":
 		#ax.text(v*0.7 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
-		ax.text(v+9300 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
+		#ax.text(v+9300 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
+		ax.text(v+9300 , i, '            [{:.1f}{}]'.format(v*0.001,'kHz'), color='black', va='center')
 
 plt.ylabel('Seed Categories')
 plt.xlabel('Fractions of the 100 kHz rate allocation for single- and multi-object triggers and cross triggers')

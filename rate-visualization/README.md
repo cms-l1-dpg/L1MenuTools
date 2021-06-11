@@ -16,6 +16,8 @@ bash run-visualize.sh --rateTable <rateTable.txt> --output <output name> --textO
 * `--textOnBarPlot`   : Specify what you want to plot on the bar plot. 
   You can choose from four options, "percentage","percentage+totalrate", "percentage+rates+totalrate" and "rates+totalrate".
   (default is `percentage+totalrate`)
+
+
 It will save four plots, `output_pieChart.{png,pdf}` and `output_barPlot.{png,pdf}`.
 
 
