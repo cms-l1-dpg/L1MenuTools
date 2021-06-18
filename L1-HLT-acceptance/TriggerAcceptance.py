@@ -139,7 +139,7 @@ def main():
             print '\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group)
             L1T_missing.append(path)
 
-    ## HLT_L1_seeds: HLT-L1T 'seed-pairings' based on whether a specific L1T path seeded a particular HLT path. Created through the output of seeds.py
+    ## HLT_L1_seeds: HLT-L1T 'seed-mappings' based on whether a specific L1T path seeded a particular HLT path. Created through the output of seeds.py
     HLT_L1_seeds = {}
     HLT_missing = []
     path = args.HLT_L1_SEEDS
