@@ -3,6 +3,9 @@
 ##################################################################################################################
 ###  TriggerAcceptance.py : A script to compute the fraction of passing Level-1 Trigger paths accepted by HLT  ###
 ##################################################################################################################
+## First development of the code: Andrew Brinkerhoff
+## Accept. study 2021 adaptation: Mark Matthewman, Anna Stakia
+##################################################################################################################
 
 import ROOT as R
 R.gROOT.SetBatch(True)  ## Don't display histograms or canvases when drawn
@@ -23,18 +26,17 @@ parser.add_argument('--MAX_EVT', type = int, default = 500000, help = 'Maximum n
 parser.add_argument('--PRT_EVT', type = int, default = 10000, help = 'Print to screen every Nth event')
 parser.add_argument('--VERBOSE', action = 'store_true', default = False, help = 'Print extra info about each event')
 parser.add_argument('--PU_MIN', type = int, default = 0, help = 'Minimum number of good reconstructed vertices')
-parser.add_argument('--ROOTFILES', type =str, default = 'example-inputs/fnames.txt', help = 'Location of txt file containing ROOT file names' )
-parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', help = 'Redirector used to load ROOT files from')
-parser.add_argument('--HLT_L1_SEEDS', type = str, default = './hlt_l1_seeds/hlt_l1.csv', help = 'Name of csv file containing run specific HLT-L1 combinations')
+parser.add_argument('--ROOTFILES', type =str, default = 'example-inputs/fnames.txt', help = 'Location of .txt file containing .root file names' )
+parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', help = 'Redirector used to load .root files from')
+parser.add_argument('--HLT_L1_SEEDS', type = str, default = './hlt_l1_seeds/hlt_l1.csv', help = 'Name of .csv file containing run specific HLT-L1 combinations')
 
 args = parser.parse_args()
 
 ## User-defined constants
-MAX_FILE = args.MAX_FILE      ## Maximum number of input files to process
-MAX_EVT  = args.MAX_EVT ## Maximum number of events to process
-PRT_EVT  = args.PRT_EVT  ## Print to screen every Nth event
-VERBOSE  = args.VERBOSE  ## Print extra info about each event
-
+MAX_FILE = args.MAX_FILE    ## Maximum number of input .root files to process
+MAX_EVT  = args.MAX_EVT     ## Maximum number of events to process
+PRT_EVT  = args.PRT_EVT     ## Print to screen every Nth event
+VERBOSE  = args.VERBOSE     ## Print extra info about each event
 PU_MIN   = args.PU_MIN      ## Minimum number of good reconstructed vertices
 
 def main():
@@ -42,26 +44,26 @@ def main():
 ###################
 ## Initialize files
 ###################
-    ## Location of input files
-    in_file_names = []
-    in_dir = '/afs/cern.ch/user/m/mmatthew/public/'
 
-    ## Loop through available input files
+    ## List to store location of the input .root files
+    in_file_names = []
+
+    ## Loop over available input .root files existing in in_dir
+    #in_dir = '/afs/cern.ch/<X>/<Y>/<ZZ>'
     #for file_name in subprocess.check_output(['ls', in_dir]).splitlines():
     #    if not '.root' in file_name: continue
     #    in_file_names.append(in_dir+file_name)
     #    print 'Opening file: '+in_file_names[-1]
     #    if len(in_file_names) >= MAX_FILE: break
 
-
-    ## Read input files from list
+    ## Read and store location of input .root files
     txtfile = args.ROOTFILES
     redirector = args.REDIRECTOR
     for ele in open(txtfile,'r'):
         in_file_names.append(redirector + ele.split('\n')[0])
         if len(in_file_names) >= MAX_FILE:break
 
-    ## Chain together trees from input files
+    ## Chain together trees from input .root files
     in_chains = []
     for i in range(len(in_file_names)):
         in_chains.append( R.TChain('Events') )
@@ -70,29 +72,31 @@ def main():
     ## Name of output file and directory
     BASE_STR = 'TriggerAcceptance'
 
-    ## Set output directories (create if they do not exist)
+    ## Set output directories for .pdf and .png files (create if not existing)
     if not os.path.exists('plots/png/%s/' % BASE_STR):
         os.makedirs('plots/png/%s/' % BASE_STR)
     if not os.path.exists('plots/pdf/%s/' % BASE_STR):
         os.makedirs('plots/pdf/%s/' % BASE_STR)
-        
+
     out_file = R.TFile('plots/%s.root' % BASE_STR, 'recreate')
     png_dir  = 'plots/png/%s/' % BASE_STR
     pdf_dir  = 'plots/pdf/%s/' % BASE_STR
 
-    
+
 ####################
 ## L1T and HLT paths
 ####################
-    
+
     print(in_chains)
     ## List of branches in the tree
     branch_list = [key.GetName() for key in in_chains[0].GetListOfBranches()]
-    ## All L1T and HLT paths in the tree
+
+    ## L1T_paths (HLT_paths): all the L1T (HLT) paths included in the tree, coming from the input .root files
     L1T_paths = [path for path in branch_list if path.startswith('L1_')]
     HLT_paths = [path for path in branch_list if path.startswith('HLT_')]
 
-    ## 49 unprescaled L1T paths with some unique rate in 2018
+    ## L1T_unpr_all: Set of *unprescaled* L1T seeds that we use for the rate calculations on the input samples 
+    ## Below are 49 unprescaled L1T paths with some unique rate in 2018
     ## Copied from L1T paper, Tables 2 and 3 (http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=TRG-17-001)
     ## 2018 prescales here: https://cmsoms.cern.ch/cms/triggers/prescale?cms_run=322079&cms_run_sequence=GLOBAL-RUN
     L1T_unpr = collections.OrderedDict()
@@ -125,7 +129,7 @@ def main():
     for group in L1T_unpr.keys():
         L1T_unpr_all += L1T_unpr[group]
 
-    ## Check that user-entered L1T paths exist in ZeroBias NanoAOD file
+    ## Check that user-entered L1T paths (L1T_unpr_all) exist in ZeroBias NanoAOD file inserted as input (L1T_paths). Their non-overlap is L1T_missing
     L1T_missing = []
     groups = list(L1T_unpr.keys())
     for path in L1T_unpr_all:
@@ -135,6 +139,7 @@ def main():
             print '\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group)
             L1T_missing.append(path)
 
+    ## HLT_L1_seeds: HLT-L1T 'seed-pairings' based on whether a specific L1T path seeded a particular HLT path. Created through the output of seeds.py
     HLT_L1_seeds = {}
     HLT_missing = []
     path = args.HLT_L1_SEEDS
@@ -167,7 +172,7 @@ def main():
     nL1T_bins = collections.OrderedDict()                     ## Dictionary of Level-1 Trigger "groups"
     for group in L1T_unpr.keys():
         nL1T_bins[group] = [len(L1T_unpr[group]), 0.5, len(L1T_unpr[group]) + 0.5]  ## Bins for Level-1 Trigger paths by group
-    
+
     ## Book 1D histograms
     ## Important to use '1D' instead of '1F' when dealing with large numbers of entries, and weighted events (higher precision)
 
@@ -202,9 +207,9 @@ def main():
     iEvt  = 0  ## Event index
     iPass = 0  ## Number of events passing pileup cut 
 
-    ## Loop through input files
+    ## Loop over input .root files
     for ch in in_chains:
-        
+
         if iEvt >= MAX_EVT and MAX_EVT > 0: break
 
         ## Loop through events in each file
@@ -215,8 +220,9 @@ def main():
             if iEvt % PRT_EVT is 0: print 'Event #%d / %d' % (iEvt, MAX_EVT)
 
             ch.GetEntry(jEvt)
-            run = str(ch.GetLeaf('run').GetValue()).split('.')[0]           
+            run = str(ch.GetLeaf('run').GetValue()).split('.')[0]
 
+            ## Pileup check
             if ch.PV_npvsGood < PU_MIN: continue
             iPass += 1
 
@@ -226,12 +232,12 @@ def main():
             hists['nPV_good'].Fill( min( max(ch.PV_npvsGood, nPV_bins[1]+0.01), nPV_bins[2]-0.01) )
 
 
-            ## List of L1T paths which fired
+            ## List of L1T paths which fired in jEvt
             L1T_pass = []
             ## Dictionary of bools storing which L1T paths passed
             L1T_acc = collections.OrderedDict()
-            
-            ## Check which L1T paths fired in this event
+
+            ## Check which L1T paths fired in jEvt
             for path in L1T_unpr_all:
                 if ch.GetLeaf(path).GetValue() == 1:
                     L1T_pass.append(path)
@@ -264,15 +270,12 @@ def main():
 
                 ## Check to see which fired L1T paths seeded this HLT path
                 for seed in L1T_pass:
-                    ###############################     FIXME!!!     ###############################
-                    ###  Should have a conditional that this L1T path seeds the firing HLT path  ###
-                    ###           e.g. if not seed in HLT_L1_seeds[path]: continue               ###
-                    ################################################################################
                     try:
-                        if not seed in HLT_L1_seeds[run][path]: 
+                        if not seed in HLT_L1_seeds[run][path]:
                             print '%s not in %s!!!' % (seed,path)
                             continue
-        
+
+                        ## Conditional that this L1T path seeded the firing HLT path
                         L1T_acc[seed].append(path)
                         HLT_seed_fired[path].append(seed)
                         print '  * %s fires %s' % (seed,path)
@@ -281,7 +284,7 @@ def main():
                     except KeyError:
                         HLT_missing.append(path)
                         print '\n%s not in user defined HLT-L1-seeds!!! Program will continue.' % (path)
-                        
+
                 ## End loop: for seed in L1T_pass:
             ## End loop: for iHLT in range(len(HLT_paths))
 
@@ -321,7 +324,7 @@ def main():
                 ## End loop: for iL1T in range(len(L1T_unpr[group])):
             ## End loop: for group in L1T_unpr.keys():
 
-                    
+
         ## End loop over events in chain (jEvt)
     ## End loop over chains (ch)
 
@@ -339,7 +342,7 @@ def main():
             if hname.startswith('L1T_%s' % group) and hists[hname].GetNbinsX() == len(L1T_unpr[group]):
                 for iL1T in range(len(L1T_unpr[group])):
                     hists[hname].GetXaxis().SetBinLabel(iL1T+1, L1T_unpr[group][iL1T])
-                    
+
                     hists[hname].GetYaxis().SetTitle('Rate (kHz)')
 
 
@@ -361,7 +364,7 @@ def main():
     y.field_names = ['group', 'total acc rate', 'prop acc rate', 'pure acc rate']
 
     for group in L1T_unpr.keys():
-        
+
         total_x = hists['L1T_%s_rate_total' % group].Integral()
         total_y = hists['L1T_%s_acc_rate_total' % group].Integral()
 
@@ -543,7 +546,7 @@ def main():
     ## End loop: for group in L1T_unpr.keys()
 
 
-    ## Display the unprescaled seeds defined by the user which are not present in the root file again
+    ## Display the unprescaled seeds defined by the user which are not present in the .root file again
     if L1T_missing !=[]:
         print '\nThe missing seeds are:'
         for ele in L1T_missing:
@@ -553,7 +556,7 @@ def main():
         print '\nThe missing paths are:'
         for ele in HLT_missing:
             print ele
-    
+
 
     ## Delete the output ROOT file from local memory
     del out_file
