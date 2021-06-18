@@ -34,9 +34,11 @@ Execution commands:
 
 #### 3bi. seeds.py
 
-Creates HLT-L1 information via the hltGetConfiguration command: It loads .root files found in the txt file “example-inputs/fnames.txt”, and extracts the run numbers which are used for the hltGetConfiguration command to create python HLT menus. The menus are then filtered for the HLT paths and L1T seeds. The information is then stored in “hlt_l1_seeds/hlt_l1.csv” with the following columns:
+Creates HLT-L1 information via the hltGetConfiguration* command: It loads .root files found in the txt file “example-inputs/fnames.txt”, and extracts the run numbers which are used for the hltGetConfiguration command to create python HLT menus. The menus are then filtered for the HLT paths and L1T seeds. The information is then stored in “hlt_l1_seeds/hlt_l1.csv” with the following columns:
 
 HLT path, Seeds (run #1), seeds (run #2), …
+
+*which requires the CMSSW environment
 
 ##### Flags
 
