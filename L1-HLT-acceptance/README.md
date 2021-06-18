@@ -44,7 +44,7 @@ HLT path, Seeds (run #1), seeds (run #2), …
 
 `--MENUDIR`: Specify location of HLT python menus. Default: 'temp/'
 
-`--ROOTFILES`: Specify location of the txt file. Default: example-inputs/fnames.txt’
+`--ROOTFILES`: Specify location of the .txt file. Default: example-inputs/fnames.txt’
 
 `--TEMPDIR`: Specify the directory to which the HLT menus are stored. Default: ‘temp/’
 
@@ -64,9 +64,9 @@ Calculates the total, pure, and proportional rates and their accepted counterpar
 
 ##### Flags
 
-`--ROOTFILES`: Specify location of the txt file. Default: example-inputs/fnames.txt’
+`--ROOTFILES`: Specify location of the .txt file. Default: example-inputs/fnames.txt’
 
-`--HLT_L1_SEEDS`: Specify location of the csv file containing the HLT-L1T information. Default: ‘./hlt_l1_seeds/hlt_l1.csv’
+`--HLT_L1_SEEDS`: Specify location of the .csv file containing the HLT-L1T information. Default: ‘./hlt_l1_seeds/hlt_l1.csv’
 
 `--MAX_FILE`: Set the number of .root files to be processed. Default: 1
 
@@ -74,7 +74,7 @@ Calculates the total, pure, and proportional rates and their accepted counterpar
 
 `--MAX_EVT`: Set the maximum number of events to process. Default: 500000
 
-`--PRT_EVT`: Print information every nth event. Default 10000:
+`--PRT_EVT`: Print information every nth event. Default: 10000
 
 `--VERBOSE`: Print extra stuff. Useful for debugging
 
