@@ -1,3 +1,9 @@
+#################################################################################################################
+############  seeds.py : A script to map the Level-1 Trigger paths to the seeded by them HLT paths  #############
+#################################################################################################################
+## First development of the code (Accept. study 2021): Mark Matthewman
+##################################################################################################################
+
 import os
 import csv
 import utils.automate
@@ -30,25 +36,25 @@ redirector = args.REDIRECTOR
 maxfiles = args.MAX_FILE
 csvname = args.CSV_NAME
 
-## Create the HLT menus using the hlt_GetConfig command
+## Case1: *Create* the HLT menus applying the hlt_GetConfig command (run by automate.py) on the input .root files 
 
 if not frommenu:
     directory = tempdir
     utils.automate.hlt_GetConfig(directory, fnames, maxfiles, redirector)
     files = os.listdir(directory)
 
-## Load the HLT menus directly from menudir
+## Case2: *Load* the HLT menus directly from menudir
 
 if frommenu:
     keep = True
     directory = menudir
     files = os.listdir(directory)
 
-## Create nested dictionary containing the HLT-L1 info for corresonding runs
+## Create nested dictionary containing the HLT-L1 info for the corresponding runs
 
 runs = {}
 for file in files:
-    with open(directory + file,"r") as f: 
+    with open(directory + file,"r") as f:
         data = f.read()
 
     # Create dictionary with HLT paths as keys and hltL1 objects as values
@@ -73,7 +79,7 @@ for file in files:
                     if hltl1 in ele and "cms.string( " in ele:
                         L1_seeds[hltl1] = ele.split('cms.string( "')[1].split('" ),\n')[0]
 
-    # Create dictionary mapping HLT paths to L1 seeds
+    # Create dictionary mapping HLT paths to L1T seeds
 
     combined = {}
     for key in HLT_paths.keys():
@@ -88,7 +94,7 @@ for file in files:
     runs[file.split(".py")[0]] = combined
 
 
-## Get all HLT paths
+## Get all HLT paths. Mapping info in .csv file, which is then fed to TriggerAcceptance.py
 
 keys = set([hlt for run in runs for hlt in runs[run]])
 
