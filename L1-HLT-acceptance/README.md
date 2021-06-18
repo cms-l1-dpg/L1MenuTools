@@ -4,15 +4,17 @@
 Evaluation of the total, pure and proportional acceptance of L1T seeds wrt HLT paths on NanoAOD samples, via the calculation of the corresponding rates. See [1] for more information on these quantities and on the workflow implemented.
 
 ## 2. Setup
-`ssh -Y <USERNAME>@lxplus.cern.ch<br/>
-voms-proxy-init -voms cms<br/>
-cmsrel CMSSW_<X_X_X><br/>
-cd CMSSW_<X_X_X>/src<br/>
-cmsenv<br/>
-git cms-init<br/>
-git clone https://github.com/cms-l1-dpg/L1MenuTools.git<br/>
-scram b -j 8<br/>
-cd L1-HLT-acceptance`
+```
+ssh -Y <USERNAME>@lxplus.cern.ch
+voms-proxy-init -voms cms
+cmsrel CMSSW_<X_X_X>
+cd CMSSW_<X_X_X>/src
+cmsenv
+git cms-init
+git clone https://github.com/cms-l1-dpg/L1MenuTools.git
+scram b -j 8
+cd L1-HLT-acceptance
+```
 
 ## 3. Execution
 
