@@ -233,12 +233,8 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 // generate conditions
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
-  {%- if cond.getType() in (tmEventSetup.MuonMuonCorrelationWithOverlapRemoval,
-                           tmEventSetup.MuonEsumCorrelationWithOverlapRemoval,
-                           tmEventSetup.CaloEsumCorrelationWithOverlapRemoval,
-                           tmEventSetup.CaloMuonCorrelationWithOverlapRemoval,
-                           tmEventSetup.CaloCaloCorrelationOvRm,
-                           tmEventSetup.InvariantMassOvRm) %}
+  {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm,
+                            tmEventSetup.InvariantMassOvRm) %}
     {% set overlap_removal = 1 %}
   {% endif -%}
 
@@ -258,16 +254,16 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() == tmEventSetup.Externals %}
     {% include 'Externals.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.MuonMuonCorrelation, tmEventSetup.MuonMuonCorrelationWithOverlapRemoval) %}
+  {% elif cond.getType() in (tmEventSetup.MuonMuonCorrelation, ) %}
     {% include 'MuonMuonCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.MuonEsumCorrelation, tmEventSetup.CaloEsumCorrelation, tmEventSetup.MuonEsumCorrelationWithOverlapRemoval, tmEventSetup.CaloEsumCorrelationWithOverlapRemoval) %}
+  {% elif cond.getType() in (tmEventSetup.MuonEsumCorrelation, tmEventSetup.CaloEsumCorrelation) %}
     {% include 'EsumCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, tmEventSetup.CaloMuonCorrelationWithOverlapRemoval) %}
+  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, ) %}
     {% include 'CaloMuonCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm) %}
+  {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
     {% include 'CaloCaloCorrelationTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.InvariantMass, tmEventSetup.InvariantMassOvRm) %}
@@ -279,6 +275,13 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       {% include 'CaloMuonCorrelationTemplate.cc' %}
     {% elif combination == tmEventSetup.CaloCaloCombination %}
       {% include 'CaloCaloCorrelationTemplate.cc' %}
+    {% endif %}
+
+  {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, ) %}
+    {% set objects = cond.getObjects() %}
+    {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
+    {% if combination == tmEventSetup.MuonMuonCombination %}
+      {% include 'MuonMuonCorrelationTemplate.cc' %}
     {% endif %}
 
   {% elif cond.getType() in (tmEventSetup.TransverseMass, tmEventSetup.TransverseMassOvRm) %}

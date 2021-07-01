@@ -102,6 +102,20 @@
 
 
 {#
+ # set massUpt2
+ #}
+{%- macro setMassUpt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
+    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
+    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+    const long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
+    const long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
+    const long long upt0 = {{LUTS.UPT0}}[data->{{prefix0}}IEtUnconstrained.at({{idx0}})];
+    const long long upt1 = {{LUTS.UPT1}}[data->{{prefix1}}IEtUnconstrained.at({{idx1}})];
+    const long long mass2 = upt0 * upt1 * (coshDeltaEta - cosDeltaPhi);
+{%- endmacro -%}
+
+
+{#
  # set mt2
  #}
 {%- macro setMt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
@@ -257,6 +271,11 @@
   {% elif cut.getCutType() == tmEventSetup.Mass %}
     // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
     {{ setMass2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
+    {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
+
+  {% elif cut.getCutType() == tmEventSetup.MassUpt %}
+    // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
+    {{ setMassUpt2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
     {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
 
   {% elif cut.getCutType() == tmEventSetup.ChargeCorrelation %}

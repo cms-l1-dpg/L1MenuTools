@@ -20,7 +20,7 @@ cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline l1t-integration-CMSSW_11_2_0
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v105.12
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v105.20.1
 git cms-addpkg L1Trigger/Configuration
 git cms-addpkg L1Trigger/L1TMuon
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TMuon.git L1Trigger/L1TMuon/data
@@ -65,5 +65,5 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
-- input dataset: `/Nu_E10-pythia8-gun/Run3Winter20DRPremixMiniAOD-SNB_110X_mcRun3_2021_realistic_v6-v1/GEN-SIM-RAW`
+- input dataset: `/SingleNeutrino_Pt-2To20-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW`
 - includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
