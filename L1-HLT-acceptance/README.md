@@ -7,7 +7,7 @@ Evaluation of the total, pure and proportional acceptance of L1T seeds wrt HLT p
 ```
 ssh -Y <USERNAME>@lxplus.cern.ch
 voms-proxy-init -voms cms
-cmsrel CMSSW_<X_X_X>
+cmsrel CMSSW_12_0_0_pre3
 cd CMSSW_<X_X_X>/src
 cmsenv
 git cms-init
