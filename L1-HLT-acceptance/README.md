@@ -8,12 +8,12 @@ Evaluation of the total, pure and proportional acceptance of L1T seeds wrt HLT p
 ssh -Y <USERNAME>@lxplus.cern.ch
 voms-proxy-init -voms cms
 cmsrel CMSSW_12_0_0_pre3
-cd CMSSW_<X_X_X>/src
+cd CMSSW_12_0_0_pre3/src
 cmsenv
 git cms-init
 git clone https://github.com/cms-l1-dpg/L1MenuTools.git
 scram b -j 8
-cd L1-HLT-acceptance
+cd L1MenuTools/L1-HLT-acceptance
 ```
 
 ## 3. Execution
