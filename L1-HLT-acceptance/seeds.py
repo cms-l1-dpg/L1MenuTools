@@ -126,7 +126,8 @@ with open(savedir+csvname,"w") as csv_file:
 
             writer.writerow(ls)
 
-print("HLT_L1_seeds generated.")
+print("HLT_L1_seeds generated: {}".format(savedir + csvname))
+
 
 if not keep:
     shutil.rmtree(directory)
