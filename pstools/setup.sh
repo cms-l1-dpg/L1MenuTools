@@ -2,7 +2,7 @@
 
 echo ""
 echo "Creating virtual environment..."
-virtualenv -p python3 env
+python3 -m venv env
 if [ $? -ne 0 ]; then
 	echo "Error creating virtual environment."
 	exit 1
@@ -11,6 +11,15 @@ fi
 echo ""
 echo "Activating virtual environment..."
 . env/bin/activate
+
+echo ""
+echo "Updating pip..."
+pip install -U pip
+if [ $? -ne 0 ]; then
+	echo "Error updating pip."
+	exit 1
+fi
+
 
 echo ""
 echo "Installing requirements..."

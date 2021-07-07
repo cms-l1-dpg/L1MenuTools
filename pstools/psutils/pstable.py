@@ -1,13 +1,14 @@
 from typing import Union
 import pandas as pd
 
-def fill_empty_val(name: str):
+def fill_empty_val(name: str, fillVal: float):
     # TODO extend functionality of this method
-    return None 
+    print("Setting new seed {0} to default value {1}.".format(name, fillVal))
+    return fillVal 
 
 
 def find_table_value(pstable: pd.DataFrame, seed: str,
-        col: str) -> Union[int, float, str]:
+        col: str, newSeedVal: float, includeBptxSeeds: bool) -> Union[int, float, str]:
     """
     Retrieve a specific value corresponding to a given seed and column name.
 
@@ -19,6 +20,8 @@ def find_table_value(pstable: pd.DataFrame, seed: str,
         Name of the desired seed
     col : str
         Name of the desired column
+    newSeedVal : float
+        Default PS value for new seeds
 
     Returns
     -------
@@ -30,10 +33,15 @@ def find_table_value(pstable: pd.DataFrame, seed: str,
     if 'Name' not in pstable.columns:
         raise KeyError('PS table does not have a column \'Name\'')
 
-    if seed in pstable['Name'].values:
+    if (not includeBptxSeeds) and ("Bptx" in seed):
+        # Only print a message if the prescale wasn't already 0, as --includeBptx will not change the value in that case
+        if (pstable.loc[pstable['Name'] == seed])[col].values[0] != 0:
+            print("Setting prescale for {0} to 0. Change this by using --includeBptx.".format(seed))
+        return 0
+    elif seed in pstable['Name'].values:
         return (pstable.loc[pstable['Name'] == seed])[col].values[0]
     else:
-        return fill_empty_val(seed)
+        return fill_empty_val(seed,newSeedVal)
 
 
 def make_empty_table(pstable: pd.DataFrame) -> pd.DataFrame:

@@ -350,7 +350,7 @@ void L1AlgoFactory::ComplexSingleMuPt(Float_t& ptcut, Bool_t isER, Int_t qualmin
       continue;
     if (muonType == 2 && ! ( ( TfIdx >= 18 && TfIdx <= 35) || (TfIdx>= 72 && TfIdx <= 89)))
       continue;
-    if (muonType == 3 && ! (TfIdx< 18 || TfIdx < 89))
+    if (muonType == 3 && ! (TfIdx < 18 || TfIdx > 89))
       continue;
 #endif     // -----  not L1T_POST_TSGV3  -----
 

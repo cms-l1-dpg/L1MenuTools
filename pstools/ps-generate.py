@@ -22,11 +22,18 @@ if __name__ == '__main__':
     parser.add_argument('NewMenu',
             help='New L1 menu XML',
             type=str)
-    parser.add_argument('-output', '--output',
+    parser.add_argument('-o', '--output',
             help='Name of the created output file (w/o file extension)',
             type=str,
             default='new_PStable',
             dest='output')
+    parser.add_argument('--newSeedPS',
+            help='Prescale value to use for new seeds',
+            type=float,
+            default=1)
+    parser.add_argument('--includeBptx',
+            help='Keep prescale information for seeds using NotBptx and Bptx. By default, these prescales are set to 0 due to problems emulating NotBptx in ZeroBias.',
+            action='store_true')
 
     args = parser.parse_args()
 
@@ -45,7 +52,7 @@ if __name__ == '__main__':
             elif col == 'Name':
                 newData[col] = seed
             else:
-                newData[col] = find_table_value(PStable_in, seed, col)
+                newData[col] = find_table_value(PStable_in, seed, col, args.newSeedPS, args.includeBptx)
 
         line = pd.DataFrame(newData, index=[index])
         PStable_out = PStable_out.append(line, ignore_index=False, sort=True)
@@ -56,4 +63,6 @@ if __name__ == '__main__':
     PStable_out = PStable_out[PStable_in.columns]
     
     # save new table to the disk
-    write_prescale_table(PStable_out, filepath=args.output)
+    write_prescale_table(PStable_out, filepath=args.output, output_format='xlsx')
+    write_prescale_table(PStable_out, filepath=args.output, output_format='csv')
+

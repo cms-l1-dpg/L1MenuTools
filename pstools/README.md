@@ -11,22 +11,6 @@ These instructions will get you a copy of the project up and running on your
 local machine.
 
 
-### Setting up the environment
-
-In order to prepare a development environment, run
-```
-./setup.sh
-```
-
-This creates a virtual environment and installs all the necessary dependencies
-from the `requirements.txt` file.
-
-In order to activate the new environment, run
-```
-source env/bin/activate
-```
-
-
 ### Available tools & usage guides
 
 #### [`ps-generate`](./docs/ps-generate.md): prescale table generation tool
