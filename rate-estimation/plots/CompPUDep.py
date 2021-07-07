@@ -9,8 +9,7 @@
 #
 # Description : It allows to create rate vs PU plots starting csv files storing rate per PU information.
 #               Fill 7005 is used as a test (runs 320673 and 320674). 
-#               The csv file containing lumi and pileup information for these runs (run_lumi_fill7005.csv) is included here as an example
-#               to test the basic running of the script.
+#               The csv file containing lumi and pileup information for these runs (run_lumi_fill7005.csv) is included here to provide a complete example.
 
 import pandas as pd
 import numpy as np
@@ -31,8 +30,8 @@ csvfile_rateVSpileup = "Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv"
 
 plot_min = 0
 plot_max = 70
-maxx = 70
-maxy = 150
+maxx = 75
+maxy = 200
 fit_min = 20
 fit_max = 60
 
