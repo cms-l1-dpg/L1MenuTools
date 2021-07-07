@@ -3,6 +3,9 @@
 ##################################################################################################################
 ###  TriggerAcceptance.py : A script to compute the fraction of passing Level-1 Trigger paths accepted by HLT  ###
 ##################################################################################################################
+## First development of the code: Andrew Brinkerhoff
+## Accept. study 2021 adaptation: Mark Matthewman, Anna Stakia
+##################################################################################################################
 
 import ROOT as R
 R.gROOT.SetBatch(True)  ## Don't display histograms or canvases when drawn
@@ -12,15 +15,29 @@ import sys
 import math
 import subprocess
 import collections
+import pdb
+import csv
+import argparse
+
+parser = argparse.ArgumentParser(description = 'A script to compute the fraction of passing Level-1 Trigger paths accepted by HLT')
+
+parser.add_argument('--MAX_FILE', type = int, default = 1, help = 'Maximum number of input files to process')
+parser.add_argument('--MAX_EVT', type = int, default = 500000, help = 'Maximum number of events to process')
+parser.add_argument('--PRT_EVT', type = int, default = 10000, help = 'Print to screen every Nth event')
+parser.add_argument('--VERBOSE', action = 'store_true', default = False, help = 'Print extra info about each event')
+parser.add_argument('--PU_MIN', type = int, default = 0, help = 'Minimum number of good reconstructed vertices')
+parser.add_argument('--ROOTFILES', type =str, default = 'example-inputs/fnames.txt', help = 'Location of .txt file containing .root file names' )
+parser.add_argument('--REDIRECTOR', type = str, default = 'root://xrootd-cms.infn.it/', help = 'Redirector used to load .root files from')
+parser.add_argument('--HLT_L1_SEEDS', type = str, default = './hlt_l1_seeds/hlt_l1.csv', help = 'Name of .csv file containing run specific HLT-L1 combinations')
+
+args = parser.parse_args()
 
 ## User-defined constants
-MAX_FILE = 1      ## Maximum number of input files to process
-MAX_EVT  = 500000 ## Maximum number of events to process
-PRT_EVT  = 10000  ## Print to screen every Nth event
-VERBOSE  = False  ## Print extra info about each event
-
-PU_MIN   = 0      ## Minimum number of good reconstructed vertices
-
+MAX_FILE = args.MAX_FILE    ## Maximum number of input .root files to process
+MAX_EVT  = args.MAX_EVT     ## Maximum number of events to process
+PRT_EVT  = args.PRT_EVT     ## Print to screen every Nth event
+VERBOSE  = args.VERBOSE     ## Print extra info about each event
+PU_MIN   = args.PU_MIN      ## Minimum number of good reconstructed vertices
 
 def main():
 
@@ -28,18 +45,25 @@ def main():
 ## Initialize files
 ###################
 
-    ## Location of input files
+    ## List to store location of the input .root files
     in_file_names = []
-    in_dir = '/afs/cern.ch/user/m/mmatthew/public/'
 
-    ## Loop through available input files
-    for file_name in subprocess.check_output(['ls', in_dir]).splitlines():
-        if not '.root' in file_name: continue
-        in_file_names.append(in_dir+file_name)
-        print 'Opening file: '+in_file_names[-1]
-        if len(in_file_names) >= MAX_FILE: break
+    ## Loop over available input .root files existing in in_dir
+    #in_dir = '/afs/cern.ch/<X>/<Y>/<ZZ>'
+    #for file_name in subprocess.check_output(['ls', in_dir]).splitlines():
+    #    if not '.root' in file_name: continue
+    #    in_file_names.append(in_dir+file_name)
+    #    print 'Opening file: '+in_file_names[-1]
+    #    if len(in_file_names) >= MAX_FILE: break
 
-    ## Chain together trees from input files
+    ## Read and store location of input .root files
+    txtfile = args.ROOTFILES
+    redirector = args.REDIRECTOR
+    for ele in open(txtfile,'r'):
+        in_file_names.append(redirector + ele.split('\n')[0])
+        if len(in_file_names) >= MAX_FILE:break
+
+    ## Chain together trees from input .root files
     in_chains = []
     for i in range(len(in_file_names)):
         in_chains.append( R.TChain('Events') )
@@ -48,25 +72,31 @@ def main():
     ## Name of output file and directory
     BASE_STR = 'TriggerAcceptance'
 
-    ## Set output directories (create if they do not exist)
+    ## Set output directories for .pdf and .png files (create if not existing)
     if not os.path.exists('plots/png/%s/' % BASE_STR):
         os.makedirs('plots/png/%s/' % BASE_STR)
-        
+    if not os.path.exists('plots/pdf/%s/' % BASE_STR):
+        os.makedirs('plots/pdf/%s/' % BASE_STR)
+
     out_file = R.TFile('plots/%s.root' % BASE_STR, 'recreate')
     png_dir  = 'plots/png/%s/' % BASE_STR
+    pdf_dir  = 'plots/pdf/%s/' % BASE_STR
 
-    
+
 ####################
 ## L1T and HLT paths
 ####################
+
     print(in_chains)
     ## List of branches in the tree
     branch_list = [key.GetName() for key in in_chains[0].GetListOfBranches()]
-    ## All L1T and HLT paths in the tree
+
+    ## L1T_paths (HLT_paths): all the L1T (HLT) paths included in the tree, coming from the input .root files
     L1T_paths = [path for path in branch_list if path.startswith('L1_')]
     HLT_paths = [path for path in branch_list if path.startswith('HLT_')]
 
-    ## 49 unprescaled L1T paths with some unique rate in 2018
+    ## L1T_unpr_all: Set of *unprescaled* L1T seeds that we use for the rate calculations on the input samples 
+    ## Below are 49 unprescaled L1T paths with some unique rate in 2018
     ## Copied from L1T paper, Tables 2 and 3 (http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=TRG-17-001)
     ## 2018 prescales here: https://cmsoms.cern.ch/cms/triggers/prescale?cms_run=322079&cms_run_sequence=GLOBAL-RUN
     L1T_unpr = collections.OrderedDict()
@@ -99,12 +129,38 @@ def main():
     for group in L1T_unpr.keys():
         L1T_unpr_all += L1T_unpr[group]
 
-    ## Check that user-entered L1T paths exist in ZeroBias NanoAOD file
+    ## Check that user-entered L1T paths (L1T_unpr_all) exist in ZeroBias NanoAOD file inserted as input (L1T_paths). Their non-overlap is L1T_missing
+    L1T_missing = []
+    groups = list(L1T_unpr.keys())
     for path in L1T_unpr_all:
         if not path in L1T_paths:
-            print '\nSUPER WEIRD!!! Path %s from group %s not in TTree!!! Quitting.' % (path, group)
-            sys.exit()
+            for group in groups:
+                if path in L1T_unpr[group]: break
+            print '\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group)
+            L1T_missing.append(path)
 
+    ## HLT_L1_seeds: HLT-L1T 'seed-mappings' based on whether a specific L1T path seeded a particular HLT path. Created through the output of seeds.py
+    HLT_L1_seeds = {}
+    HLT_missing = []
+    path = args.HLT_L1_SEEDS
+    with open(path,'r') as csvfile:
+        reader = csv.reader(csvfile,delimiter=',')
+        header = next(reader)
+        for j in range(1,len(header)):
+            HLT_L1_seeds[header[j]] = {}
+        for row in reader:
+            for j in range(1,len(row)):
+                HLT_L1_seeds[header[j]][row[0]] = row[j].split(' OR ')
+
+
+    ## Remove missing paths to avoid errors when calling ch.GetLeaf(path)
+    for ele in L1T_missing:
+        L1T_unpr_all.remove(ele)
+
+
+    if L1T_unpr_all ==[]:
+        print 'None of the user defined unprescaled seeds can be found in TTree. System exit'
+        sys.exit()
 
 #############
 ## Histograms
@@ -116,7 +172,7 @@ def main():
     nL1T_bins = collections.OrderedDict()                     ## Dictionary of Level-1 Trigger "groups"
     for group in L1T_unpr.keys():
         nL1T_bins[group] = [len(L1T_unpr[group]), 0.5, len(L1T_unpr[group]) + 0.5]  ## Bins for Level-1 Trigger paths by group
-    
+
     ## Book 1D histograms
     ## Important to use '1D' instead of '1F' when dealing with large numbers of entries, and weighted events (higher precision)
 
@@ -147,12 +203,13 @@ def main():
 ## Event loop
 #############
 
+
     iEvt  = 0  ## Event index
     iPass = 0  ## Number of events passing pileup cut 
 
-    ## Loop through input files
+    ## Loop over input .root files
     for ch in in_chains:
-        
+
         if iEvt >= MAX_EVT and MAX_EVT > 0: break
 
         ## Loop through events in each file
@@ -163,7 +220,9 @@ def main():
             if iEvt % PRT_EVT is 0: print 'Event #%d / %d' % (iEvt, MAX_EVT)
 
             ch.GetEntry(jEvt)
+            run = str(ch.GetLeaf('run').GetValue()).split('.')[0]
 
+            ## Pileup check
             if ch.PV_npvsGood < PU_MIN: continue
             iPass += 1
 
@@ -173,12 +232,12 @@ def main():
             hists['nPV_good'].Fill( min( max(ch.PV_npvsGood, nPV_bins[1]+0.01), nPV_bins[2]-0.01) )
 
 
-            ## List of L1T paths which fired
+            ## List of L1T paths which fired in jEvt
             L1T_pass = []
             ## Dictionary of bools storing which L1T paths passed
             L1T_acc = collections.OrderedDict()
-            
-            ## Check which L1T paths fired in this event
+
+            ## Check which L1T paths fired in jEvt
             for path in L1T_unpr_all:
                 if ch.GetLeaf(path).GetValue() == 1:
                     L1T_pass.append(path)
@@ -211,13 +270,21 @@ def main():
 
                 ## Check to see which fired L1T paths seeded this HLT path
                 for seed in L1T_pass:
-                    ###############################     FIXME!!!     ###############################
-                    ###  Should have a conditional that this L1T path seeds the firing HLT path  ###
-                    ###           e.g. if not seed in HLT_L1_seeds[path]: continue               ###
-                    ################################################################################
-                    L1T_acc       [seed].append(path)
-                    HLT_seed_fired[path].append(seed)
-                    if VERBOSE: print '  * %s also fired' % seed
+                    try:
+                        if not seed in HLT_L1_seeds[run][path]:
+                            print '%s not in %s!!!' % (seed,path)
+                            continue
+
+                        ## Conditional that this L1T path seeded the firing HLT path
+                        L1T_acc[seed].append(path)
+                        HLT_seed_fired[path].append(seed)
+                        print '  * %s fires %s' % (seed,path)
+                        if VERBOSE: print '  * %s fires %s' % (seed,path)
+
+                    except KeyError:
+                        HLT_missing.append(path)
+                        print '\n%s not in user defined HLT-L1-seeds!!! Program will continue.' % (path)
+
                 ## End loop: for seed in L1T_pass:
             ## End loop: for iHLT in range(len(HLT_paths))
 
@@ -233,6 +300,7 @@ def main():
                     hists['L1T_%s_rate_total' % group].Fill(iL1T+1)
                     hists['L1T_%s_rate_pure'  % group].Fill(iL1T+1, (len(L1T_pass) == 1))
                     hists['L1T_%s_rate_prop'  % group].Fill(iL1T+1, 1.0 / len(L1T_pass))
+
 
                     ## Require that L1T path seeded at least one HLT path which fired
                     if len(L1T_acc[seed]) == 0: continue
@@ -252,15 +320,65 @@ def main():
                     hists['L1T_%s_acc_rate_pure'  % group].Fill(iL1T+1, (nAcc_L1T == 1))
                     hists['L1T_%s_acc_rate_prop'  % group].Fill(iL1T+1, 1.0 / nAcc_L1T)
 
+
                 ## End loop: for iL1T in range(len(L1T_unpr[group])):
             ## End loop: for group in L1T_unpr.keys():
 
-                    
+
         ## End loop over events in chain (jEvt)
     ## End loop over chains (ch)
 
     print 'Finished with loop over %d events' % iEvt
 
+    ## Configure the rate histograms
+    for hname in hists.keys():
+        hists[hname].SetStats(0)
+        ## Label the L1T and HLT histogram axes
+        if hname.startswith('HLT') and hists[hname].GetNbinsX() == len(HLT_paths):
+            for iHLT in range(len(HLT_paths)):
+                hists[hname].GetXaxis().SetBinLabel(iHLT+1, HLT_paths[iHLT])
+                hists[hname].GetYaxis().SetTitle('Rate (kHz)')
+        for group in L1T_unpr.keys():
+            if hname.startswith('L1T_%s' % group) and hists[hname].GetNbinsX() == len(L1T_unpr[group]):
+                for iL1T in range(len(L1T_unpr[group])):
+                    hists[hname].GetXaxis().SetBinLabel(iL1T+1, L1T_unpr[group][iL1T])
+
+                    hists[hname].GetYaxis().SetTitle('Rate (kHz)')
+
+
+        ## Scale counts by 30 MHz to get trigger rate
+        if (hname.startswith('HLT') or hname.startswith('L1T')) and '_rate_' in hname:
+            hists[hname].Scale(30000. / iPass)
+#            print("Re-insert Scaling!!!!")
+
+        hists[hname].SetMinimum(0) # Necessary to set at end otherwise command is ignored due to scaling
+
+    ## Two 2D Tables
+
+    from prettytable import PrettyTable
+
+    x = PrettyTable()
+    y = PrettyTable()
+
+    x.field_names = ['group', 'total rate', 'prop rate', 'pure rate']
+    y.field_names = ['group', 'total acc rate', 'prop acc rate', 'pure acc rate']
+
+    for group in L1T_unpr.keys():
+
+        total_x = hists['L1T_%s_rate_total' % group].Integral()
+        total_y = hists['L1T_%s_acc_rate_total' % group].Integral()
+
+        prop_x = hists['L1T_%s_rate_prop' % group].Integral()
+        prop_y = hists['L1T_%s_acc_rate_prop' % group].Integral()
+
+        pure_x = hists['L1T_%s_rate_pure' % group].Integral()
+        pure_y = hists['L1T_%s_acc_rate_pure' % group].Integral()
+
+        x.add_row([group, total_x, prop_x, pure_x])
+        y.add_row([group, total_y, prop_y, pure_y])
+
+    print(x)
+    print(y)
 
 ######################
 ## Save the histograms
@@ -275,121 +393,169 @@ def main():
 
 
     ## Draw the number of primary vertices
+    legend = R.TLegend(0.78,0.78,0.98,0.93)
     hists['nPV_good'].SetLineWidth(2)
     hists['nPV_good'].SetLineColor(R.kBlue)
     hists['nPV_good'].Draw('hist')
+    legend.AddEntry(hists['nPV_good'], 'Good primary vertices', 'l')
+    legend.Draw()
     hists['nPV_good'].Write()
     hists['nPV'].SetLineWidth(2)
     hists['nPV'].SetLineColor(R.kBlack)
     hists['nPV'].Draw('histsame')
+    legend.AddEntry(hists['nPV'], 'Primary vertices', 'l')
+    legend.Draw()
     hists['nPV'].Write()
     c0.SaveAs(png_dir+'h_nPV.png')
-
-
-    ## Configure the rate histograms
-    for hname in hists.keys():
-        ## Label the L1T and HLT histogram axes
-        if hname.startswith('HLT') and hists[hname].GetNbinsX() == len(HLT_paths):
-            for iHLT in range(len(HLT_paths)):
-                hists[hname].GetXaxis().SetBinLabel(iHLT+1, HLT_paths[iHLT])
-                hists[hname].GetYaxis().SetTitle('Rate (kHz)')
-        for group in L1T_unpr.keys():
-            if hname.startswith('L1T_%s' % group) and hists[hname].GetNbinsX() == len(L1T_unpr[group]):
-                for iL1T in range(len(L1T_unpr[group])):
-                    hists[hname].GetXaxis().SetBinLabel(iL1T+1, L1T_unpr[group][iL1T])
-                    hists[hname].GetYaxis().SetTitle('Rate (kHz)')
-        ## Scale counts by 30 MHz to get trigger rate
-        if (hname.startswith('HLT') or hname.startswith('L1T')) and '_rate_' in hname:
-            hists[hname].Scale(30000. / iPass)
+    c0.SaveAs(pdf_dir+'h_nPV.pdf')
 
 
     ## Draw the HLT rate histograms
+
     hists['HLT_rate_total'].SetLineWidth(2)
     hists['HLT_rate_total'].SetLineColor(R.kBlack)
     hists['HLT_rate_total'].Draw('hist')
     hists['HLT_rate_total'].Write()
     c0.SaveAs(png_dir+'h_HLT_rate.png')
-
+    c0.SaveAs(pdf_dir+'h_HLT_rate.pdf')
 
     ## Draw the L1T rate and acceptance histograms for each group
     for group in L1T_unpr.keys():
 
         ## Raw L1T rate histograms, including purity w.r.t. other L1T seeds
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_total' % group].SetLineWidth(2)
         hists['L1T_%s_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_rate_total' % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_total' % group], 'L1T total rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_total' % group].Write()
         hists['L1T_%s_rate_prop'  % group].SetLineWidth(2)
         hists['L1T_%s_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_rate_prop'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_rate_prop' % group], 'L1T prop. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_prop'  % group].Write()
         hists['L1T_%s_rate_pure'  % group].SetLineWidth(2)
         hists['L1T_%s_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_rate_pure'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_rate_pure' % group], 'L1T pure rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_pure'  % group].Write()
         hists['L1T_%s_rate_total' % group].SetTitle('L1T rates')
+
         c0.SaveAs(png_dir+'h_L1T_%s_rate.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate.pdf' % group)
 
         ## HLT acceptance rate histograms, including purity w.r.t. HLT acceptance
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_acc_rate_total' % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_acc_rate_total' % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].Write()
         hists['L1T_%s_acc_rate_prop'  % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_acc_rate_prop'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T prop. acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_prop'  % group].Write()
         hists['L1T_%s_acc_rate_pure'  % group].SetLineWidth(2)
         hists['L1T_%s_acc_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_acc_rate_pure'  % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_pure' % group], 'L1T pure acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_pure'  % group].Write()
         hists['L1T_%s_acc_rate_total' % group].SetTitle('L1T HLT-accepted rates')
         c0.SaveAs(png_dir+'h_L1T_%s_acc_rate.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_acc_rate.pdf' % group)
 
         ## Total rate and HLT acceptance overlaid
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_total'     % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_total' % group], 'L1T total rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kViolet)
         hists['L1T_%s_acc_rate_total' % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_total'     % group].SetTitle('L1T net and HLT-accepted total rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_total.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate_acc_total.pdf' % group)
 
         ## Proportional rate and HLT acceptance overlaid
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_prop'     % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_prop' % group], 'L1T prop. acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_prop' % group].SetLineColor(R.kGreen)
         hists['L1T_%s_acc_rate_prop' % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T prop. acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_prop'     % group].SetTitle('L1T net and HLT-accepted proportional rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_prop.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate_acc_prop.pdf' % group)
 
         ## Pure rate and HLT acceptance overlaid
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_rate_pure'     % group].Draw('hist')
+        legend.AddEntry(hists['L1T_%s_rate_pure' % group], 'L1T pure rate', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_pure' % group].SetLineColor(R.kMagenta)
         hists['L1T_%s_acc_rate_pure' % group].Draw('histsame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_pure' % group], 'L1T pure acc. rate', 'l')
+        legend.Draw()
         hists['L1T_%s_rate_pure'     % group].SetTitle('L1T net and HLT-accepted pure rates')
         c0.SaveAs(png_dir+'h_L1T_%s_rate_acc_pure.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_rate_acc_pure.pdf' % group)
 
         ## HLT acceptance fraction histograms, including purity w.r.t. HLT acceptance
+        legend = R.TLegend(0.78,0.78,0.98,0.93)
         hists['L1T_%s_acc_rate_total' % group].Divide  (hists['L1T_%s_rate_total' % group])
         hists['L1T_%s_acc_rate_total' % group].SetName ('h_L1T_%s_acc_frac_total' % group )
         hists['L1T_%s_acc_rate_total' % group].SetTitle('h_L1T_%s_acc_frac_total' % group )
+        hists['L1T_%s_acc_rate_total' % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_total' % group].SetLineColor(R.kBlack)
         hists['L1T_%s_acc_rate_total' % group].Draw('histe')
+        legend.AddEntry(hists['L1T_%s_acc_rate_total' % group], 'L1T total fraction', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_total' % group].Write()
         hists['L1T_%s_acc_rate_prop'  % group].Divide  (hists['L1T_%s_rate_prop' % group])
         hists['L1T_%s_acc_rate_prop'  % group].SetName ('h_L1T_%s_acc_frac_prop' % group )
         hists['L1T_%s_acc_rate_prop'  % group].SetTitle('h_L1T_%s_acc_frac_prop' % group )
+        hists['L1T_%s_acc_rate_prop'  % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_prop'  % group].SetLineColor(R.kBlue)
         hists['L1T_%s_acc_rate_prop'  % group].Draw('histesame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_prop' % group], 'L1T prop. fraction', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_prop'  % group].Write()
         hists['L1T_%s_acc_rate_pure'  % group].Divide  (hists['L1T_%s_rate_pure' % group])
         hists['L1T_%s_acc_rate_pure'  % group].SetName ('h_L1T_%s_acc_frac_pure' % group )
         hists['L1T_%s_acc_rate_pure'  % group].SetTitle('h_L1T_%s_acc_frac_pure' % group )
+        hists['L1T_%s_acc_rate_pure'  % group].GetYaxis().SetTitle('Fraction')
         hists['L1T_%s_acc_rate_pure'  % group].SetLineColor(R.kRed)
         hists['L1T_%s_acc_rate_pure'  % group].Draw('histesame')
+        legend.AddEntry(hists['L1T_%s_acc_rate_pure' % group], 'L1T pure fraction', 'l')
+        legend.Draw()
         hists['L1T_%s_acc_rate_pure'  % group].Write()
         hists['L1T_%s_acc_rate_total' % group].SetTitle('L1T fraction of HLT-accepted events')
         c0.SaveAs(png_dir+'h_L1T_%s_acc_frac.png' % group)
+        c0.SaveAs(pdf_dir+'h_L1T_%s_acc_frac.pdf' % group)
 
     ## End loop: for group in L1T_unpr.keys()
+
+
+    ## Display the unprescaled seeds defined by the user which are not present in the .root file again
+    if L1T_missing !=[]:
+        print '\nThe missing seeds are:'
+        for ele in L1T_missing:
+            print ele
+
+    if HLT_missing !=[]:
+        print '\nThe missing paths are:'
+        for ele in HLT_missing:
+            print ele
 
 
     ## Delete the output ROOT file from local memory
