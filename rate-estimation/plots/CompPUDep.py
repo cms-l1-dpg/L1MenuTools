@@ -9,7 +9,8 @@
 #
 # Description : It allows to create rate vs PU plots starting csv files storing rate per PU information.
 #               Fill 7005 is used as a test (runs 320673 and 320674). 
-#               The csv file containing lumi and pileup information for these runs (run_lumi_fill7005.csv) is included here to provide a complete example.
+#               The csv file containing lumi and pileup information for these runs (run_lumi_fill7005.csv) is included here as an example
+#               to test the basic running of the script.
 
 import pandas as pd
 import numpy as np
@@ -17,6 +18,7 @@ import glob
 import math
 import ROOT
 import collections
+import argparse
 import os
 import re
 import tdrstyle
@@ -25,8 +27,19 @@ from Config import DualMap, S1S2Map, S2S1Map
 
 ROOT.gROOT.SetBatch(True)
 
-outfolder_details    = "20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1"
-csvfile_rateVSpileup = "Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv"
+parser = argparse.ArgumentParser()
+parser.add_argument('--outfolder',
+        help='Name of the output folder',
+        default='20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1',
+        type=str)
+parser.add_argument('--csv',
+        help='Name of the csv file containing rates as a function of pileup',
+        default='Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv',
+        type=str)
+args = parser.parse_args()
+
+outfolder_details = args.outfolder
+csvfile_rateVSpileup = args.csv
 
 plot_min = 0
 plot_max = 70
@@ -71,7 +84,6 @@ PatMap = {
 def DrawPU(canvas, f, l1seed, count, key=None):
     list_fromDrawPU = [] # Making Python objects used here known within the DrawL1 function  
     df = f[(f.L1Seed == l1seed )]
-    #RetVar = None
 
     for i in range(0, len(pubins) -1):
         pumap[pubins[i]] = []
@@ -154,7 +166,6 @@ def DrawPU(canvas, f, l1seed, count, key=None):
 
     if key is not None:
         tex = ROOT.TLatex(0.2, 0.85, key)
-        #list_fromDrawPU.append(tex)
         tex.SetNDC()
         tex.SetTextFont(61)
         tex.SetTextSize(0.055)
@@ -162,7 +173,6 @@ def DrawPU(canvas, f, l1seed, count, key=None):
         tex.SetLineWidth(2)
         tex.Draw()
 
-    #canvas.Update()
     return list_fromDrawPU
 
 def DrawL1(key, pattern):
@@ -215,7 +225,7 @@ if __name__ == "__main__":
     df = pd.concat(flist)
 
     ## PatMap can be redifined to take into account each L1Seed present in the dataframe
-    PatMap = {k:k for k in pd.unique(df.L1Seed)}
+    #PatMap = {k:k for k in pd.unique(df.L1Seed)}
 
     ROOT.gStyle.SetOptStat(000000000)
     tdrstyle.setTDRStyle()
