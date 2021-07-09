@@ -350,35 +350,38 @@ for e in ext:
 	fig.savefig("{}_pieChart.{}".format(outputFileName,e),transparent=True)
 	print ("File saved: {}_pieChart.{}".format(outputFileName,e))
 
-plt.rc('font', size=13)
+plt.rc('font', size=16, weight='bold')
 ## for getting percentages
 tot = sum(rates)
 #print ("sum of all rate: ", tot)
-figbar, ax = plt.subplots(figsize=(15,4)) 
+figbar, ax = plt.subplots(figsize=(12,6)) 
 ax.barh(labels, rates, edgecolor='black',color='None',align='center', alpha=0.5)
 figbar.subplots_adjust(left= 0.24)
 #figbar.subplots_adjust(right=1/15.0, left=1-1/15.0, top=1/4.0, bottom=1-1/4.0, wspace=0.2)
 for i, v in enumerate(rates):
 	if text == "percentage+totalrate" or text == "percentage":
 		#ax.text(v*1.1, i, '{:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
-		ax.text(v+100, i, '{:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+		ax.text(v+300, i, '  {:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
 	if text == "percentage+rates+totalrate" :
 		#ax.text(v*0.7 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
 		#ax.text(v+9300 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
-		ax.text(v+100 , i, '{:.1f}{}    [{:.1f}{}]'.format((v/tot)*100,'\%',v*0.001,' kHz'), color='black', va='center')
+		ax.text(v+300 , i, '  {:.1f}{}      [{:.1f}{}]'.format((v/tot)*100,'\%',v*0.001,' kHz'), color='black', va='center')
 	if text == "rates+totalrate":
-		ax.text(v+100 , i, '{:.1f}{}'.format(v*0.001,' kHz'), color='black', va='center')
+		ax.text(v+120 , i, '  {:.1f}{}'.format(v*0.001,' kHz'), color='black', va='center')
 
-plt.ylabel('Seed Categories')
-plt.xlabel('Fractions of the 100 kHz rate allocation for single- and multi-object triggers and cross triggers')
+plt.ylabel('Seed Categories', size=15)
+plt.xlabel('Fractions of the 100 kHz rate allocation for single- and multi-object triggers and cross triggers', size=15)
 if "totalrate" in text:
-	plt.title('L1 Rates for Seed Categories\n(Total rate: {:.1f} kHz)'.format(df_PS1.iloc[-1,3]) )
+	#plt.title('L1 Rates for Seed Categories\n(Total rate: {:.1f} kHz)'.format(df_PS1.iloc[-1,3]) )
+	ax.set_title('L1 Rates for Seed Categories\n(Total rate: {:.1f} kHz)'.format(df_PS1.iloc[-1,3]) , loc = 'left')
 else:
-	plt.title('L1 Rates for Seed Categories')
+	#plt.title('L1 Rates for Seed Categories')
+	ax.set_title('L1 Rates for Seed Categories', loc= 'left')
 plt.box(False)
 ax.get_xaxis().set_ticks([])
 ax.tick_params(axis='both', which='both', length=0)
 barfig = plt.gcf()
+plt.tight_layout()
 plt.show()
 for e in ext:
 	barfig.savefig("{}_{}_barPlot.{}".format(outputFileName,text,e),transparent=True)
