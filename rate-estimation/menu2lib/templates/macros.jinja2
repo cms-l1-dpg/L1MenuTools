@@ -47,16 +47,16 @@
 {#
  # set delta phi
  #}
-{% macro setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) %}
-  int iPhi = {{ getIPhi(prefix0, idx0) }};
+{% macro setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True, ns='') %}
+  int {{ns}}iPhi = {{ getIPhi(prefix0, idx0) }};
   {% if (prefix0 != prefix1) and (prefix1 | isMuon) %}
-    iPhi = {{LUTS.CONV_PHI}}[iPhi];
+    {{ns}}iPhi = {{LUTS.CONV_PHI}}[{{ns}}iPhi];
   {% endif %}
 
-  unsigned int deltaIPhi = abs(iPhi - {{ getIPhi(prefix1, idx1) }});
-  if (deltaIPhi >= {{iPi}}) deltaIPhi = 2*{{iPi}} - deltaIPhi;
+  unsigned int {{ns}}deltaIPhi = abs({{ns}}iPhi - {{ getIPhi(prefix1, idx1) }});
+  if ({{ns}}deltaIPhi >= {{iPi}}) {{ns}}deltaIPhi = 2*{{iPi}} - {{ns}}deltaIPhi;
   {% if useDelta %}
-      const unsigned int deltaPhi = {{LUTS.DPHI}}[deltaIPhi];
+      const unsigned int {{ns}}deltaPhi = {{LUTS.DPHI}}[{{ns}}deltaIPhi];
   {% endif %}
 {% endmacro %}
 
@@ -64,15 +64,15 @@
 {#
  # set delta eta
  #}
-{% macro setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta=True) %}
-  iEta = {{ getIEta(prefix0, idx0) }};
+{% macro setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta=True, ns='') %}
+  {% if ns %}int {% endif %}{{ns}}iEta = {{ getIEta(prefix0, idx0) }};
   {% if (prefix0 != prefix1) and (prefix1 | isMuon) %}
-    if (iEta < 0) iEta += {{LUTS.ETA_OFFSET}};
-    iEta = {{LUTS.CONV_ETA}}[iEta];
+    if ({{ns}}iEta < 0) {{ns}}iEta += {{LUTS.ETA_OFFSET}};
+    {{ns}}iEta = {{LUTS.CONV_ETA}}[{{ns}}iEta];
   {% endif %}
-  deltaIEta = abs(iEta - {{ getIEta(prefix1, idx1) }});
+  {% if ns %}int {% endif %}{{ns}}deltaIEta = abs({{ns}}iEta - {{ getIEta(prefix1, idx1) }});
   {% if useDelta %}
-    unsigned int deltaEta = {{LUTS.DETA}}[deltaIEta];
+    unsigned int {{ns}}deltaEta = {{LUTS.DETA}}[{{ns}}deltaIEta];
   {% endif %}
 {% endmacro %}
 
@@ -90,28 +90,25 @@
 {#
  # set mass2
  #}
-{%- macro setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
-    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
-    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
-    const long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
-    const long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
-    const long long pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
-    const long long pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
-    const long long mass2 = pt0 * pt1 * (coshDeltaEta - cosDeltaPhi);
+{%- macro setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True, ns='') -%}
+    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta, ns) }}
+    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta, ns) }}
+    const long long {{ns}}coshDeltaEta = {{LUTS.COSH_DETA}}[{{ns}}deltaIEta];
+    const long long {{ns}}cosDeltaPhi = {{LUTS.COS_DPHI}}[{{ns}}deltaIPhi];
+    const long long {{ns}}pt0 = {{LUTS.ET0}}[data->{{prefix0}}IEt.at({{idx0}})];
+    const long long {{ns}}pt1 = {{LUTS.ET1}}[data->{{prefix1}}IEt.at({{idx1}})];
+    const long long {{ns}}mass2 = {{ns}}pt0 * {{ns}}pt1 * ({{ns}}coshDeltaEta - {{ns}}cosDeltaPhi);
 {%- endmacro -%}
 
 
 {#
- # set massUpt2
+ # set mass3
  #}
-{%- macro setMassUpt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
-    {{ setDeltaEta(prefix0, prefix1, idx0, idx1, LUTS, useDelta) }}
-    {{ setDeltaPhi(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
-    const long long coshDeltaEta = {{LUTS.COSH_DETA}}[deltaIEta];
-    const long long cosDeltaPhi = {{LUTS.COS_DPHI}}[deltaIPhi];
-    const long long upt0 = {{LUTS.UPT0}}[data->{{prefix0}}IEtUnconstrained.at({{idx0}})];
-    const long long upt1 = {{LUTS.UPT1}}[data->{{prefix1}}IEtUnconstrained.at({{idx1}})];
-    const long long mass2 = upt0 * upt1 * (coshDeltaEta - cosDeltaPhi);
+{%- macro setMass3(prefix0, prefix1, prefix2, idx0, idx1, idx2, LUTS01, LUTS02, LUTS12, iPi, useDelta=True) -%}
+    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS01, iPi, useDelta, 'ab_') }}
+    {{ setMass2(prefix0, prefix2, idx0, idx2, LUTS02, iPi, useDelta, 'ac_') }}
+    {{ setMass2(prefix1, prefix2, idx1, idx2, LUTS12, iPi, useDelta, 'bc_') }}
+    const long long mass3 = ab_mass2 + ac_mass2 + bc_mass2;
 {%- endmacro -%}
 
 
@@ -273,11 +270,6 @@
     {{ setMass2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
     {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
 
-  {% elif cut.getCutType() == tmEventSetup.MassUpt %}
-    // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
-    {{ setMassUpt2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
-    {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
-
   {% elif cut.getCutType() == tmEventSetup.ChargeCorrelation %}
     if (data->{{prefix}}Chg.at({{idx0}}) == 0) continue;  // charge valid bit not set
     if (data->{{prefix}}Chg.at({{idx1}}) == 0) continue;  // charge valid bit not set
@@ -291,6 +283,21 @@
   {% endif %}
   {% endfor %}
 {% endmacro %}
+
+{#
+ # get cuts for correlations of objects with the same type
+ #}
+{% macro getSameTypeCorrelationCuts3(prefix, idx0, idx1, idx2, cond, tmEventSetup, LUTS01, LUTS02, LUTS12, iPi) %}
+  {{ cond | hasCorrelationCuts }}
+  {% for cut in cond.getCuts() %}
+  {% if cut.getCutType() == tmEventSetup.Mass %}
+    // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
+    {{ setMass3(prefix, prefix, prefix, idx0, idx1, idx2, LUTS01, LUTS02, LUTS12, iPi, False) }}
+    {{ applyFunctionCut('mass3', cut, LUTS01.PREC_MASS) }}
+  {% endif %}
+  {% endfor %}
+{% endmacro %}
+
 
 
 {#
@@ -467,3 +474,4 @@
 {% endmacro %}
 
 {# eof #}
+
