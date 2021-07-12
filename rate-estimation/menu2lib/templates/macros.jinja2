@@ -279,7 +279,7 @@
 
   {% elif cut.getCutType() == tmEventSetup.Mass %}
     // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
-    {{ setMass2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
+    {{ setMass2(prefix, prefix, idx0, idx1, LUTS, iPi, False, '') }}
     {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
 
   {% elif cut.getCutType() == tmEventSetup.MassUpt %}
@@ -341,7 +341,7 @@
 
   {% elif cut.getCutType() == tmEventSetup.Mass %}
     // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
-    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, False) }}
+    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, False, '') }}
     {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
 
   {% endif %}
