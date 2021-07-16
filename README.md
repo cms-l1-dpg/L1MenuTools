@@ -10,8 +10,11 @@ Collection of tools used for rate estimation of a new menu.
 ### Rate visualization tool ([rate-visualization/](rate-visualization/))
 Create pie charts and bar charts from L1 Menu rate tables.
 
+### L1-HLT acceptance studies ([L1-HLT-acceptance/](L1-HLT-acceptance/))
+Study and visualize the relations between L1 and HLT menus.
+
 ### L1Ntuples production recipe ([L1Ntuples/](L1Ntuples/))
-Latest snapshop of a recipe to produce L1Ntuples on HTCondor.
+Latest snapshot of a recipe to produce L1Ntuples on HTCondor.
 
 ### PS-tools ([pstools/](pstools/))
 Collection of prescale table tools for offline L1 Menu operations in CMS. 
