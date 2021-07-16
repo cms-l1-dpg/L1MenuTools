@@ -1131,6 +1131,7 @@ bool L1Menu2016::Loop()
   //Int_t nevents = fChain->GetEntriesFast();//GetEntries();
   unsigned int currentLumi(-1);
   nZeroBiasevents = 0.;
+  nZeroBiasevents_PUrange = 0.;
   int i = -1;
   nLumi.clear();
   bool skipLS = false;
@@ -1205,6 +1206,24 @@ bool L1Menu2016::Loop()
 
     nZeroBiasevents++;
 
+    float ev_pileup = -1;
+    // Data                                                                            
+    if (event_->run > 1 && DataLSPU.find(event_->run) != DataLSPU.end())
+      {
+	if (DataLSPU[event_->run].find(event_->lumi) != DataLSPU[event_->run].end())
+	  {
+	    ev_pileup = DataLSPU[event_->run][event_->lumi];
+	  }
+      }
+    // MC                                                                                                                               
+    if (event_->run == 1)
+      {
+	ev_pileup = event_->nPV_True;
+      }
+
+    if (ev_pileup < 48 || ev_pileup > 58) continue;
+    nZeroBiasevents_PUrange++;
+
     GetL1Event();
     RunMenu();
 
@@ -1225,6 +1244,7 @@ bool L1Menu2016::Loop()
   }
 
   std::cout << "Total Event: " << i <<" ZeroBias Event: " << nZeroBiasevents << std::endl;
+  std::cout << "Total Event: " << i <<" ZeroBias Event with PU requirement: " << nZeroBiasevents_PUrange << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----
 
@@ -1447,7 +1467,8 @@ bool L1Menu2016::RunMenu()
 double L1Menu2016::CalScale(int nEvents_, int nBunches_, bool print) 
 {
   double scale = 0.0;
-  int nEvents = nEvents_ == 0 ? nZeroBiasevents : nEvents_;
+  //int nEvents = nEvents_ == 0 ? nZeroBiasevents : nEvents_;
+  int nEvents = nEvents_ == 0 ? nZeroBiasevents_PUrange : nEvents_;
   double nBunches = nBunches_ == 0 ?  L1Config["nBunches"] : nBunches_;
 
   if (L1Config["nBunches"] < 0)
@@ -2236,6 +2257,7 @@ bool L1Menu2016::ReadDataPU()
     int Fill, Run, LS;
     float pileup;
     iss >> Fill >> c >> Run >> c >> LS >> c >> pileup;
+    
     DataLSPU[Run][LS] = pileup;
     DataFillNO[Run] = Fill;
   }
