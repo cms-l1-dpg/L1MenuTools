@@ -293,6 +293,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       err> unsupported object combination for mT
     {% endif %}
 
+  {% elif cond.getType() in (tmEventSetup.InvariantMass3, ) %}
+    {% include 'MuonMuonMuonCorrelationTemplate.cc' %}
+
   {% endif -%}
 {% endfor %}
 
