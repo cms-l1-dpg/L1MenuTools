@@ -116,6 +116,17 @@
 
 
 {#
+ # set mass3
+ #}
+{%- macro setMass3(prefix0, prefix1, prefix2, idx0, idx1, idx2, LUTS, iPi, useDelta=True) -%}
+    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta, 'ab_') }}
+    {{ setMass2(prefix0, prefix2, idx0, idx2, LUTS, iPi, useDelta, 'ac_') }}
+    {{ setMass2(prefix1, prefix2, idx1, idx2, LUTS, iPi, useDelta, 'bc_') }}
+    const long long mass3 = ab_mass2 + ac_mass2 + bc_mass2;
+{%- endmacro -%}
+
+
+{#
  # set mt2
  #}
 {%- macro setMt2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
