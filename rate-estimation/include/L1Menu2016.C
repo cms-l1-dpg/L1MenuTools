@@ -1207,20 +1207,8 @@ bool L1Menu2016::Loop()
     nZeroBiasevents++;
 
     float ev_pileup = -1;
-    // Data                                                                            
-    if (event_->run > 1 && DataLSPU.find(event_->run) != DataLSPU.end())
-      {
-	if (DataLSPU[event_->run].find(event_->lumi) != DataLSPU[event_->run].end())
-	  {
-	    ev_pileup = DataLSPU[event_->run][event_->lumi];
-	  }
-      }
-    // MC                                                                                                                               
-    if (event_->run == 1)
-      {
-	ev_pileup = event_->nPV_True;
-      }
-
+    ev_pileup = EvaluatePileUp();
+    //if (ev_pileup <= 45 || ev_pileup >= 61) continue;
     if (ev_pileup < 48 || ev_pileup > 58) continue;
     nZeroBiasevents_PUrange++;
 
@@ -1243,8 +1231,8 @@ bool L1Menu2016::Loop()
       l1uGT->CompEvents();
   }
 
-  std::cout << "Total Event: " << i <<" ZeroBias Event: " << nZeroBiasevents << std::endl;
-  std::cout << "Total Event: " << i <<" ZeroBias Event with PU requirement: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "Total Event: " << i <<" ZeroBias Events: " << nZeroBiasevents << std::endl;
+  std::cout << "Total Event: " << i <<" ZeroBias Events in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----
 
@@ -2145,7 +2133,59 @@ bool L1Menu2016::FillPileUpSec()
   }
 
   return true;
-}       // -----  end of function L1Menu2016::FillPileUpSec  -----
+}       // -----  end of function L1Menu2016::FillPileUpSec  ----
+
+// ===  FUNCTION  ============================================================                                                                                 
+//         Name:  L1Menu2016::EvaluatePileUp                                                                                                                    
+//  Description:  Evaluate pileup for data and MC                                                                                                                    
+// ===========================================================================                                                                                     
+float L1Menu2016::EvaluatePileUp()
+{
+  float pu = -1;
+
+  // Data                                                                                                                                                   
+  if (event_->run > 1)            
+    {
+      const std::string pucsv = L1ConfigStr["Lumilist"];
+      std::ifstream csvfile(pucsv);
+      if (!csvfile)
+	{
+	  std::cout << "Data PU CSV File "<<pucsv<<" is not found !"<<std::endl;
+	  return false;
+	}
+      
+      std::string line;
+      DataLSPU.clear();
+      std::getline(csvfile, line); // Skip the first line;                                                                         
+      
+      while (std::getline(csvfile, line))
+	{
+	  std::istringstream iss(line);
+	  char c;
+	  int Fill, Run, LS;
+	  float pileup;
+	  iss >> Fill >> c >> Run >> c >> LS >> c >> pileup;
+	  DataLSPU[Run][LS] = pileup;
+	}
+      
+      if (DataLSPU.find(event_->run) != DataLSPU.end())                                                                                  
+	{
+	  if (DataLSPU[event_->run].find(event_->lumi) != DataLSPU[event_->run].end())                                                                 
+	    {                                                                                                                                               
+	      pu = DataLSPU[event_->run][event_->lumi];
+	    }                                                                                                                                                           
+	}
+    }
+
+  // MC                                                                                                                                                      
+  if (event_->run == 1)
+    {
+      pu = event_->nPV;
+    }
+
+  return pu;
+}
+// -----  end of function L1Menu2016::EvaluatePileUp  -----              
 
 // ===  FUNCTION  ============================================================
 //         Name:  L1Menu2016::PrintCSV
@@ -2257,7 +2297,6 @@ bool L1Menu2016::ReadDataPU()
     int Fill, Run, LS;
     float pileup;
     iss >> Fill >> c >> Run >> c >> LS >> c >> pileup;
-    
     DataLSPU[Run][LS] = pileup;
     DataFillNO[Run] = Fill;
   }
