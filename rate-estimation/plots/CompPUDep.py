@@ -29,17 +29,22 @@ ROOT.gROOT.SetBatch(True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--outfolder',
-        help='Name of the output folder',
+        help='Specify details for the output folder',
         default='20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1',
         type=str)
 parser.add_argument('--csv',
         help='Name of the csv file containing rates as a function of pileup',
         default='Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv',
         type=str)
+parser.add_argument('--seed',
+        help='Names of the L1 seeds for which rates are plotted as a function of the pileup',
+        default='L1APhysics',
+        type=str)
 args = parser.parse_args()
 
 outfolder_details = args.outfolder
 csvfile_rateVSpileup = args.csv
+seedName = args.seed
 
 plot_min = 0
 plot_max = 70
@@ -78,12 +83,13 @@ pumap = collections.defaultdict(list)
 
 # The PatMap contains the names of the L1 seeds for which rates are plotted as a function of the pileup:
 # by default, triggers used for physics are considered all together and are accessed with the label "L1APhysics"
-PatMap = {  
-    "L1APhysics" : "L1APhysics"}
+PatMap = {
+    seedName : seedName}
 
 def DrawPU(canvas, f, l1seed, count, key=None):
     list_fromDrawPU = [] # Making Python objects used here known within the DrawL1 function  
     df = f[(f.L1Seed == l1seed )]
+    #RetVar = None
 
     for i in range(0, len(pubins) -1):
         pumap[pubins[i]] = []
@@ -141,7 +147,7 @@ def DrawPU(canvas, f, l1seed, count, key=None):
 
     error_vec = result_ptr.GetConfidenceIntervals() 
     print ("error vec size = %d, fitted PU = %d" % (error_vec.size(), fit_max - fit_min + 1)) 
-    if (fitname == "pol4" or fitname == "exp"):
+    if (fitname == "pol4" or fitname == "expo"):
         f2 = graph.GetFunction(fitname).Clone() 
     else:
         f2 = graph.GetFunction("fitname").Clone() 
@@ -166,6 +172,7 @@ def DrawPU(canvas, f, l1seed, count, key=None):
 
     if key is not None:
         tex = ROOT.TLatex(0.2, 0.85, key)
+        #list_fromDrawPU.append(tex)
         tex.SetNDC()
         tex.SetTextFont(61)
         tex.SetTextSize(0.055)
@@ -173,6 +180,7 @@ def DrawPU(canvas, f, l1seed, count, key=None):
         tex.SetLineWidth(2)
         tex.Draw()
 
+    #canvas.Update()
     return list_fromDrawPU
 
 def DrawL1(key, pattern):
@@ -203,7 +211,7 @@ def DrawL1(key, pattern):
     box.SetFillStyle(3002)
     c1.Update()
 
-    if (fitname == "pol4" or fitname == "exp"):
+    if (fitname == "pol4" or fitname == "expo"):
         c1.SaveAs("Plots_%s/%s_%s.png" % (outfolder_details, key, fitname))
         c1.SaveAs("Plots_%s/%s_%s.pdf" % (outfolder_details, key, fitname))
         c1.SaveAs("Plots_%s/%s_%s.root" % (outfolder_details, key, fitname))
@@ -225,7 +233,8 @@ if __name__ == "__main__":
     df = pd.concat(flist)
 
     ## PatMap can be redifined to take into account each L1Seed present in the dataframe
-    #PatMap = {k:k for k in pd.unique(df.L1Seed)}
+    if (seedName == "all"):
+        PatMap = {k:k for k in pd.unique(df.L1Seed)}
 
     ROOT.gStyle.SetOptStat(000000000)
     tdrstyle.setTDRStyle()

@@ -2114,7 +2114,7 @@ bool L1Menu2016::FillPileUpSec()
   // MC
   if (event_->run == 1)
   {
-    pu = event_->nPV;
+    pu = event_->nPV_True;
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Fill Rate per PU ~~~~~
