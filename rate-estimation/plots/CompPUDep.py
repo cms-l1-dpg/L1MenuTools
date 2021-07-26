@@ -83,6 +83,7 @@ pumap = collections.defaultdict(list)
 
 # The PatMap contains the names of the L1 seeds for which rates are plotted as a function of the pileup:
 # by default, triggers used for physics are considered all together and are accessed with the label "L1APhysics"
+# The option "all" redefines the PatMap to take into account each L1Seed present in the dataframe: "--seed all"
 PatMap = {
     seedName : seedName}
 
