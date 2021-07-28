@@ -116,10 +116,10 @@
 {#
  # set mass3
  #}
-{%- macro setMass3(prefix0, prefix1, prefix2, idx0, idx1, idx2, LUTS01, LUTS02, LUTS12, iPi, useDelta=True) -%}
-    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS01, iPi, useDelta, 'ab_') }}
-    {{ setMass2(prefix0, prefix2, idx0, idx2, LUTS02, iPi, useDelta, 'ac_') }}
-    {{ setMass2(prefix1, prefix2, idx1, idx2, LUTS12, iPi, useDelta, 'bc_') }}
+{%- macro setMass3(prefix0, prefix1, prefix2, idx0, idx1, idx2, LUTS, iPi, useDelta=True) -%}
+    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta, 'ab_') }}
+    {{ setMass2(prefix0, prefix2, idx0, idx2, LUTS, iPi, useDelta, 'ac_') }}
+    {{ setMass2(prefix1, prefix2, idx1, idx2, LUTS, iPi, useDelta, 'bc_') }}
     const long long mass3 = ab_mass2 + ac_mass2 + bc_mass2;
 {%- endmacro -%}
 
@@ -304,13 +304,13 @@
 {#
  # get cuts for correlations of objects with the same type
  #}
-{% macro getSameTypeCorrelationCuts3(prefix, idx0, idx1, idx2, cond, tmEventSetup, LUTS01, LUTS02, LUTS12, iPi) %}
+{% macro getSameTypeCorrelationCuts3(prefix, idx0, idx1, idx2, cond, tmEventSetup, LUTS, iPi) %}
   {{ cond | hasCorrelationCuts }}
   {% for cut in cond.getCuts() %}
   {% if cut.getCutType() == tmEventSetup.Mass %}
     // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
-    {{ setMass3(prefix, prefix, prefix, idx0, idx1, idx2, LUTS01, LUTS02, LUTS12, iPi, False) }}
-    {{ applyFunctionCut('mass3', cut, LUTS01.PREC_MASS) }}
+    {{ setMass3(prefix, prefix, prefix, idx0, idx1, idx2, LUTS, iPi, False) }}
+    {{ applyFunctionCut('mass3', cut, LUTS.PREC_MASS) }}
   {% endif %}
   {% endfor %}
 {% endmacro %}

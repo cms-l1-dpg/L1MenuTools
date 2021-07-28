@@ -17,10 +17,7 @@
 
 {% set prefix = objects[0] | getPrefix %}
 
-{% set LUTS01 = scaleMap | getLookUpTable(objects[0], objects[1]) %}
-{% set LUTS02 = scaleMap | getLookUpTable(objects[0], objects[2]) %}
-{% set LUTS12 = scaleMap | getLookUpTable(objects[1], objects[2]) %}
-
+{% set LUTS = scaleMap | getLookUpTable(objects[0], objects[1]) %}
 
 {% set iPi = (0.5*(phiScale.getMaximum() - phiScale.getMinimum())/phiScale.getStep()) | int -%}
 
@@ -63,7 +60,7 @@ bool
 {{ macros.getObjectCuts(prefix, 'idx0', objects[0], tmEventSetup, nEtaBits) }}
 {{ macros.getObjectCuts(prefix, 'idx1', objects[1], tmEventSetup, nEtaBits) }}
 {{ macros.getObjectCuts(prefix, 'idx2', objects[2], tmEventSetup, nEtaBits) }}
-{{ macros.getSameTypeCorrelationCuts3(prefix, 'idx0', 'idx1', 'idx2', cond, tmEventSetup, LUTS01, LUTS02, LUTS12, iPi) }}
+{{ macros.getSameTypeCorrelationCuts3(prefix, 'idx0', 'idx1', 'idx2', cond, tmEventSetup, LUTS, iPi) }}
       pass = true;
       break;
     }
@@ -121,7 +118,7 @@ bool
         {% endif %}
         const int idx2 = kk;
 {{ macros.getObjectCuts(prefix, 'idx2', objects[2], tmEventSetup, nEtaBits) }}
-{{ macros.getSameTypeCorrelationCuts3(prefix, 'idx0', 'idx1', 'idx2', cond, tmEventSetup, LUTS01, LUTS02, LUTS12, iPi) }}
+{{ macros.getSameTypeCorrelationCuts3(prefix, 'idx0', 'idx1', 'idx2', cond, tmEventSetup, LUTS, iPi) }}
       pass = true;
       break;
     }
