@@ -295,8 +295,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
   {% elif cond.getType() == tmEventSetup.InvariantMass3 %}
     {% set objects = cond.getObjects() %}
-    {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
-    {% if combination == tmEventSetup.MuonMuonCombination %}
+    {% set combination01 = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
+    {% set combination02 = tmEventSetup.getObjectCombination(objects[0].getType(), objects[2].getType()) %}
+    {% if combination01 == tmEventSetup.MuonMuonCombination and combination02 == tmEventSetup.MuonMuonCombination %}
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
 
