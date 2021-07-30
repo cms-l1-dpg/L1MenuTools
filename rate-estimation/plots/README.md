@@ -17,4 +17,6 @@ Default settings correspond to the following command provided as an example:
 python CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv --seed L1APhysics
 ```
 
-NOTE: The option "--seed all" redefines the PatMap to take into account each L1Seed present in the dataframe  
+NOTES: 
+* It is possible to provide a list of L1 seed names as an argument, for example --seed L1APhysics L1_DoubleMu_12_5 L1_DoubleEG8er2p5_HTT300er (no comma needed)
+* The option "--seed all" redefines the PatMap to take into account each L1Seed present in the dataframe  
