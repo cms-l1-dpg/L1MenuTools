@@ -7,13 +7,16 @@ See the [Menu Twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HowToL1Trigger
 The code can be used for both MC and data ntuples. 
 Note that when using data, you need the specific lumi csv file produced by running the GetLumi.py for the considered runs to run the rate estimation.
 
-Provide the following arguments to run the script: 
+The following arguments can be provided to run the script: 
 * Name of the output folders: --outfolder
 * Name of the csv file containing rates as a function of pileup: --csv
+* Name of the L1 seeds for which rates are plotted as a function of the pileup: --seed 
 
 Default settings correspond to the following command provided as an example:
 ```
-python CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv
+python CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv --seed L1APhysics
 ```
 
-The script can be edited to modify the PatMap, which contains the L1 seeds for which rates will be plotted as a function of the pileup
+NOTES: 
+* It is possible to provide a list of L1 seed names as an argument, for example --seed L1APhysics L1_DoubleMu_12_5 L1_DoubleEG8er2p5_HTT300er (no comma needed)
+* The option "--seed all" redefines the PatMap to take into account each L1Seed present in the dataframe  

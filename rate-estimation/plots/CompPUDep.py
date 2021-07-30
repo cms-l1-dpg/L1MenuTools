@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env Python
 # encoding: utf-8
 
 # File        : CompPUDep.py
@@ -29,17 +29,24 @@ ROOT.gROOT.SetBatch(True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--outfolder',
-        help='Name of the output folder',
+        help='Specify details for the output folder',
         default='20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1',
         type=str)
 parser.add_argument('--csv',
         help='Name of the csv file containing rates as a function of pileup',
         default='Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv',
         type=str)
-args = parser.parse_args()
+parser.add_argument('--seed',
+        help='Names of the L1 seeds for which rates are plotted as a function of the pileup',
+        nargs="*",
+        default=['L1APhysics'],
+        type=str)
 
+args = parser.parse_args()
 outfolder_details = args.outfolder
 csvfile_rateVSpileup = args.csv
+seedList = args.seed
+print("List of L1 seeds considered: %r" % args.seed)
 
 plot_min = 0
 plot_max = 70
@@ -68,7 +75,7 @@ unit = "kHz"
 config = 2018
 
 fitname = ROOT.TF1("fitname","[0]*x + [1]*x*x",0,70);
-#fitname.SetParameters(0.1,0.001);
+fitname.SetParameters(0.1,0.001);
 #fitname = "pol4"
 #fitname = "expo"
 
@@ -78,8 +85,8 @@ pumap = collections.defaultdict(list)
 
 # The PatMap contains the names of the L1 seeds for which rates are plotted as a function of the pileup:
 # by default, triggers used for physics are considered all together and are accessed with the label "L1APhysics"
-PatMap = {  
-    "L1APhysics" : "L1APhysics"}
+#PatMap = {seedName : seedName}
+PatMap = {seedName:seedName for seedName in seedList}
 
 def DrawPU(canvas, f, l1seed, count, key=None):
     list_fromDrawPU = [] # Making Python objects used here known within the DrawL1 function  
@@ -108,16 +115,9 @@ def DrawPU(canvas, f, l1seed, count, key=None):
     list_fromDrawPU.append(graph)
 
     for i, (xx, yy, yee) in enumerate(zip(x, y, yerr)):
-        # if yy != 0 and yee/yy >0.3:
-            # continue
-	#if i == 22 or i == 23 or i == 24:
-	    # continue
         graph.SetPoint(i, xx, yy)
-	#print (i,xx,yy,yee)
-        #print "h1->SetBinContent( %d, %f);" %(xx,yy)
-        #print "h1->SetBinError( %d, %f);" %(xx,yee)
         graph.SetPointError(i, 0, yee)
-
+    
     graph.SetMarkerStyle(20+count)
     graph.SetMarkerSize(1.5)
     graph.SetMarkerColor(1+count)
@@ -125,7 +125,7 @@ def DrawPU(canvas, f, l1seed, count, key=None):
     graph.SetLineWidth(2)
     tdrstyle.setTDRStyle()
     canvas.cd()
-    canvas.Update()
+
     if count == 0:
         graph.Draw("AP")
         graph.GetXaxis().SetTitle("PileUp")
@@ -134,47 +134,46 @@ def DrawPU(canvas, f, l1seed, count, key=None):
         graph.GetYaxis().SetTitle("Rate (nBunches = %d) [%s]" % (nBunches, unit))
     else:
         graph.Draw("P")
-    canvas.Update()
+
     leg.AddEntry(graph, l1seed, "p")
-
+    
     result_ptr = graph.Fit(fitname, "SQ", "", fit_min, fit_max) 
-
-    error_vec = result_ptr.GetConfidenceIntervals() 
-    print ("error vec size = %d, fitted PU = %d" % (error_vec.size(), fit_max - fit_min + 1)) 
-    if (fitname == "pol4" or fitname == "exp"):
-        f2 = graph.GetFunction(fitname).Clone() 
+    checkVariable = result_ptr.Get() # TFitResult * TFitResultPtr::Get ( ) const => Return contained pointer 
+    if (not(checkVariable)):
+        print("TFitResult is empty, returned null pointer: checkVariable =", checkVariable)
     else:
-        f2 = graph.GetFunction("fitname").Clone() 
-    list_fromDrawPU.append(f2)
-
-    f2.SetLineColor(1+count)
-    f2.SetLineWidth(2)
-    f2.SetRange(plot_min, fit_min)
-    f2.SetLineStyle(5)
-    #minChi = f2.GetChisquare() / f2.GetNDF()
-
-    #fun = "Fit = %.2f + %.2f*x + %.3f*x^2" % (f2.GetParameter(0), f2.GetParameter(1), f2.GetParameter(2) )
-    #fun = "Fit = %f*x + %f*x^2" % (f2.GetParameter(0), f2.GetParameter(1) )
-    #print fun
-
-    f2.Draw("same")
-    f2_2 = f2.Clone("dashline2")
-    list_fromDrawPU.append(f2_2)
-    f2_2.SetRange(fit_max, plot_max)
-    f2_2.Draw("same")
-    key = ""
-
-    if key is not None:
-        tex = ROOT.TLatex(0.2, 0.85, key)
-        tex.SetNDC()
-        tex.SetTextFont(61)
-        tex.SetTextSize(0.055)
-        tex.SetTextColor(ROOT.kGreen+2)
-        tex.SetLineWidth(2)
-        tex.Draw()
-
+        error_vec = result_ptr.GetConfidenceIntervals() 
+    
+        print ("error vec size = %d, fitted PU = %d" % (error_vec.size(), fit_max - fit_min + 1)) 
+        if (fitname == "pol4" or fitname == "expo"):
+            f2 = graph.GetFunction(fitname).Clone() 
+        else:
+            f2 = graph.GetFunction("fitname").Clone() 
+        list_fromDrawPU.append(f2)
+        
+        f2.SetLineColor(1+count)
+        f2.SetLineWidth(2)
+        f2.SetRange(plot_min, fit_min)
+        f2.SetLineStyle(5)
+        #minChi = f2.GetChisquare() / f2.GetNDF()
+        
+        f2.Draw("same")
+        f2_2 = f2.Clone("dashline2")
+        list_fromDrawPU.append(f2_2)
+        f2_2.SetRange(fit_max, plot_max)
+        f2_2.Draw("same")
+        key = ""
+        
+        if key is not None:
+            tex = ROOT.TLatex(0.2, 0.85, key)
+            tex.SetNDC()
+            tex.SetTextFont(61)
+            tex.SetTextSize(0.055)
+            tex.SetTextColor(ROOT.kGreen+2)
+            tex.SetLineWidth(2)
+            tex.Draw()            
     return list_fromDrawPU
-
+            
 def DrawL1(key, pattern):
     c1.Clear()
     leg.Clear()
@@ -203,7 +202,7 @@ def DrawL1(key, pattern):
     box.SetFillStyle(3002)
     c1.Update()
 
-    if (fitname == "pol4" or fitname == "exp"):
+    if (fitname == "pol4" or fitname == "expo"):
         c1.SaveAs("Plots_%s/%s_%s.png" % (outfolder_details, key, fitname))
         c1.SaveAs("Plots_%s/%s_%s.pdf" % (outfolder_details, key, fitname))
         c1.SaveAs("Plots_%s/%s_%s.root" % (outfolder_details, key, fitname))
@@ -225,7 +224,8 @@ if __name__ == "__main__":
     df = pd.concat(flist)
 
     ## PatMap can be redifined to take into account each L1Seed present in the dataframe
-    #PatMap = {k:k for k in pd.unique(df.L1Seed)}
+    if (seedList[0] == 'all'):
+        PatMap = {k:k for k in pd.unique(df.L1Seed)}
 
     ROOT.gStyle.SetOptStat(000000000)
     tdrstyle.setTDRStyle()
