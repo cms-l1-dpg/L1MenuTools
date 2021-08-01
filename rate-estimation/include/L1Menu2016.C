@@ -109,6 +109,7 @@ bool L1Menu2016::InitConfig()
   L1Config["doTnPMuon"]      = 0;
   L1Config["doPlotLS"]       = 0;
   L1Config["doPrintPU"]      = 0;
+  L1Config["allPileUp"]      = 0;
   L1Config["doPrintBX"]      = 0;
   L1Config["doCompuGT"]      = 0;
   L1Config["maxEvent"]       = -1;
@@ -1132,6 +1133,7 @@ bool L1Menu2016::Loop()
   unsigned int currentLumi(-1);
   nZeroBiasevents = 0.;
   nZeroBiasevents_PUrange = 0.;
+
   int i = -1;
   nLumi.clear();
   bool skipLS = false;
@@ -1208,8 +1210,8 @@ bool L1Menu2016::Loop()
 
     float ev_pileup = -1;
     ev_pileup = EvaluatePileUp();
-    //if (ev_pileup <= 45 || ev_pileup >= 61) continue;
-    if (ev_pileup < 48 || ev_pileup > 58) continue;
+    // PileUp window around 53, expected average PU value during the lumi levelling period in Run 3
+    if ((ev_pileup < 48 || ev_pileup > 58) && L1Config["allPileUp"] == 0) continue;
     nZeroBiasevents_PUrange++;
 
     GetL1Event();
@@ -1231,8 +1233,11 @@ bool L1Menu2016::Loop()
       l1uGT->CompEvents();
   }
 
-  std::cout << "Total Event: " << i <<" ZeroBias Events: " << nZeroBiasevents << std::endl;
-  std::cout << "Total Event: " << i <<" ZeroBias Events in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "============================================" << i << std::endl;
+  std::cout << "Total Event: " << i << std::endl;
+  std::cout << "ZeroBias Events: " << nZeroBiasevents << std::endl;
+  std::cout << "ZeroBias Events in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "============================================" << i << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----
 
@@ -1455,8 +1460,15 @@ bool L1Menu2016::RunMenu()
 double L1Menu2016::CalScale(int nEvents_, int nBunches_, bool print) 
 {
   double scale = 0.0;
-  //int nEvents = nEvents_ == 0 ? nZeroBiasevents : nEvents_;
-  int nEvents = nEvents_ == 0 ? nZeroBiasevents_PUrange : nEvents_;
+  int nEvents = 0;
+  if (L1Config["allPileUp"] == 0)
+    {  
+      nEvents = nEvents_ == 0 ? nZeroBiasevents_PUrange : nEvents_;
+    }
+  else
+    {
+      nEvents = nEvents_ == 0 ? nZeroBiasevents : nEvents_;
+    }
   double nBunches = nBunches_ == 0 ?  L1Config["nBunches"] : nBunches_;
 
   if (L1Config["nBunches"] < 0)
