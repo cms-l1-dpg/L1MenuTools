@@ -112,4 +112,9 @@ The arguments used in the test are as follows:
 |`--SelectRun` | Select a run number; default is full list. |
 |`--SelectLS [startLS,endLS]` | Select lumi sections to run over; default is whole LS provided. |
 
-Running `./testMenu2016 --help` will show all arguments with a brief description. Also see docs/testMenu2016.md .
+Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
+
+#### Temporary remark:
+Please note that currently in the context of rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
+A pileup range from 48 to 58, corresponding to the expected average PU during the lumi levelling period in Run 3, is taken into account. 
+If you want to run the rates for the full PU distribution available in the sample, please use the option --allPileUp.

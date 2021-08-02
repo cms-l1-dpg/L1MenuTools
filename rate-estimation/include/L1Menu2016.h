@@ -154,6 +154,7 @@ class L1Menu2016 : public L1AlgoFactory
     bool InsertInMenu(std::string L1name, bool value);
     bool FillLumiSection(int currentLumi);
     bool FillPileUpSec();
+    float EvaluatePileUp();
     bool PrintCSV(std::ostream &out);
     // ====================  DATA MEMBERS  ===============================
 
@@ -178,6 +179,7 @@ class L1Menu2016 : public L1AlgoFactory
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rate variables ~~~~~
     double scale;
     unsigned int nZeroBiasevents;
+    unsigned int nZeroBiasevents_PUrange;
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;
