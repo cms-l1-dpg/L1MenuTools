@@ -306,7 +306,7 @@ categories = {
     "isSingleEG":{"texName":'Single e/$\gamma$'},
     "isMultiEG": {"texName":'Multi e/$\gamma$'},
     "isEGJet":{"texName":'e/$\gamma$ + Jets or Energy sums'},
-    "isJet":{"texName":'Single or Multi Jets '},
+    "isJet":{"texName":'Single or Multi Jets'},
     "isTau":{"texName":'Single or Multi $\\tau$'},
     "isLepJet":{"texName":'$\\tau$ + $\mu$ or e/$\gamma$ or Jets or Energy sums'},
     "isSums":{"texName":'Energy Sums'},
@@ -336,7 +336,43 @@ for x in sorted_sums[rateType]:
 plt.rc('text', usetex=True, )
 plt.rc('font', family='serif')
 plt.rc('font', family='helvetica')
-wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
+#colours = dict(zip(labels, plt.cm.tab20.colors[:len(labels)]))
+#for i,l in enumerate(labels):
+#	colours[l] = "C{}".format(i)
+#fix colors per category
+#colours={
+#
+#    "Single $\mu$": "C0",
+#    "Multi $\mu$": "C1",
+#    "$\mu$ + e/$\gamma$":    "C2",
+#    "$\mu$ + Jets or Energy sums":   "C3",
+#    "Single e/$\gamma$":"C4",
+#    "Multi e/$\gamma$": "C5",
+#    "e/$\gamma$ + Jets or Energy sums":"C6",
+#    "Single or Multi Jets":"C7",
+#    "Single or Multi $\\tau$":"C8",
+#    "$\\tau$ + $\mu$ or e/$\gamma$ or Jets or Energy sums":"C9",
+#    "Energy Sums":"cyan",
+#    "Zero Bias":"yellow",
+#}
+
+colours={
+
+    "Single $\mu$": "orange",
+    "Multi $\mu$": "blue",
+    "$\mu$ + e/$\gamma$":    "brown",
+    "$\mu$ + Jets or Energy sums":   "red",
+    "Single e/$\gamma$":"green",
+    "Multi e/$\gamma$": "pink",
+    "e/$\gamma$ + Jets or Energy sums":"magenta",
+    "Single or Multi Jets":"grey",
+    "Single or Multi $\\tau$":"yellow",
+    "$\\tau$ + $\mu$ or e/$\gamma$ or Jets or Energy sums":"lime",
+    "Energy Sums":"cyan",
+    "Zero Bias":"teal",
+}
+wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=[colours[key] for key in labels])
+#wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
 #wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=mcolors.TABLEAU_COLORS)
 for label, pct_text in zip(lab, pct_text):
 	pct_text.set_rotation(label.get_rotation())
@@ -354,23 +390,39 @@ plt.rc('font', size=16, weight='bold')
 ## for getting percentages
 tot = sum(rates)
 #print ("sum of all rate: ", tot)
+highRate = False
+for rate in rates:
+	if (rate*0.001)>100:
+		highRate = True
+		break
+print( "high rate? : ", highRate)
 figbar, ax = plt.subplots(figsize=(12,6)) 
 ax.barh(labels, rates, edgecolor='black',color='None',align='center', alpha=0.5)
 figbar.subplots_adjust(left= 0.24)
 #figbar.subplots_adjust(right=1/15.0, left=1-1/15.0, top=1/4.0, bottom=1-1/4.0, wspace=0.2)
 for i, v in enumerate(rates):
+	#print ("y-location: ", v)
+	
 	if text == "percentage+totalrate" or text == "percentage":
 		#ax.text(v*1.1, i, '{:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
-		ax.text(v+300, i, '  {:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+		#if tot*0.001 <300:
+		if highRate:
+			ax.text(v+3000, i, '  {:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
+		else:
+			ax.text(v+300, i, '  {:.1f}{}'.format((v/tot)*100,'\%'),horizontalalignment='left', color='black', va='center', fontweight='bold')
 	if text == "percentage+rates+totalrate" :
-		#ax.text(v*0.7 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
-		#ax.text(v+9300 , i, '            [{:.1f}{}]'.format(v,'Hz'), color='black', va='center')
-		ax.text(v+300 , i, '  {:.1f}{}      [{:.1f}{}]'.format((v/tot)*100,'\%',v*0.001,' kHz'), color='black', va='center')
+		if highRate:
+			ax.text(v+3000 , i, "                    "+'{:.1f}{}      [{:.1f}{}]'.format((v/tot)*100,'\%',v*0.001,' kHz'),horizontalalignment='left', color='black', va='center')
+		else:
+			ax.text(v+300 , i, "                    "+'{:.1f}{}      [{:.1f}{}]'.format((v/tot)*100,'\%',v*0.001,' kHz'),horizontalalignment='left', color='black', va='center')
 	if text == "rates+totalrate":
-		ax.text(v+120 , i, '  {:.1f}{}'.format(v*0.001,' kHz'), color='black', va='center')
+		if highRate:
+			ax.text(v+3000 , i,'{:.1f}{}'.format(v*0.001,' kHz'), horizontalalignment='left',color='black', va='center')
+		else:
+			ax.text(v+300 , i,'{:.1f}{}'.format(v*0.001,' kHz'), horizontalalignment='left',color='black', va='center')
 
 plt.ylabel('Seed Categories', size=15)
-plt.xlabel('Fractions of the 100 kHz rate allocation for single- and multi-object triggers and cross triggers', size=15)
+plt.xlabel('Fractions of the {:.1f} kHz rate allocation for single- and multi-object triggers and cross triggers'.format(df_PS1.iloc[-1,3]), size=15)
 if "totalrate" in text:
 	#plt.title('L1 Rates for Seed Categories\n(Total rate: {:.1f} kHz)'.format(df_PS1.iloc[-1,3]) )
 	ax.set_title('L1 Rates for Seed Categories\n(Total rate: {:.1f} kHz)'.format(df_PS1.iloc[-1,3]) , loc = 'left')
