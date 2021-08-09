@@ -359,7 +359,7 @@ plt.rc('font', family='helvetica')
 colours={
 
     "Single $\mu$": "orange",
-    "Multi $\mu$": "blue",
+    "Multi $\mu$": "cornflowerblue",
     "$\mu$ + e/$\gamma$":    "brown",
     "$\mu$ + Jets or Energy sums":   "red",
     "Single e/$\gamma$":"green",
