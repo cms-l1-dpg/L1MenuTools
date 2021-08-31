@@ -101,7 +101,7 @@ bool L1Menu2016::InitConfig()
 {
   L1Config["SumJetET"]       = 0;
   L1Config["SumJetEta"]      = 999;
-  L1Config["nBunches"]       = 2592; //default for 2017 nBunches
+  L1Config["nBunches"]       = 2544; //default for 2018 nBunches
   L1Config["doPlotRate"]     = 0;
   L1Config["doPlotEff"]      = 0;
   L1Config["doPlotTest"]     = 0;
@@ -126,17 +126,17 @@ bool L1Menu2016::InitConfig()
   L1Config["UseUnpackTree"]  = 0;
   L1Config["doScanLS"]       = 0;
   L1Config["SetL1AcceptPS"]  = 0;
-  L1Config["Select_BX_in_48b"]       = -1;
-  L1Config["Select_BX_in_12b"]       = -1;
-  L1Config["doBXReweight_1_to_6_47_48"]       = 0;
-  L1Config["doBXReweight128"]       = 0;
-  L1Config["doBXReweight34567"]       = 0;
-  L1Config["doBXReweight_1_to_6_11_12"]       = 0;
-  L1Config["doBXReweight_5_to_10"]       = 0;
+  L1Config["Select_BX_in_48b"]          = -1;
+  L1Config["Select_BX_in_12b"]          = -1;
+  L1Config["doBXReweight_1_to_6_47_48"] = 0;
+  L1Config["doBXReweight128"]           = 0;
+  L1Config["doBXReweight34567"]         = 0;
+  L1Config["doBXReweight_1_to_6_11_12"] = 0;
+  L1Config["doBXReweight_5_to_10"]      = 0;
   
-  L1ConfigStr["SelectLS"] = "";
-  L1ConfigStr["SelectBX"] = "";
-  L1ConfigStr["Lumilist"] = "";
+  L1ConfigStr["SelectLS"]  = "";
+  L1ConfigStr["SelectBX"]  = "";
+  L1ConfigStr["Lumilist"]  = "";
   L1ConfigStr["SelectCol"] = "";
 
   L1ObjectMap["Jet"]        = &L1Event.JetPt;
@@ -166,7 +166,7 @@ bool L1Menu2016::InitConfig()
 
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Map to old func for now. ~~~~~
-  // MutliJets
+  // MultiJets
   L1SeedFun["L1_QuadJetC36_TauJet52"] = std::bind(&L1AlgoFactory::QuadJetCentral_TauJet, this, 36.,52., false, false);
   L1SeedFun["L1_QuadJetC36_Tau52"] = std::bind(&L1AlgoFactory::QuadJetCentral_TauJet, this, 36.,52., false, false);
   L1SeedFun["L1_QuadJet36er3p0_Tau52"] = std::bind(&L1AlgoFactory::QuadJetCentral_TauJet, this, 36.,52., false, false);
@@ -1260,8 +1260,8 @@ bool L1Menu2016::Loop()
 
   std::cout << "============================================" << i << std::endl;
   std::cout << "Total Event: " << i << std::endl;
-  std::cout << "ZeroBias Events: " << nZeroBiasevents << std::endl;
-  std::cout << "ZeroBias Events in a predefined PU range [52, 54]: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "Events counted without PU requirement: " << nZeroBiasevents << std::endl;
+  std::cout << "Events counted in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
   std::cout << "============================================" << i << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----
