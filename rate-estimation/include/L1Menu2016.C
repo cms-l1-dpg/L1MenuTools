@@ -1011,6 +1011,31 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
     //std::cout << "line 1004 end" << std::endl;
   }
 
+  if (event_->run > 1)            
+    {
+      const std::string pucsv = L1ConfigStr["Lumilist"];
+      std::ifstream csvfile(pucsv);
+      if (!csvfile)
+	{
+	  std::cout << "Data PU CSV File "<<pucsv<<" is not found !"<<std::endl;
+	  return false;
+	}
+      
+      std::string line;
+      DataLSPU.clear();
+      std::getline(csvfile, line); // Skip the first line;                                                                         
+      
+      while (std::getline(csvfile, line))
+	{
+	  std::istringstream iss(line);
+	  char c;
+	  int Fill, Run, LS;
+	  float pileup;
+	  iss >> Fill >> c >> Run >> c >> LS >> c >> pileup;
+	  DataLSPU[Run][LS] = pileup;
+	}
+    }
+
   if (L1Config["doPrintPU"] || L1Config["SelectFill"] != -1 )
   {
     ReadDataPU();
@@ -1236,7 +1261,7 @@ bool L1Menu2016::Loop()
   std::cout << "============================================" << i << std::endl;
   std::cout << "Total Event: " << i << std::endl;
   std::cout << "ZeroBias Events: " << nZeroBiasevents << std::endl;
-  std::cout << "ZeroBias Events in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "ZeroBias Events in a predefined PU range [52, 54]: " << nZeroBiasevents_PUrange << std::endl;
   std::cout << "============================================" << i << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----
@@ -2158,28 +2183,6 @@ float L1Menu2016::EvaluatePileUp()
   // Data                                                                                                                                                   
   if (event_->run > 1)            
     {
-      const std::string pucsv = L1ConfigStr["Lumilist"];
-      std::ifstream csvfile(pucsv);
-      if (!csvfile)
-	{
-	  std::cout << "Data PU CSV File "<<pucsv<<" is not found !"<<std::endl;
-	  return false;
-	}
-      
-      std::string line;
-      DataLSPU.clear();
-      std::getline(csvfile, line); // Skip the first line;                                                                         
-      
-      while (std::getline(csvfile, line))
-	{
-	  std::istringstream iss(line);
-	  char c;
-	  int Fill, Run, LS;
-	  float pileup;
-	  iss >> Fill >> c >> Run >> c >> LS >> c >> pileup;
-	  DataLSPU[Run][LS] = pileup;
-	}
-      
       if (DataLSPU.find(event_->run) != DataLSPU.end())                                                                                  
 	{
 	  if (DataLSPU[event_->run].find(event_->lumi) != DataLSPU[event_->run].end())                                                                 
