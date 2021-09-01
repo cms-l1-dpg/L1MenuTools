@@ -55,7 +55,8 @@ bool PreColumn::PassRelation( std::vector<std::string> vL1Seed_,
   return true;
 }       // -----  end of function PreColumn::PassRelation  -----
 
-bool PreColumn::InsertInMenu(std::string L1name, bool value) {
+bool PreColumn::InsertInMenu(std::string L1name, bool value) 
+{
   bool post_prescale = false;
 
   if ( mL1Seed.find(L1name) == mL1Seed.end() ) {
@@ -81,7 +82,39 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value) {
   }
 
   return true;
-}
+}  // -----  end of function PreColumn::InsertInMenu  -----
+
+// Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
+bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu) 
+{
+  bool post_prescale = false;
+  float ev_puweight = -1;
+  ev_puweight = ExtractPileUpWeight(pu);
+
+  if ( mL1Seed.find(L1name) == mL1Seed.end() ) {
+    std::cout << "This shouldn't happen!" << std::endl;
+    return false;
+  }
+
+  mL1Seed[L1name].eventfire = false;
+  if (value)
+    mL1Seed[L1name].ncounts+=ev_puweight;
+
+  if (mL1Seed[L1name].prescale == 0)
+    return false;
+
+  if ( mL1Seed[L1name].ncounts % mL1Seed[L1name].prescale == 0) 
+    post_prescale = value; 
+
+  mL1Seed[L1name].eventfire = post_prescale;
+  if (post_prescale)
+  {
+    mL1Seed[L1name].firecounts+=ev_puweight;
+    FireSeed.insert(L1name);
+  }
+
+  return true;
+} // -----  end of function PreColumn::InsertInMenu(std::string L1name, bool value, float pu)  -----
 
 
 // ===  FUNCTION  ============================================================
@@ -102,12 +135,26 @@ bool PreColumn::EventReset()
 bool PreColumn::CheckCorrelation()
 {
   if (FireSeed.size() > 0)
-    nFireevents ++;
+    nFireevents++;
 
   CheckPhysFire();
   CheckPureFire();
   return true;
 }       // -----  end of function PreColumn::CheckCorrelation  -----
+
+// Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
+bool PreColumn::CheckCorrelation(float pu)
+{
+  float ev_puweight = -1;
+  ev_puweight = ExtractPileUpWeight(pu);
+
+  if (FireSeed.size() > 0)
+    nFireevents += ev_puweight;
+
+  CheckPhysFire(pu);
+  CheckPureFire(pu);
+  return true;
+}       // -----  end of function PreColumn::CheckCorrelation(float pu)  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  PreColumn::CheckPureFire
@@ -167,6 +214,63 @@ bool PreColumn::CheckPureFire()
   return true;
 }       // -----  end of function PreColumn::CheckPureFire  -----
 
+// Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
+bool PreColumn::CheckPureFire(float pu) 
+{
+  float ev_puweight = -1;
+  ev_puweight = ExtractPileUpWeight(pu);
+
+//**************************************************************************//
+//                              Check Pure Rate                             //
+//**************************************************************************//
+  // Trigger path pure rate
+  if (FireSeed.size() == 1) 
+    mL1Seed[*(FireSeed.begin())].purecounts+=ev_puweight;
+
+  // POG pure rate
+  std::set<std::string> POGset;
+  for(auto fireit : FireSeed)
+  {
+    for(auto &pog : mL1Seed[fireit].POG)
+    {
+      POGset.insert(pog);
+    }
+  }
+  if (POGset.size() == 1)
+  {
+    PhyPureCounts[*(POGset.begin())]+=ev_puweight;
+  }
+
+  std::set<std::string> PAGset;
+  for(auto fireit : FireSeed)
+  {
+    for(auto &pag : mL1Seed[fireit].PAG)
+    {
+      PAGset.insert(pag);
+    }
+  }
+  if (PAGset.size() == 1)
+  {
+    PhyPureCounts[*(PAGset.begin())]+=ev_puweight;
+  }
+
+
+//**************************************************************************//
+//                          Check Proportional Rate                         //
+//**************************************************************************//
+  // Get Proportional counts;
+  for(auto i : FireSeed)
+    mL1Seed[i].propcounts += 1.0 / FireSeed.size();
+
+  for(auto i : POGset)
+    PhyPropCounts[i] += 1.0 / POGset.size();
+
+  for(auto i : PAGset)
+    PhyPropCounts[i] += 1.0/ PAGset.size();
+    
+  return true;
+}       // -----  end of function PreColumn::CheckPureFire  -----
+
 // ===  FUNCTION  ============================================================
 //         Name:  PreColumn::CheckPhysFire
 //  Description:  
@@ -204,6 +308,43 @@ bool PreColumn::CheckPhysFire()
   Fill2DCorrelations("cor_PAGS", eventPAG);
   return true;
 }       // -----  end of function PreColumn::CheckPhysFire  -----
+
+// Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
+bool PreColumn::CheckPhysFire(float pu)
+{
+  float ev_puweight = -1;
+  ev_puweight = ExtractPileUpWeight(pu);
+  std::set<std::string> eventPOG;
+  std::set<std::string> eventPAG;
+
+  for(auto fired : FireSeed)
+  {
+    L1Seed &seed = mL1Seed[fired];
+    //if (writefiles)
+      //*outfile <<  event_->run <<","<<event_->lumi<<"," <<event_->event<<","<<seed.name << std::endl;
+    for(auto pog : seed.POG)
+    {
+      if (FiredPhy.insert(pog).second) 
+      {
+        eventPOG.insert(pog);
+        PhyCounts[pog]+=ev_puweight;
+      }
+    }
+    for(auto pag : seed.PAG)
+    {
+      if (FiredPhy.insert(pag).second) 
+      {
+        eventPAG.insert(pag);
+        PhyCounts[pag]+=ev_puweight;
+      }
+    }
+  }
+
+  Fill2DCorrelations("cor_Seeds", FireSeed);
+  Fill2DCorrelations("cor_Block", eventPOG);
+  Fill2DCorrelations("cor_PAGS", eventPAG);
+  return true;
+}       // -----  end of function PreColumn::CheckPhysFire(float pu)  -----
 
 // ===  FUNCTION  ============================================================
 //         Name:  PreColumn::BookHistogram
@@ -301,6 +442,7 @@ bool PreColumn::WriteHistogram(TFile *outrootfile)
 //         Name:  PreColumn::ExtractPileUpWeight                                                                                                                     
 //  Description:  Extract weights for reweighting of the pileup distribution in MC                                                                                  
 // ===============================================================================                                                                         
+// Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
 float PreColumn::ExtractPileUpWeight(float pu)
 {
   double weight = -1;
@@ -319,11 +461,12 @@ float PreColumn::ExtractPileUpWeight(float pu)
 //         Name:  PreColumn::FillPileUpSec
 //  Description:  
 // ===========================================================================
+// Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
 bool PreColumn::FillPileUpSec(float pu)
 {
+  bool eFired = false;
   float ev_puweight = -1;
   ev_puweight = ExtractPileUpWeight(pu);
-  bool eFired = false;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ L1Seed ~~~~~
   for(auto l1 : mL1Seed)
   {
@@ -335,7 +478,7 @@ bool PreColumn::FillPileUpSec(float pu)
     {
       eFired= true;
       //L1PUCount[l1.first][pu]++;
-      L1PUCount[l1.first][pu] += ev_puweight;
+      L1PUCount[l1.first][pu] += ev_puweight; // Reweighting procedure
     }
   }
 
@@ -357,7 +500,7 @@ bool PreColumn::FillPileUpSec(float pu)
     if (FiredPhy.find(pog.first) != FiredPhy.end())
     {
       //L1PUCount[l1pog][pu] ++;
-      L1PUCount[l1pog][pu] += ev_puweight;
+      L1PUCount[l1pog][pu] += ev_puweight; // Reweighting procedure 
       POGset.insert(pog.first);
     }
   }
@@ -365,7 +508,7 @@ bool PreColumn::FillPileUpSec(float pu)
   {
     std::string l1pogpure = "L1T_Pure"+*(POGset.begin());
     //L1PUCount[l1pogpure][pu]++;
-    L1PUCount[l1pogpure][pu] += ev_puweight;
+    L1PUCount[l1pogpure][pu] += ev_puweight; // Reweighting procedure 
   }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAG ~~~~~
   std::set<std::string> PAGset;
@@ -384,7 +527,7 @@ bool PreColumn::FillPileUpSec(float pu)
     if (FiredPhy.find(pag.first) != FiredPhy.end())
     {
       //L1PUCount[l1pag][pu] ++;
-      L1PUCount[l1pag][pu] += ev_puweight;
+      L1PUCount[l1pag][pu] += ev_puweight; // Reweighting procedure 
       PAGset.insert(pag.first);
     }
   }
@@ -392,17 +535,17 @@ bool PreColumn::FillPileUpSec(float pu)
   {
     std::string l1pagpure = "L1A_Pure"+*(PAGset.begin());
     //L1PUCount[l1pagpure][pu]++;
-    L1PUCount[l1pagpure][pu] += ev_puweight;
+    L1PUCount[l1pagpure][pu] += ev_puweight; // Reweighting procedure 
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Total ~~~~~
   //L1PUCount["Count"][pu]++;
-  L1PUCount["Count"][pu] += ev_puweight;
+  L1PUCount["Count"][pu] += ev_puweight; // Reweighting procedure 
 
   if (eFired)
   {
     //L1PUCount["L1APhysics"][pu]++;
-    L1PUCount["L1APhysics"][pu] += ev_puweight; 
+    L1PUCount["L1APhysics"][pu] += ev_puweight; // Reweighting procedure  
   }
 
   return true;

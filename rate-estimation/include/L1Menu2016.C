@@ -1158,7 +1158,6 @@ bool L1Menu2016::Loop()
   unsigned int currentLumi(-1);
   nZeroBiasevents = 0.;
   nZeroBiasevents_PUrange = 0.;
-  weight = -1;
 
   int i = -1;
   nLumi.clear();
@@ -1232,12 +1231,14 @@ bool L1Menu2016::Loop()
     if (L1Config["SetL1AcceptPS"] ==0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
       continue;
 
+    // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting 
     float ev_pileup = -1;
-    //float ev_puweight = -1;
-    //ev_puweight = ExtractPileUpWeight();
-    //ev_pileup = EvaluatePileUp()*ev_puweight;
+    float ev_puweight = -1;
+    ev_puweight = ExtractPileUpWeight();
+    ev_pileup = EvaluatePileUp();
+    //nZeroBiasevents++;
+    nZeroBiasevents+=ev_puweight; // Reweighting procedure
 
-    nZeroBiasevents++;
     // PileUp window around 53, expected average PU value during the lumi levelling period in Run 3
     if ((ev_pileup < 48 || ev_pileup > 58) && L1Config["allPileUp"] == 0) continue;
     nZeroBiasevents_PUrange++;
@@ -1450,6 +1451,11 @@ bool L1Menu2016::CheckL1Seed(const std::string L1Seed)
 // ===========================================================================
 bool L1Menu2016::RunMenu()
 {
+  // Reweighting procedure: info about the pileup of the event passed as argument to the InsertInMenu and CheckCorrelation functions 
+  // (defined in PreColumn)
+  float ev_pileup = -1;
+  ev_pileup = EvaluatePileUp();
+
   for(auto col : ColumnMap)
   {
     col.second->EventReset();
@@ -1468,13 +1474,15 @@ bool L1Menu2016::RunMenu()
 
     for(auto col : ColumnMap)
     {
-      col.second->InsertInMenu(seed.first, IsFired);
+      //col.second->InsertInMenu(seed.first, IsFired); 
+      col.second->InsertInMenu(seed.first, IsFired, ev_pileup); // Reweighting procedure
     }
   }
 
   for(auto col : ColumnMap)
   {
-    col.second->CheckCorrelation();
+    //col.second->CheckCorrelation(); 
+    col.second->CheckCorrelation(ev_pileup); // Reweighting procedure
   }
 
   return true;
@@ -2150,7 +2158,6 @@ bool L1Menu2016::FillLumiSection(int currentLumi)
 bool L1Menu2016::FillPileUpSec()
 {
   float pu = -1;
-  //double weight = -1;
   //bool eFired = false;
   // Data
   if (event_->run > 1 && DataLSPU.find(event_->run) != DataLSPU.end())
@@ -2164,11 +2171,7 @@ bool L1Menu2016::FillPileUpSec()
   // MC
   if (event_->run == 1)
   {
-    ////weight = ExtractPileUpWeight(); 
-    //pu = (event_->nPV_True)*weight;
     pu = (event_->nPV_True);
-    //std::cout << "FillPileUpSec ===> PU = " << pu << "   and weight = " << weight << "  ====> pu*weight = " << pu*weight << std::endl; 
-    //std::cout << "FillPileUpSec ===> PU = " << pu << std::endl; 
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Fill Rate per PU ~~~~~

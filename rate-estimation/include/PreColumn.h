@@ -42,8 +42,10 @@ class PreColumn
 
     // ====================  ACCESSORS     ===============================
     bool CheckCorrelation();
+    bool CheckCorrelation(float pu);
     bool EventReset();
     bool InsertInMenu(std::string L1name, bool value);
+    bool InsertInMenu(std::string L1name, bool value, float pu);
     bool PrintCSV(std::vector<std::string> &out, double scale);
     bool WriteHistogram(TFile *outrootfile);
     bool PrintRates(std::ostream &out, double scale);
@@ -69,6 +71,8 @@ class PreColumn
     // ====================  METHODS       ===============================
     bool CheckPureFire();
     bool CheckPhysFire();
+    bool CheckPureFire(float pu);
+    bool CheckPhysFire(float pu);
 
     // ====================  DATA MEMBERS  ===============================
 

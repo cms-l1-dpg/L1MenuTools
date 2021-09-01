@@ -180,9 +180,10 @@ class L1Menu2016 : public L1AlgoFactory
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rate variables ~~~~~
     double scale;
-    unsigned int nZeroBiasevents;
-    unsigned int nZeroBiasevents_PUrange;
-    unsigned int weight;
+    //unsigned int nZeroBiasevents;
+    //unsigned int nZeroBiasevents_PUrange;
+    float nZeroBiasevents; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_PUrange; // float to accept non integer values coming from the reweighting procedure
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;
