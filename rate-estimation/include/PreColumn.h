@@ -57,7 +57,9 @@ class PreColumn
     bool CalRate(double scale);
     bool PrintMenuRate(double scale) const;
 
-    // ====================  MUTATORS      ===============================
+    float ExtractPileUpWeight(float pu);
+    std::vector<double> h_weights_2018;
+   // ====================  MUTATORS      ===============================
 
     // ====================  OPERATORS     ===============================
 
@@ -76,13 +78,16 @@ class PreColumn
     bool bybit;
     std::map<std::string, L1Seed> mL1Seed;
     double nFireevents;
-
+     
     std::set<std::string> FireSeed;
     std::set<std::string> FiredPhy;
-    std::map<std::string, int > PhyCounts;
-    std::map<std::string, int > PhyPureCounts;
+    //std::map<std::string, int > PhyCounts;
+    //std::map<std::string, int > PhyPureCounts;
+    std::map<std::string, float > PhyCounts; // float to accept non integer values coming from the reweighting procedure
+    std::map<std::string, float > PhyPureCounts; // float to accept non integer values coming from the reweighting procedure
     std::map<std::string, float > PhyPropCounts;
-    std::map<std::string, std::map<float, int> > L1PUCount; // counting lumi section
+    //std::map<std::string, std::map<float, int> > L1PUCount; // counting lumi section
+    std::map<std::string, std::map<float, float> > L1PUCount; // float to accept non integer values coming from the reweighting procedure
 
     std::map<std::string, TH1F*> HistMap;
     std::map<std::string, TH2F*> Hist2D;

@@ -32,6 +32,7 @@
 #include <functional>
 #include <ctype.h>
 #include <stdlib.h>
+#include "TGraphErrors.h"
 
 // ROOT
 #include "TH1F.h"
@@ -144,7 +145,7 @@ class L1Menu2016 : public L1AlgoFactory
     std::fstream *outfile;
     std::fstream *outcsv;
     TFile        *outrootfile;
-
+    std::vector<double> h_weights_2018;
 
   protected:
     // ====================  METHODS       ===============================
@@ -155,6 +156,7 @@ class L1Menu2016 : public L1AlgoFactory
     bool FillLumiSection(int currentLumi);
     bool FillPileUpSec();
     float EvaluatePileUp();
+    float ExtractPileUpWeight();
     bool PrintCSV(std::ostream &out);
     // ====================  DATA MEMBERS  ===============================
 
@@ -180,6 +182,7 @@ class L1Menu2016 : public L1AlgoFactory
     double scale;
     unsigned int nZeroBiasevents;
     unsigned int nZeroBiasevents_PUrange;
+    unsigned int weight;
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;

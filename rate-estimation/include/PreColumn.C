@@ -56,7 +56,6 @@ bool PreColumn::PassRelation( std::vector<std::string> vL1Seed_,
 }       // -----  end of function PreColumn::PassRelation  -----
 
 bool PreColumn::InsertInMenu(std::string L1name, bool value) {
-
   bool post_prescale = false;
 
   if ( mL1Seed.find(L1name) == mL1Seed.end() ) {
@@ -298,6 +297,23 @@ bool PreColumn::WriteHistogram(TFile *outrootfile)
   return true;
 }       // -----  end of function PreColumn::WriteHistogram  -----
 
+// ===============================================================================                                                                   
+//         Name:  PreColumn::ExtractPileUpWeight                                                                                                                     
+//  Description:  Extract weights for reweighting of the pileup distribution in MC                                                                                  
+// ===============================================================================                                                                         
+float PreColumn::ExtractPileUpWeight(float pu)
+{
+  double weight = -1;
+  // WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution:               
+  // see here -> https://elfontan.web.cern.ch/elfontan/Run3_MENU/PileupReweighting/weights_nPV_True.png.                           
+  // A weight equal to 0 is set in bins where the number of events in data is less than 100. 
+  h_weights_2018 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.7805557154345164, 1.8060490539875227, 1.8429444310772023, 1.8847969284653239, 1.9023685309193448, 1.9237248769457562, 1.9052231983237566, 1.9323838791307304, 1.9085059563417344, 1.8603791701197574, 1.7603108386627149, 1.6756647663900748, 1.5370617605401784, 1.3999688210755514, 1.259781632746541, 1.113578483437248, 0.9458259616433159, 0.8004237934065365, 0.67859967863879, 0.5416839609316458, 0.4312760960624466, 0.3410534695481281, 0.2670644366287844, 0.20005146208632094, 0.15028893320205652, 0.10953206021410954, 0.08057347625153384, 0.05889674651099118, 0.04287951951844378, 0.03136484854119283, 0.022045797907650135, 0.015338620880659437, 0.011042294804776033, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+  weight = h_weights_2018.at(pu);
+  
+  return weight;
+}
+// -----  end of function PreColumn::ExtractPileUpWeight  -----   
 
 // ===  FUNCTION  ============================================================
 //         Name:  PreColumn::FillPileUpSec
@@ -305,6 +321,8 @@ bool PreColumn::WriteHistogram(TFile *outrootfile)
 // ===========================================================================
 bool PreColumn::FillPileUpSec(float pu)
 {
+  float ev_puweight = -1;
+  ev_puweight = ExtractPileUpWeight(pu);
   bool eFired = false;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ L1Seed ~~~~~
   for(auto l1 : mL1Seed)
@@ -316,7 +334,8 @@ bool PreColumn::FillPileUpSec(float pu)
     if (l1.second.eventfire)
     {
       eFired= true;
-      L1PUCount[l1.first][pu]++;
+      //L1PUCount[l1.first][pu]++;
+      L1PUCount[l1.first][pu] += ev_puweight;
     }
   }
 
@@ -337,14 +356,16 @@ bool PreColumn::FillPileUpSec(float pu)
 
     if (FiredPhy.find(pog.first) != FiredPhy.end())
     {
-      L1PUCount[l1pog][pu] ++;
+      //L1PUCount[l1pog][pu] ++;
+      L1PUCount[l1pog][pu] += ev_puweight;
       POGset.insert(pog.first);
     }
   }
   if (POGset.size() == 1)
   {
     std::string l1pogpure = "L1T_Pure"+*(POGset.begin());
-    L1PUCount[l1pogpure][pu]++;
+    //L1PUCount[l1pogpure][pu]++;
+    L1PUCount[l1pogpure][pu] += ev_puweight;
   }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAG ~~~~~
   std::set<std::string> PAGset;
@@ -362,21 +383,26 @@ bool PreColumn::FillPileUpSec(float pu)
     }
     if (FiredPhy.find(pag.first) != FiredPhy.end())
     {
-      L1PUCount[l1pag][pu] ++;
+      //L1PUCount[l1pag][pu] ++;
+      L1PUCount[l1pag][pu] += ev_puweight;
       PAGset.insert(pag.first);
     }
   }
   if (PAGset.size() == 1)
   {
     std::string l1pagpure = "L1A_Pure"+*(PAGset.begin());
-    L1PUCount[l1pagpure][pu]++;
+    //L1PUCount[l1pagpure][pu]++;
+    L1PUCount[l1pagpure][pu] += ev_puweight;
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Total ~~~~~
-  L1PUCount["Count"][pu]++;
+  //L1PUCount["Count"][pu]++;
+  L1PUCount["Count"][pu] += ev_puweight;
+
   if (eFired)
   {
-    L1PUCount["L1APhysics"][pu]++;
+    //L1PUCount["L1APhysics"][pu]++;
+    L1PUCount["L1APhysics"][pu] += ev_puweight; 
   }
 
   return true;
@@ -415,9 +441,9 @@ bool PreColumn::PrintCSV(std::vector<std::string> &out, double scale)
       << "," << seed.proprate      <<",";
       //<< ",\""<<seed.second.comment<<"\""<<",";
     csvout++->append(ss.str());
-    totalrate +=seed.firerate;
-    totalpurerate +=seed.purerate;
-    totalproprate +=seed.proprate;
+    totalrate += seed.firerate;
+    totalpurerate += seed.purerate;
+    totalproprate += seed.proprate;
   }
   
   // POG
