@@ -260,13 +260,13 @@ bool PreColumn::CheckPureFire(float pu)
 //**************************************************************************//
   // Get Proportional counts;
   for(auto i : FireSeed)
-    mL1Seed[i].propcounts += 1.0 / FireSeed.size();
+    mL1Seed[i].propcounts += ev_puweight / FireSeed.size();
 
   for(auto i : POGset)
-    PhyPropCounts[i] += 1.0 / POGset.size();
+    PhyPropCounts[i] += ev_puweight / POGset.size();
 
   for(auto i : PAGset)
-    PhyPropCounts[i] += 1.0/ PAGset.size();
+    PhyPropCounts[i] += ev_puweight / PAGset.size();
     
   return true;
 }       // -----  end of function PreColumn::CheckPureFire  -----
