@@ -71,7 +71,7 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value)
   if (mL1Seed[L1name].prescale == 0)
     return false;
 
-  if ( mL1Seed[L1name].ncounts % mL1Seed[L1name].prescale == 0) 
+  if ( int(mL1Seed[L1name].ncounts) % mL1Seed[L1name].prescale == 0) 
     post_prescale = value; 
 
   mL1Seed[L1name].eventfire = post_prescale;
@@ -103,7 +103,7 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu)
   if (mL1Seed[L1name].prescale == 0)
     return false;
 
-  if ( mL1Seed[L1name].ncounts % mL1Seed[L1name].prescale == 0) 
+  if ( int(mL1Seed[L1name].ncounts) % mL1Seed[L1name].prescale == 0) 
     post_prescale = value; 
 
   mL1Seed[L1name].eventfire = post_prescale;

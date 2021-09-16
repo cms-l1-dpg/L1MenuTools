@@ -87,11 +87,11 @@ class PreColumn
     std::set<std::string> FiredPhy;
     //std::map<std::string, int > PhyCounts;
     //std::map<std::string, int > PhyPureCounts;
-    std::map<std::string, float > PhyCounts; // float to accept non integer values coming from the reweighting procedure
-    std::map<std::string, float > PhyPureCounts; // float to accept non integer values coming from the reweighting procedure
+    std::map<std::string, float > PhyCounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
+    std::map<std::string, float > PhyPureCounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
     std::map<std::string, float > PhyPropCounts;
     //std::map<std::string, std::map<float, int> > L1PUCount; // counting lumi section
-    std::map<std::string, std::map<float, float> > L1PUCount; // float to accept non integer values coming from the reweighting procedure
+    std::map<std::string, std::map<float, float> > L1PUCount; // Reweighting: float to accept non integer values coming from the reweighting procedure
 
     std::map<std::string, TH1F*> HistMap;
     std::map<std::string, TH2F*> Hist2D;
