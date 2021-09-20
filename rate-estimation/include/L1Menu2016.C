@@ -110,6 +110,7 @@ bool L1Menu2016::InitConfig()
   L1Config["doPlotLS"]       = 0;
   L1Config["doPrintPU"]      = 0;
   L1Config["allPileUp"]      = 0;
+  L1Config["doReweighting"]  = 0;
   L1Config["doPrintBX"]      = 0;
   L1Config["doCompuGT"]      = 0;
   L1Config["maxEvent"]       = -1;
@@ -1011,6 +1012,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
     //std::cout << "line 1004 end" << std::endl;
   }
 
+  // If data, read the csv file and fill the DataLSPU information.
   if (event_->run > 1)
     {
       const std::string pucsv = L1ConfigStr["Lumilist"];
@@ -1035,12 +1037,12 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
 	  DataLSPU[Run][LS] = pileup;
 	}
     }
-  
+
   if (L1Config["doPrintPU"] || L1Config["SelectFill"] != -1 )
     {
       ReadDataPU();
     }
-    
+
   if (L1Config["doTnPMuon"])
     {
       l1TnP = new L1TnP(outrootfile, event_, upgrade_, recoJet_,
@@ -1076,6 +1078,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
   
   if (L1ConfigStr["SelectBX"] != "") 
     ParseRanges("SelectBX", pBX);
+
   return true;
 }       // -----  end of function L1Menu2016::PreLoop  -----
 
@@ -1163,6 +1166,11 @@ bool L1Menu2016::Loop()
   nLumi.clear();
   bool skipLS = false;
 
+  if (L1Config["doReweighting"] != 0 )
+    {
+      reweight = true;
+    }
+
   while(true)
   {
     i++;
@@ -1228,16 +1236,23 @@ bool L1Menu2016::Loop()
     //Use Final decision by default, unless for PlotLS
     //if (l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"]))
     //In case using L1Accept, don't count the Zerobias Event
-    if (L1Config["SetL1AcceptPS"] ==0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
+    if (L1Config["SetL1AcceptPS"] == 0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
       continue;
 
     // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting 
+    if (L1Config["doReweighting"] != 0 )
+      {
+	float ev_puweight = -1;
+	ev_puweight = ExtractPileUpWeight();
+	nZeroBiasevents+=ev_puweight; 
+      }
+    else
+      {
+	nZeroBiasevents++;
+      }
+
     float ev_pileup = -1;
-    float ev_puweight = -1;
-    ev_puweight = ExtractPileUpWeight();
     ev_pileup = EvaluatePileUp();
-    //nZeroBiasevents++;
-    nZeroBiasevents+=ev_puweight; // Reweighting procedure
 
     // PileUp window around 53, expected average PU value during the lumi levelling period in Run 3
     if ((ev_pileup < 48 || ev_pileup > 58) && L1Config["allPileUp"] == 0) continue;
@@ -1321,7 +1336,6 @@ bool L1Menu2016::PostLoop()
 // ===========================================================================
 bool L1Menu2016::PrintPUCSV()
 {
-  //const int nBunches = 2736;
   std::fstream pucsv (outputdir + "/" + outputname+"_PU" +".csv", std::fstream::out );
 
   // L1Seeds
@@ -1474,15 +1488,19 @@ bool L1Menu2016::RunMenu()
 
     for(auto col : ColumnMap)
     {
-      //col.second->InsertInMenu(seed.first, IsFired); 
-      col.second->InsertInMenu(seed.first, IsFired, ev_pileup); // Reweighting procedure
+    if (L1Config["doReweighting"] == 0 ) // Reweighting procedure 
+      col.second->InsertInMenu(seed.first, IsFired); 
+    else
+      col.second->InsertInMenu(seed.first, IsFired, ev_pileup); 
     }
   }
 
   for(auto col : ColumnMap)
   {
-    //col.second->CheckCorrelation(); 
-    col.second->CheckCorrelation(ev_pileup); // Reweighting procedure
+    if (L1Config["doReweighting"] == 0 ) // Reweighting procedure 
+      col.second->CheckCorrelation(); 
+    else
+      col.second->CheckCorrelation(ev_pileup);
   }
 
   return true;
@@ -2178,7 +2196,7 @@ bool L1Menu2016::FillPileUpSec()
   for(auto col : ColumnMap)
   {
     col.second->ExtractPileUpWeight(pu);
-    col.second->FillPileUpSec(pu);
+    col.second->FillPileUpSec(pu, reweight);
   }
 
   return true;

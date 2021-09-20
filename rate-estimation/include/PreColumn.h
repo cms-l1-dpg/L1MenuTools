@@ -42,16 +42,16 @@ class PreColumn
 
     // ====================  ACCESSORS     ===============================
     bool CheckCorrelation();
-    bool CheckCorrelation(float pu);
+    bool CheckCorrelation(float pu); // Reweighting: information about the weight corresponding to a given pileup needed for the counting 
     bool EventReset();
     bool InsertInMenu(std::string L1name, bool value);
-    bool InsertInMenu(std::string L1name, bool value, float pu);
+    bool InsertInMenu(std::string L1name, bool value, float pu); // Reweighting: information about the weight corresponding to a given pileup needed for the counting 
     bool PrintCSV(std::vector<std::string> &out, double scale);
     bool WriteHistogram(TFile *outrootfile);
     bool PrintRates(std::ostream &out, double scale);
     bool PrintPUCSV( std::vector<std::string> &csvout);
     bool BookHistogram();
-    bool FillPileUpSec(float pu);
+    bool FillPileUpSec(float pu, bool reweight);
     bool FillDefHist2D(double &scale);
     bool FillDefHist1D(double &scale);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
@@ -59,7 +59,7 @@ class PreColumn
     bool CalRate(double scale);
     bool PrintMenuRate(double scale) const;
 
-    float ExtractPileUpWeight(float pu);
+    float ExtractPileUpWeight(float pu); // Reweighting: information about the weight corresponding to a given pileup needed for the counting 
     std::vector<double> h_weights_2018;
    // ====================  MUTATORS      ===============================
 

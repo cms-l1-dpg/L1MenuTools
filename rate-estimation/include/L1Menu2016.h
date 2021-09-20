@@ -146,6 +146,7 @@ class L1Menu2016 : public L1AlgoFactory
     std::fstream *outcsv;
     TFile        *outrootfile;
     std::vector<double> h_weights_2018;
+    bool reweight = false;
 
   protected:
     // ====================  METHODS       ===============================
