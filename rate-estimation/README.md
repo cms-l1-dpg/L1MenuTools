@@ -118,11 +118,11 @@ The arguments that you can use are as follows:
 
 Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
 
-#### <h3 style="color:#ff0000">Temporary remark</h3>:
+#### Temporary remark:
 Please note that currently in the context of rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
 A pileup range from 48 to 58, corresponding to the expected average PU during the lumi levelling period in Run 3, is taken into account. 
 If you want to run the rates for the full PU distribution available in the sample, please use the option --allPileUp.
 
-#### <h3 style="color:#ff0000">Important note</h3>:
+#### Important note:
 Please remember that when you use the --SelectCol option, you just select a specific PS column from the table which contains the information about which seeds are prescaled or unprescaled and about the prescale values. It does not allow to select a certain luminosity. In order to look at rates using a specific luminosity scenario, you would need to use lumi-range-skimmed datasets or to select a specific pileup window when running the rates. 
 (See [here](https://github.com/cms-l1-dpg/L1MenuTools/blob/master/rate-estimation/include/L1Menu2016.C#L1239) for the part of the code that has to be modified in case you need to select the pileup range of interest. Then remember to compile the rate-estimation directory!).
