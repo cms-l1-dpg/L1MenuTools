@@ -92,14 +92,15 @@ Then run `make -j 4`.
 Components have been provided to run a short test.
 ```bash
 ./testMenu2016 -u menu/run_lumi.csv \
--m menu/Prescale_2018_v2_1_0_Col_2.0.txt \
--l ntuple/fill_7118_nanoDST_shifter_lxplus_test.list \
--o test -b 2544 --doPlotRate --doPlotEff --UseUnpackTree
+-m menu/Prescale_2022_v0_1_1.csv \
+-l ntuple/Run3_NuGun_MC_ntuples.list \
+-o test -b 2544 --doPlotRate --doPlotEff --SelectCol 2E+34 \
+--UseUnpackTree -- maxEvent 10000
 ```
 This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
 
 #### Arguments
-The arguments used in the test are as follows:
+The arguments that you can use are as follows:
 
 |Option | Description |
 |-------|-------------|
@@ -108,9 +109,12 @@ The arguments used in the test are as follows:
 |`-l`   | ntuple list. |
 |`-o`   | Output name. Output files will be saved to `results/[output name].\*` |
 |`-b`   | Number of bunches. |
-|`--UseUnpackTree` | Switch to using UnpackTree; default is EmuTree. |
 |`--SelectRun` | Select a run number; default is full list. |
 |`--SelectLS [startLS,endLS]` | Select lumi sections to run over; default is whole LS provided. |
+|`--SelectCol` | Select the column in the PS table. |
+|`--UseUnpackTree` | Switch to using UnpackTree; default is EmuTree. |
+|`--maxEvent` | Run on a subset of the available events. |
+|`--doPrintPU` | Evaluate and save the rates for different pileup values |
 
 Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
 
@@ -118,3 +122,7 @@ Running `./testMenu2016 --help` will show all arguments with a brief description
 Please note that currently in the context of rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
 A pileup range from 48 to 58, corresponding to the expected average PU during the lumi levelling period in Run 3, is taken into account. 
 If you want to run the rates for the full PU distribution available in the sample, please use the option --allPileUp.
+
+#### Important note:
+Please remember that when you use the --SelectCol option, you just select a specific PS column from the table which contains the information about which seeds are prescaled or unprescaled and about the prescale values. It does not allow to select a certain luminosity. In order to look at rates using a specific luminosity scenario, you would need to use lumi-range-skimmed datasets or to select a specific pileup window when running the rates. 
+(See [here](https://github.com/cms-l1-dpg/L1MenuTools/blob/master/rate-estimation/include/L1Menu2016.C#L1239) for the part of the code that has to be modified in case you need to select the pileup range of interest. Then remember to compile the rate-estimation directory!).

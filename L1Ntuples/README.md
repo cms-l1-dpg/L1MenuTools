@@ -65,5 +65,6 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
-- input dataset: `/SingleNeutrino_Pt-2To20-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW`
+- input datasets: `/SingleNeutrino_Pt-2To20-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW`,
+`/SingleNeutrino_E10-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW `
 - includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
