@@ -104,11 +104,11 @@ def ExtractPileUpWeight(pu):
 def DrawPU(canvas, f, l1seed, count, key=None):
     list_fromDrawPU = [] # Making Python objects used here known within the DrawL1 function  
     df = f[(f.L1Seed == l1seed )]
-
+    #print "\n Dataframe:\n", df
     for i in range(0, len(pubins) -1):
         pumap[pubins[i]] = []
-        pumap[pubins[i]].append(df[np.logical_and(df.PileUp > pubins[i], df.PileUp <= pubins[i+1])].Fired0.sum() )
-        pumap[pubins[i]].append(df[np.logical_and(df.PileUp > pubins[i], df.PileUp <= pubins[i+1])].Total.sum() )
+        pumap[pubins[i]].append(df[np.logical_and(df.PileUp >= pubins[i], df.PileUp < pubins[i+1])].Fired0.sum() )
+        pumap[pubins[i]].append(df[np.logical_and(df.PileUp >= pubins[i], df.PileUp < pubins[i+1])].Total.sum() )
 
     x = []
     y = []
@@ -122,8 +122,7 @@ def DrawPU(canvas, f, l1seed, count, key=None):
                     w = ExtractPileUpWeight(k)
                     yerr.append( math.sqrt(float(v[0])*w)/v[1] * freq * nBunches )
                 else:
-                    yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches )
-                    
+                    yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches )                    
             if unit == "kHz":
                 y.append(float(v[0])/v[1] * freq * nBunches / 1000)
                 if (isReweight):
@@ -131,9 +130,6 @@ def DrawPU(canvas, f, l1seed, count, key=None):
                     yerr.append( math.sqrt(float(v[0])*w)/v[1] * freq * nBunches / 1000 )
                 else:
                     yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches / 1000 )
-                    
-    print "Y ERROR = " 
-    print yerr
 
     ## Draw the plot
     graph = ROOT.TGraphErrors(len(x))

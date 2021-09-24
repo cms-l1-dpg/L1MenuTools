@@ -64,6 +64,7 @@ inline bool SingleObjPt(float* obj, double pt)
 {
   return *obj >=pt ;
 }       // -----  end of function SingleObjPt  -----
+
 // ===========================================================================
 //        Class:  L1Menu2016
 //  Description:  A class to handle the L1Menu
@@ -71,7 +72,6 @@ inline bool SingleObjPt(float* obj, double pt)
 class L1Menu2016 : public L1AlgoFactory 
 {
   public:
-
     // ====================  LIFECYCLE     ===============================
     L1Menu2016 (std::string MenuName, std::string filelist); // constructor
     ~L1Menu2016 ();                                          // destructor
@@ -108,7 +108,6 @@ class L1Menu2016 : public L1AlgoFactory
     bool BXReweight_is_1_to_6_11_12(int currentBX);
     bool BXReweight_is_5_to_10(int currentBX);
 
-
     bool ConfigOutput(bool writetext_, bool writecsv_, bool writeplot_, 
         std::string outputdir_, std::string outputname_);
     std::string SetOutputName() const;
@@ -132,6 +131,7 @@ class L1Menu2016 : public L1AlgoFactory
     bool ParseMuEG(const std::string& SeedName);
     bool ParseMuerTauer(const std::string& SeedName);
     bool ParseMuSum(const std::string& SeedName);
+
     // ====================  OPERATORS     ===============================
 
     L1Menu2016& operator = ( const L1Menu2016 &other ); // assignment operator

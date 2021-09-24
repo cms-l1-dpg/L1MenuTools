@@ -45,9 +45,9 @@ struct L1Seed
   //unsigned int ncounts;
   float ncounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   bool eventfire;
-  //unsigned int firecounts; 
-  //unsigned int purecounts; 
-  float firecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure 
+  //unsigned int firecounts;
+  //unsigned int purecounts;
+  float firecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   float purecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   float propcounts; // proportional counts;
   double firerate;
@@ -63,12 +63,13 @@ struct L1Seed
     bit           = -1;
     prescale      = 0;
     //ncounts       = 0;
-    ncounts       = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure
+    ncounts       = 0.0;
     eventfire     = false;
     //firecounts    = 0;
     //purecounts    = 0;
-    firecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure
-    purecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure
+    //firecounts_w  = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure
+    firecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure 
+    purecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure 
     propcounts    = 0.0;
     firerate      = 0.0;
     firerateerror = 0.0;

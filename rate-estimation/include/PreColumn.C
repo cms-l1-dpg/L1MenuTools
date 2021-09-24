@@ -28,7 +28,6 @@ PreColumn::PreColumn (int ColIdx_, std::map<std::string, L1Seed> mL1Seed_):
 {
   bybit = false;
   nFireevents = 0;  
-  //nFireevents_w = 0;
 }  // -----  end of method PreColumn::PreColumn  (constructor)  -----
 
 //----------------------------------------------------------------------------
@@ -110,7 +109,6 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu)
   mL1Seed[L1name].eventfire = post_prescale;
   if (post_prescale)
   {
-    //mL1Seed[L1name].firecounts_w+=ev_puweight;
     mL1Seed[L1name].firecounts+=ev_puweight;
     FireSeed.insert(L1name);
   }
@@ -152,7 +150,6 @@ bool PreColumn::CheckCorrelation(float pu)
 
   if (FireSeed.size() > 0)
     {
-      //nFireevents_w += ev_puweight;
       nFireevents += ev_puweight;
     }
 
@@ -645,7 +642,6 @@ bool PreColumn::PrintCSV(std::vector<std::string> &out, double scale)
   // Total
   csvout++;
   ss.str("");
-  //ss <<"1,"<< nFireevents_w / 1000 * scale 
   ss <<"1,"<< nFireevents / 1000 * scale 
     <<","<<sqrt(nFireevents) * scale / 1000 
     <<","<<totalpurerate / 1000 
@@ -783,7 +779,6 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
   }
 
 
-  //out << std::endl << "Total rate  = " << nFireevents_w / 1000 * scale 
   out << std::endl << "Total rate  = " << nFireevents / 1000 * scale 
     <<" +/- " << sqrt(nFireevents) * scale / 1000 << " (kHz)" << std::endl;
   out << std::endl << "Total rate (with overlaps) = " << totalrate / 1000 << " (kHz)" << std::endl;
@@ -811,7 +806,6 @@ bool PreColumn::FillDefHist1D(double &scale)
       std::string l1name = BitMap[l1bit];
       std::cout << l1bit << " " << l1name<< std::endl;
       HistMap[pog.first]->GetXaxis()->SetBinLabel(binidx, l1name.c_str());
-      //HistMap[pog.first]->SetBinContent(binidx, mL1Seed[l1name].firecounts_w);
       HistMap[pog.first]->SetBinContent(binidx, mL1Seed[l1name].firecounts);
       binidx++;
     }
@@ -875,13 +869,10 @@ bool PreColumn::CalRate(double scale)
 {
   for(auto &seed : mL1Seed)
   {
-    //seed.second.firerate = seed.second.firecounts_w *scale;
     seed.second.firerate = seed.second.firecounts *scale;
     seed.second.firerateerror = sqrt(seed.second.firecounts)*scale;
     seed.second.purerate = seed.second.purecounts *scale;
     seed.second.proprate = seed.second.propcounts *scale;
-    //std::cout << "seed.second.firecounts_w = " << seed.second.firecounts_w << "  with scale => " << seed.second.firecounts_w*scale << std::endl;
-    //std::cout << "seed.second.firecounts = " << seed.second.firecounts << std::endl;
   }
   return true;
 }       // -----  end of function PreColumn::CalRate  -----
@@ -892,11 +883,8 @@ bool PreColumn::CalRate(double scale)
 // ===========================================================================
 bool PreColumn::PrintMenuRate(double scale) const
 {
-  //std::cout << "Col" << ColIdx << ": Menu rate  = " << nFireevents_w / 1000 * scale 
   std::cout << "Col" << ColIdx << ": Menu rate  = " << nFireevents / 1000 * scale 
     <<" +/- " << sqrt(nFireevents) * scale / 1000 << " (kHz)" << std::endl;
-  //std::cout << "===============> nFireevents_w = " << nFireevents_w << std::endl;
-  //std::cout << "===============> nFireevents = " << nFireevents << std::endl;
 
   return true;
 }       // -----  end of function PreColumn::PrintMenuRate  -----
