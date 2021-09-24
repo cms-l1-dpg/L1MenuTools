@@ -277,7 +277,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       {% include 'CaloCaloCorrelationTemplate.cc' %}
     {% endif %}
 
-  {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, ) %}
+  {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, tmEventSetup.InvariantMassDeltaR) %}
     {% set objects = cond.getObjects() %}
     {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
     {% if combination == tmEventSetup.MuonMuonCombination %}

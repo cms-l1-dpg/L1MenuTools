@@ -378,6 +378,10 @@ def toDeltaR(value):
   return "%.2f" % math.sqrt(value)
 
 
+def toMassDeltaR(value):
+  return "%.2f" % math.sqrt(2.*value)
+
+
 def warning(message):
   print(message)
   return ''
@@ -403,6 +407,7 @@ def render(menu, template):
   j2_env.filters['warning'] = warning
   j2_env.filters['toMass'] = toMass
   j2_env.filters['toDeltaR'] = toDeltaR
+  j2_env.filters['toMassDeltaR'] = toMassDeltaR
   j2_env.filters['chkChgCor'] = chkChgCor
   j2_env.filters['getPrefix'] = getPrefix
   j2_env.filters['isMuon'] = isMuon

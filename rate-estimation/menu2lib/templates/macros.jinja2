@@ -114,6 +114,17 @@
 {%- endmacro -%}
 
 {#
+ # set mass2 over delta R2
+ #}
+{%- macro setMass2DeltaR2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta=True) -%}
+    {{ setMass2(prefix0, prefix1, idx0, idx1, LUTS, iPi, useDelta) }}
+    const long long inversedR2 = {{LUTS.INVDELTAR}}[invDeltaR2];
+    const long long mass2deltaR2 = mass2 * inversedR2;
+{%- endmacro -%}
+{# get actual LUT name #}
+
+
+{#
  # set mass3
  #}
 {%- macro setMass3(prefix0, prefix1, prefix2, idx0, idx1, idx2, LUTS, iPi, useDelta=True) -%}
@@ -286,6 +297,12 @@
     // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
     {{ setMassUpt2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
     {{ applyFunctionCut('mass2', cut, LUTS.PREC_MASS) }}
+
+  {% elif cut.getCutType() == tmEventSetup.MassDeltaR %}
+    // {{ cut.getMinimum().value | toMassDeltaR }} <= massdr <= {{ cut.getMaximum().value | toMassDeltaR}}
+    {{ setMass2DeltaR2(prefix, prefix, idx0, idx1, LUTS, iPi, False) }}
+    {{ applyFunctionCut('mass2deltaR2', cut, LUTS.PREC_INVERSE_DR) }}
+  {# definitely need more than mass types here, but can I just include inverse deltaR types here as well or do I have to define a new function cut for mass and 1/R2? #}
 
   {% elif cut.getCutType() == tmEventSetup.ChargeCorrelation %}
     if (data->{{prefix}}Chg.at({{idx0}}) == 0) continue;  // charge valid bit not set

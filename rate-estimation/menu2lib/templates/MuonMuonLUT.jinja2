@@ -52,4 +52,15 @@ const int LUT_MU_UPT[] = {
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
+
+{# inverse deltaR #}
+const int prec_mu_mu_invdelta = {{ scaleMap | getPrecisionByName('MU', 'MU', 'InvDelta') }};
+
+const int LUT_INVDR_MU_MU[] = {
+{% for x in mu_mu_invdelta[tmGrammar.DR] -%}
+  {{x}}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+};
+
 {# eof #}
+
