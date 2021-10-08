@@ -12,9 +12,9 @@ from jinja2 import Environment, FileSystemLoader
 import tmGrammar
 import tmEventSetup
 
-UTM_VERSION = '0.8.2'
-assert tmGrammar.__version__ == UTM_VERSION, "invalid utm version"
-assert tmEventSetup.__version__ == UTM_VERSION, "invalid utm version"
+UTM_VERSION = '0.9.1'
+assert tmGrammar.__version__ == UTM_VERSION, f"invalid utm version {tmGrammar.__version__}, should be {UTM_VERSION}"
+assert tmEventSetup.__version__ == UTM_VERSION, f"invalid utm version {tmEventSetup.__version__}, should be {UTM_VERSION}"
 
 #
 # constants
