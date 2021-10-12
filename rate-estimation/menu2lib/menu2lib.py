@@ -145,7 +145,7 @@ def hasCorrelationCuts(condition):
 
   for cut in condition.getCuts():
     if cut.getCutType() in (tmEventSetup.DeltaEta, tmEventSetup.OvRmDeltaR, tmEventSetup.Mass, tmEventSetup.MassUpt,
-                            tmEventSetup.OvRmDeltaEta, tmEventSetup.DeltaR):
+                            tmEventSetup.OvRmDeltaEta, tmEventSetup.DeltaR, tmEventSetup.MassDeltaR):
       requireDeltaEta = True
 
   if requireDeltaEta:
