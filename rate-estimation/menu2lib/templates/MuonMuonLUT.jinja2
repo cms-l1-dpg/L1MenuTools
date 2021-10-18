@@ -55,13 +55,14 @@ const int LUT_MU_UPT[] = {
 
 {# inverse deltaR #}
 const int prec_mu_mu_invdelta = {{ scaleMap | getPrecisionByName('MU', 'MU', 'InverseDeltaRMath') }};
+const int prec_mu_mu_massdr = prec_mu_mu_mass * prec_mu_mu_invdelta;
 
-{% set mu_mu_invdelta = scaleMap | getDeltaLut(tmGrammar.MU, tmGrammar.MU, tmGrammar.MASSDR) %}
-const int LUT_INVDR_MU_MU[] = {
-{% for x in mu_mu_invdelta[tmGrammar.MASSDR] -%}
-  {{x}}{% if not loop.last %},{% endif %}
-{%- endfor -%}
-};
+{# {% set mu_mu_invdelta = scaleMap | getDeltaLut(tmGrammar.MU, tmGrammar.MU, tmGrammar.INVERSE_DR) %} #}
+{# const int LUT_INVDR_MU_MU[] = { #}
+{# {% for x in mu_mu_invdelta[tmGrammar.INVERSE_DR] -%} #}
+{#  {{x}}{% if not loop.last %},{% endif %} #}
+{# {%- endfor -%} #}
+{# }; #}
 
 {# eof #}
 

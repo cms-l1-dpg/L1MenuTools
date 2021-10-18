@@ -1,3 +1,4 @@
+
 """L1 trigger menu to C++ library for rate estimations."""
 
 import argparse
@@ -332,6 +333,8 @@ def getLookUpTable(scaleMap, obj1, obj2):
   precisionMath = getPrecision(scaleMap, obj1, obj2, 'Math')
   precisionPt = getPrecision(scaleMap, obj1, obj2, 'MassPt')
 
+  precisionInvDeltaR = getPrecision(scaleMap, obj1, obj2, 'InverseDeltaRMath')
+
   has_deta = not (isVectorSum(obj1) or isVectorSum(obj2))
   convert = ((obj1.getType() != obj2.getType())
              and
@@ -347,6 +350,7 @@ def getLookUpTable(scaleMap, obj1, obj2):
   rc['PREC_MASS'] = 2*precisionPt + precisionMath
   rc['COS_DPHI'] = "LUT_COS_DPHI_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
 
+
   if has_unconstrained_pt:
     rc['UPT0'] = "LUT_%s_UPT" % getObjectName(obj1)
     rc['UPT1'] = "LUT_%s_UPT" % getObjectName(obj2)
@@ -355,6 +359,8 @@ def getLookUpTable(scaleMap, obj1, obj2):
     rc['DETA'] = "LUT_DETA_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
     rc['COSH_DETA'] = "LUT_COSH_DETA_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
     rc['PREC_DR'] = 2*precisionDelta
+
+    rc['PREC_MASSDR'] = 2*precisionPt + precisionMath + precisionInvDeltaR
 
   if convert:
     if obj1.getType() == tmEventSetup.Muon:
