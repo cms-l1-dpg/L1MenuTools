@@ -35,7 +35,7 @@ RM       = rm -rf
 ifneq ($(shell echo $$CMSSW_BASE), )
   CXXFLAGS  += -isystem $(CMSSW_BASE)/src/
   CXXFLAGS  += -isystem $(CMSSW_RELEASE_BASE)/src
-  CXXFLAGS  += -isystem $(shell scram tool info boost | awk -F"=" '/INCLUDE=(.*)/{print $$NF}')
+  CXXFLAGS  += -isystem $(shell scram tool info boost | awk -F"=" '/BOOST_BASE=(.*)/{print $$NF}')/include
   LIBS += -L$(CMSSW_BASE)/lib/$(SCRAM_ARCH)/ -L$(CMSSW_RELEASE_BASE)/lib/$(SCRAM_ARCH)/ \
 		  -lFWCoreFWLite -lDataFormatsL1TGlobal
   LIBS += -L$(shell scram tool info boost | awk -F"=" '/LIBDIR=(.*)/{print $$NF}') \
