@@ -233,7 +233,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 // generate conditions
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
-  {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm,
+  {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.SingleJetOvRm, tmEventSetup.DoubleTauOvRm,
                             tmEventSetup.InvariantMassOvRm) %}
     {% set overlap_removal = 1 %}
   {% endif -%}
@@ -265,6 +265,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
   {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
     {% include 'CaloCaloCorrelationTemplate.cc' %}
+
+  {% elif cond.getType() == tmEventSetup.SingleJetOvRm %}
+    {% include 'SingleObjectOvRmTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.InvariantMass, tmEventSetup.InvariantMassOvRm) %}
     {% set objects = cond.getObjects() %}
