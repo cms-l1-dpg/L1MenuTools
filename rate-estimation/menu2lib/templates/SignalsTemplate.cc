@@ -12,12 +12,10 @@
 // EF
 // MuonShowerType from L1TNtuples => L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h:
 // kInvalid, kOneNominal,kOneTight, kTwoLoose
-//{% if object.getType() == tmEventSetup.MuonShower0 -%}
+//{% if object.getType() == tmEventSetup.MUS0 -%}
 //  {% set type = 'L1Analysis::kOneNominal' %}
-//{% elif object.getType() == tmEventSetup.MuonShower1 -%}
+//{% elif object.getType() == tmEventSetup.MUS1 -%}
 //  {% set type = 'L1Analysis::kOneTight' %}
-//{% if object.getType() == tmEventSetup.MuonShowerOutOfTime0 -%}
-//{% if object.getType() == tmEventSetup.MuonShowerOutOfTime1 -%}
 //{% endif -%}
 
 bool

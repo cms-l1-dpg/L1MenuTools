@@ -196,10 +196,10 @@ def sortObjects(obj1, obj2):
     return obj2, obj1
 
   # Muon showers
-  #elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
-  #  if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
-  #                            tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
-  #    return obj2, obj1
+  elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
+    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
+                              tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
+      return obj2, obj1
   return obj1, obj2
 
 

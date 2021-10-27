@@ -235,12 +235,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 /////////////////////////
 // Muon showers: definition of ShowerSignal types;
 // it can be done for Centrality signals, as well
-ShowerSignalTypes = (
+{%set ShowerSignalTypes = (
 		      tmEventSetup.MuonShower0,
 		      tmEventSetup.MuonShower1, 
 		      tmEventSetup.MuonShowerOutOfTime0, 
-		      tmEventSetup.MuonShowerOutOfTime1
-		      )
+		      tmEventSetup.MuonShowerOutOfTime1)}
 
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
@@ -271,7 +270,7 @@ ShowerSignalTypes = (
   {% elif cond.getType() in (tmEventSetup.MuonEsumCorrelation, tmEventSetup.CaloEsumCorrelation) %}
     {% include 'EsumCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation ) %}
+  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, ) %}
     {% include 'CaloMuonCorrelationTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
