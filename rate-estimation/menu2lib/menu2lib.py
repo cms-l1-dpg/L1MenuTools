@@ -35,6 +35,10 @@ PREFIX = {
   tmEventSetup.MBT1HFM: 'sum',
   tmEventSetup.MBT1HFP: 'sum',
   tmEventSetup.TOWERCOUNT: 'sum',
+  tmEventSetup.MuonShower0: 'muonShower',
+  tmEventSetup.MuonShower1: 'muonShower',
+  tmEventSetup.MuonShowerOutOfTime0: 'muonShower',
+  tmEventSetup.MuonShowerOutOfTime1: 'muonShower'
 }
 
 
@@ -50,6 +54,10 @@ def getObjectName(key):
     tmEventSetup.ETM: tmGrammar.ETM,
     tmEventSetup.HTM: tmGrammar.HTM,
     tmEventSetup.ETMHF: tmGrammar.ETMHF,
+    tmEventSetup.MuonShower0: tmGrammar.MUS0,
+    tmEventSetup.MuonShower1: tmGrammar.MUS1,
+    tmEventSetup.MuonShowerOutOfTime0: tmGrammar.MUSOOT0,
+    tmEventSetup.MuonShowerOutOfTime1: tmGrammar.MUSOOT1
   }[key.getType()]
 
 
@@ -305,6 +313,13 @@ def isTau(prefix):
 def isMuon(prefix):
   return prefix == PREFIX[tmEventSetup.Muon]
 
+def isMuonShower(prefix):
+  return (
+    prefix == PREFIX[tmEventSetup.MUS0] or
+    prefix == PREFIX[tmEventSetup.MUS1] or
+    prefix == PREFIX[tmEventSetup.MUSOOT0] or
+    prefix == PREFIX[tmEventSetup.MUSOOT1]
+  )
 
 def hasIndexCut(cuts):
   for cut in cuts:

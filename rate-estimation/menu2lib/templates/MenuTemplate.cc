@@ -230,6 +230,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 //
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
+//
 // generate conditions
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
@@ -239,9 +240,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% endif -%}
 
   {%- if cond.getType() in (tmEventSetup.SingleMuon, tmEventSetup.DoubleMuon, tmEventSetup.TripleMuon, tmEventSetup.QuadMuon,
-                           tmEventSetup.SingleEgamma, tmEventSetup.DoubleEgamma, tmEventSetup.TripleEgamma, tmEventSetup.QuadEgamma,
-                           tmEventSetup.SingleTau, tmEventSetup.DoubleTau, tmEventSetup.TripleTau, tmEventSetup.QuadTau,
-                           tmEventSetup.SingleJet, tmEventSetup.DoubleJet, tmEventSetup.TripleJet, tmEventSetup.QuadJet) %}
+			    tmEventSetup.SingleEgamma, tmEventSetup.DoubleEgamma, tmEventSetup.TripleEgamma, tmEventSetup.QuadEgamma,
+			    tmEventSetup.SingleTau, tmEventSetup.DoubleTau, tmEventSetup.TripleTau, tmEventSetup.QuadTau,
+			    tmEventSetup.SingleJet, tmEventSetup.DoubleJet, tmEventSetup.TripleJet, tmEventSetup.QuadJet) %}
     {% include 'ObjectTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.TotalEt, tmEventSetup.TotalHt, tmEventSetup.MissingEt, tmEventSetup.MissingHt,
@@ -260,7 +261,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() in (tmEventSetup.MuonEsumCorrelation, tmEventSetup.CaloEsumCorrelation) %}
     {% include 'EsumCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, ) %}
+  {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation ) %}
     {% include 'CaloMuonCorrelationTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
@@ -300,6 +301,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
     {% if combination01 == tmEventSetup.MuonMuonCombination and combination02 == tmEventSetup.MuonMuonCombination %}
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
+
+    {% elif cond.getType() == tmEventSetup.MuonShower0, tmEventSetup.MuonShower1, tmEventSetup.MuonShowerOutOfTime0, tmEventSetup.MuonShowerOutOfTime1 %}
+    {% include 'SignalsTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}
