@@ -5,19 +5,20 @@
 
 {% block SignalsTemplate scoped %}
 {% import 'macros.jinja2' as macros %}
-{% set objects = cond.getObjects() %}
+{% set object = cond.getObjects() %}
 {% set prefix = objects[0] | getPrefix  %}
+{% set analysis_type = objects[0] | getAnalysisType  %}
 
+// EF
 // MuonShowerType from L1TNtuples => L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h:
 // kInvalid, kOneNominal,kOneTight, kTwoLoose
-{% if object.getType() == tmEventSetup.MuonShower0 -%}
-  {% set type = 'L1Analysis::kOneNominal' %}
-{% elif object.getType() == tmEventSetup.MuonShower1 -%}
-  {% set type = 'L1Analysis::kOneTight' %}
-{% elif object.getType() == tmEventSetup.MuonShower1 -%}
+//{% if object.getType() == tmEventSetup.MuonShower0 -%}
+//  {% set type = 'L1Analysis::kOneNominal' %}
+//{% elif object.getType() == tmEventSetup.MuonShower1 -%}
+//  {% set type = 'L1Analysis::kOneTight' %}
 //{% if object.getType() == tmEventSetup.MuonShowerOutOfTime0 -%}
 //{% if object.getType() == tmEventSetup.MuonShowerOutOfTime1 -%}
-{% endif -%}
+//{% endif -%}
 
 bool
 {{ cond.getName() }}
@@ -25,10 +26,11 @@ bool
 {
   bool pass = false;
   // Is signals in same bx?
-  if (data->{{ prefix }}Bx.at(0) == {{ objects[0].getBxOffset() }})
+  if (data->{{ prefix }}Bx.at(0) == {{ objects[0].getBxOffset() }})  
     {
       // Is signal set?
-      if (data->{{ prefix }}Type.at(0) == {{ type }})
+      if (data->{{ prefix }}Type.at(0) == L1Analysis::{{ analysis_type }})
+      // EF: if (data->{{ prefix }}Type.at(0) == {{ type }})
 	{
 	  pass = true;
 	}

@@ -230,8 +230,18 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 //
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
-//
-// generate conditions
+/////////////////////////
+// Generate conditions //
+/////////////////////////
+// Muon showers: definition of ShowerSignal types;
+// it can be done for Centrality signals, as well
+ShowerSignalTypes = (
+		      tmEventSetup.MuonShower0,
+		      tmEventSetup.MuonShower1, 
+		      tmEventSetup.MuonShowerOutOfTime0, 
+		      tmEventSetup.MuonShowerOutOfTime1
+		      )
+
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
   {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm,
@@ -302,7 +312,10 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
 
-    {% elif cond.getType() == tmEventSetup.MuonShower0, tmEventSetup.MuonShower1, tmEventSetup.MuonShowerOutOfTime0, tmEventSetup.MuonShowerOutOfTime1 %}
+  // Muon showers: associate the condition type and a given template; 
+  // it can be done for Centrality signals, as well
+  //{% elif cond.getType() == tmEventSetup.MuonShower0, tmEventSetup.MuonShower1, tmEventSetup.MuonShowerOutOfTime0, tmEventSetup.MuonShowerOutOfTime1 %}
+  {% elif cond.getType() in ShowerSignalTypes %}
     {% include 'SignalsTemplate.cc' %}
 
   {% endif -%}
