@@ -8,8 +8,8 @@
 {% block SignalsTemplate scoped %}
 {% import 'macros.jinja2' as macros %}
 {% set object = cond.getObjects() %}
-{% set prefix = objects[0] | getPrefix  %}
-{% set analysis_type = objects[0] | getAnalysisType  %}
+{% set prefix = object | getPrefix  %}
+{% set analysis_type = object | getAnalysisType  %}
 
 {#
 // EF
@@ -30,7 +30,7 @@ bool
 {
   bool pass = false;
   // Is signals in same bx?
-  if (data->{{ prefix }}Bx.at(0) == {{ objects[0].getBxOffset() }})
+  if (data->{{ prefix }}Bx.at(0) == {{ object.getBxOffset() }})
     {
       // Is signal set?
       if (data->{{ prefix }}Type.at(0) == L1Analysis::{{ analysis_type }})
