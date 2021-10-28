@@ -25,10 +25,10 @@ bool
 (L1Analysis::L1AnalysisL1UpgradeDataFormat* data)
 {
   bool pass = false;
-  {# Is signals in same bx?}
+  {# Is signals in same bx? #}
   if (data->{{ prefix }}Bx.at(0) == {{ object.getBxOffset() }})
   {
-    {# Is signal set?}
+    {# Is signal set? #}
     if (data->{{ prefix }}Type.at(0) == L1Analysis::{{ analysis_type }})
     {# EF: if (data->{{ prefix }}Type.at(0) == {{ type }}) #}
     {
