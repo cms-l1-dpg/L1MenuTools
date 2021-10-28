@@ -5,10 +5,11 @@
 
 {% block SignalsTemplate scoped %}
 {% import 'macros.jinja2' as macros %}
-{% set object = cond.getObjects() %}
-{% set prefix = objects[0] | getPrefix  %}
-{% set analysis_type = objects[0] | getAnalysisType  %}
+{% set object = cond.getObjects()[0] %}
+{% set prefix = object | getPrefix  %}
+{% set analysis_type = object | getAnalysisType  %}
 
+{#
 // EF
 // MuonShowerType from L1TNtuples => L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h:
 // kInvalid, kOneNominal,kOneTight, kTwoLoose
@@ -17,6 +18,7 @@
 //{% elif object.getType() == tmEventSetup.MUS1 -%}
 //  {% set type = 'L1Analysis::kOneTight' %}
 //{% endif -%}
+#}
 
 bool
 {{ cond.getName() }}
@@ -24,15 +26,15 @@ bool
 {
   bool pass = false;
   // Is signals in same bx?
-  if (data->{{ prefix }}Bx.at(0) == {{ objects[0].getBxOffset() }})  
+  if (data->{{ prefix }}Bx.at(0) == {{ object.getBxOffset() }})
+  {
+    // Is signal set?
+    if (data->{{ prefix }}Type.at(0) == L1Analysis::{{ analysis_type }})
+    {# EF: if (data->{{ prefix }}Type.at(0) == {{ type }}) #}
     {
-      // Is signal set?
-      if (data->{{ prefix }}Type.at(0) == L1Analysis::{{ analysis_type }})
-      // EF: if (data->{{ prefix }}Type.at(0) == {{ type }})
-	{
-	  pass = true;
-	}
+      pass = true;
     }
+  }
   return pass;
 }
 {% endblock SignalsTemplate %}
