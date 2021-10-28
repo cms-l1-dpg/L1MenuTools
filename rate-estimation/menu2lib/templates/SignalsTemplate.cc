@@ -7,7 +7,7 @@
 
 {% block SignalsTemplate scoped %}
 {% import 'macros.jinja2' as macros %}
-{% set object = cond.getObjects() %}
+{% set object = cond.getObjects()[0] %}
 {% set prefix = object | getPrefix  %}
 {% set analysis_type = object | getAnalysisType  %}
 
