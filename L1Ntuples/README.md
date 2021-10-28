@@ -14,21 +14,17 @@ on HTCondor.
 ## 1. Environment setup
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
 ```
-cmsrel CMSSW_11_2_0
-cd CMSSW_11_2_0/src
+cmsrel CMSSW_12_0_2
+cd CMSSW_12_0_2/src
 cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
-git fetch cms-l1t-offline l1t-integration-CMSSW_11_2_0
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v106.0
-git cms-addpkg L1Trigger/Configuration
-git cms-addpkg L1Trigger/L1TMuon
-git clone https://github.com/cms-l1t-offline/L1Trigger-L1TMuon.git L1Trigger/L1TMuon/data
+git fetch cms-l1t-offline l1t-integration-CMSSW_12_0_2
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v108.0
 git cms-addpkg L1Trigger/L1TCalorimeter
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
-
 
 scram b -j 8
 ```
@@ -65,6 +61,6 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
-- input datasets: `/SingleNeutrino_Pt-2To20-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW`,
+- Input datasets: `/SingleNeutrino_Pt-2To20-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW`,
 `/SingleNeutrino_E10-gun/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_SNB_112X_mcRun3_2021_realistic_v16-v2/GEN-SIM-DIGI-RAW `
-- includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
+- It includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
