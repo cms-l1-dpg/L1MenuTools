@@ -233,13 +233,16 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 /////////////////////////
 // Generate conditions //
 /////////////////////////
+{#
 // Muon showers: definition of ShowerSignal types;
 // it can be done for Centrality signals, as well
-{%set ShowerSignalTypes = (
-		      tmEventSetup.MuonShower0,
-		      tmEventSetup.MuonShower1, 
-		      tmEventSetup.MuonShowerOutOfTime0, 
-		      tmEventSetup.MuonShowerOutOfTime1)}
+#}
+{% set ShowerSignalTypes = (
+  tmEventSetup.MuonShower0,
+  tmEventSetup.MuonShower1,
+  tmEventSetup.MuonShowerOutOfTime0,
+  tmEventSetup.MuonShowerOutOfTime1
+) %}
 
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
@@ -310,10 +313,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
     {% if combination01 == tmEventSetup.MuonMuonCombination and combination02 == tmEventSetup.MuonMuonCombination %}
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
-
-  // Muon showers: associate the condition type and a given template; 
+{#
+  // Muon showers: associate the condition type and a given template;
   // it can be done for Centrality signals, as well
-  //{% elif cond.getType() == tmEventSetup.MuonShower0, tmEventSetup.MuonShower1, tmEventSetup.MuonShowerOutOfTime0, tmEventSetup.MuonShowerOutOfTime1 %}
+#}
+  {# {% elif cond.getType() == tmEventSetup.MuonShower0, tmEventSetup.MuonShower1, tmEventSetup.MuonShowerOutOfTime0, tmEventSetup.MuonShowerOutOfTime1 %} #}
   {% elif cond.getType() in ShowerSignalTypes %}
     {% include 'SignalsTemplate.cc' %}
 
