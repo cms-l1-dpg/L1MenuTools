@@ -38,7 +38,7 @@
 #include "TH2F.h"
 
 // boost
-#include "boost/bind.hpp"
+#include <boost/bind/bind.hpp>
 #include "boost/tokenizer.hpp"
 #include "boost/filesystem.hpp"
 #include "boost/lexical_cast.hpp"
@@ -53,7 +53,7 @@
 
 #define INFTY 262139
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-
+using namespace boost::placeholders;
 
 // ===  FUNCTION  ============================================================
 //         Name:  SingleObjPt
