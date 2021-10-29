@@ -14,9 +14,6 @@ rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-fileList = rootDir + "nu.list" 
-nEvents = 1998800  #all                                                                         
-nJobs = 4997       #all                                                                                                                             
 #fileList = rootDir + "nu_PtGun.list" 
 #nEvents = 999600  #NuGun_Pt_2-20                                                                         
 #nJobs = 2499      #NuGun_Pt_2-20                                                                                                                             
