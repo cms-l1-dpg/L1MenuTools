@@ -145,8 +145,9 @@ class L1Menu2016 : public L1AlgoFactory
     std::fstream *outfile;
     std::fstream *outcsv;
     TFile        *outrootfile;
-    std::vector<double> h_weights_2018;
-    bool reweight = false;
+    std::vector<double> h_PUweights;
+    bool reweight_2018 = false;
+    bool reweight_Run3 = false;
 
   protected:
     // ====================  METHODS       ===============================
@@ -164,7 +165,7 @@ class L1Menu2016 : public L1AlgoFactory
   private:
     // ====================  METHODS       ===============================
     double CalScale(int nEvents_ = 0, int nBunches_ = 0, bool print=false);
-    bool RunMenu();
+    bool RunMenu(float pu, bool reweight_2018, bool reweight_Run3);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
     void CalLocalHT(float &HTTcut, bool withHF);
     void CalLocalHTM(float &HTMcut);
@@ -185,6 +186,13 @@ class L1Menu2016 : public L1AlgoFactory
     //unsigned int nZeroBiasevents_PUrange;
     float nZeroBiasevents; // float to accept non integer values coming from the reweighting procedure
     float nZeroBiasevents_PUrange; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_0_10; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_10_20; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_20_30; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_30_40; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_40_50; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_50_60; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_over60; // float to accept non integer values coming from the reweighting procedure
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;

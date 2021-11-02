@@ -42,16 +42,16 @@ class PreColumn
 
     // ====================  ACCESSORS     ===============================
     bool CheckCorrelation();
-    bool CheckCorrelation(float pu);
+    bool CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run3);
     bool EventReset();
     bool InsertInMenu(std::string L1name, bool value);
-    bool InsertInMenu(std::string L1name, bool value, float pu);
+    bool InsertInMenu(std::string L1name, bool value, float pu, bool reweight_2018, bool reweight_Run3);
     bool PrintCSV(std::vector<std::string> &out, double scale);
     bool WriteHistogram(TFile *outrootfile);
     bool PrintRates(std::ostream &out, double scale);
     bool PrintPUCSV( std::vector<std::string> &csvout);
     bool BookHistogram();
-    bool FillPileUpSec(float pu, bool reweight);
+    bool FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3);
     bool FillDefHist2D(double &scale);
     bool FillDefHist1D(double &scale);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
@@ -59,8 +59,10 @@ class PreColumn
     bool CalRate(double scale);
     bool PrintMenuRate(double scale) const;
 
-    float ExtractPileUpWeight(float pu);
-    std::vector<double> h_weights_2018;
+    float ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3);
+    std::vector<double> h_PUweights;
+    bool reweight = false;
+
    // ====================  MUTATORS      ===============================
 
     // ====================  OPERATORS     ===============================
@@ -71,8 +73,8 @@ class PreColumn
     // ====================  METHODS       ===============================
     bool CheckPureFire();
     bool CheckPhysFire();
-    bool CheckPureFire(float pu);
-    bool CheckPhysFire(float pu);
+    bool CheckPureFire(float pu, bool reweight_2018, bool reweight_Run3);
+    bool CheckPhysFire(float pu, bool reweight_2018, bool reweight_Run3);
 
     // ====================  DATA MEMBERS  ===============================
 

@@ -99,41 +99,42 @@ bool L1Menu2016::ConfigOutput(bool writetext_, bool writecsv_, bool writeplot_,
 // ===========================================================================
 bool L1Menu2016::InitConfig()
 {
-  L1Config["SumJetET"]       = 0;
-  L1Config["SumJetEta"]      = 999;
-  L1Config["nBunches"]       = 2544; //default for Run 2
-  L1Config["doPlotRate"]     = 0;
-  L1Config["doPlotEff"]      = 0;
-  L1Config["doPlotTest"]     = 0;
-  L1Config["doPlotuGt"]      = 0;
-  L1Config["doTnPMuon"]      = 0;
-  L1Config["doPlotLS"]       = 0;
-  L1Config["doPrintPU"]      = 0;
-  L1Config["allPileUp"]      = 0;
-  L1Config["doReweighting"]  = 0;
-  L1Config["doPrintBX"]      = 0;
-  L1Config["doCompuGT"]      = 0;
-  L1Config["maxEvent"]       = -1;
-  L1Config["SetMuonER"]      = -1;
-  L1Config["SetNoPrescale"]  = 0;
-  L1Config["IgnorePrescale"] = 0;
-  L1Config["UseUpgradeLyr1"] = -1;
-  L1Config["UseL1CaloTower"] = -1;
-  L1Config["SelectFill"]     = -1;
-  L1Config["SelectRun"]      = -1;
-  L1Config["SelectEvent"]    = -1;
-  L1Config["UsePFMETNoMuon"] = 0;
-  L1Config["UseuGTDecision"] = 0;
-  L1Config["UseUnpackTree"]  = 0;
-  L1Config["doScanLS"]       = 0;
-  L1Config["SetL1AcceptPS"]  = 0;
-  L1Config["Select_BX_in_48b"]       = -1;
-  L1Config["Select_BX_in_12b"]       = -1;
-  L1Config["doBXReweight_1_to_6_47_48"]       = 0;
-  L1Config["doBXReweight128"]       = 0;
-  L1Config["doBXReweight34567"]       = 0;
-  L1Config["doBXReweight_1_to_6_11_12"]       = 0;
-  L1Config["doBXReweight_5_to_10"]       = 0;
+  L1Config["SumJetET"]          = 0;
+  L1Config["SumJetEta"]         = 999;
+  L1Config["nBunches"]          = 2544; //default for Run 2
+  L1Config["doPlotRate"]        = 0;
+  L1Config["doPlotEff"]         = 0;
+  L1Config["doPlotTest"]        = 0;
+  L1Config["doPlotuGt"]         = 0;
+  L1Config["doTnPMuon"]         = 0;
+  L1Config["doPlotLS"]          = 0;
+  L1Config["doPrintPU"]         = 0;
+  L1Config["allPileUp"]         = 0;
+  L1Config["doReweighting2018"] = 0;
+  L1Config["doReweightingRun3"] = 0;
+  L1Config["doPrintBX"]         = 0;
+  L1Config["doCompuGT"]         = 0;
+  L1Config["maxEvent"]          = -1;
+  L1Config["SetMuonER"]         = -1;
+  L1Config["SetNoPrescale"]     = 0;
+  L1Config["IgnorePrescale"]    = 0;
+  L1Config["UseUpgradeLyr1"]    = -1;
+  L1Config["UseL1CaloTower"]    = -1;
+  L1Config["SelectFill"]        = -1;
+  L1Config["SelectRun"]         = -1;
+  L1Config["SelectEvent"]       = -1;
+  L1Config["UsePFMETNoMuon"]    = 0;
+  L1Config["UseuGTDecision"]    = 0;
+  L1Config["UseUnpackTree"]     = 0;
+  L1Config["doScanLS"]          = 0;
+  L1Config["SetL1AcceptPS"]     = 0;
+  L1Config["Select_BX_in_48b"]  = -1;
+  L1Config["Select_BX_in_12b"]  = -1;
+  L1Config["doBXReweight_1_to_6_47_48"] = 0;
+  L1Config["doBXReweight128"]           = 0;
+  L1Config["doBXReweight34567"]         = 0;
+  L1Config["doBXReweight_1_to_6_11_12"] = 0;
+  L1Config["doBXReweight_5_to_10"]      = 0;
   
   L1ConfigStr["SelectLS"] = "";
   L1ConfigStr["SelectBX"] = "";
@@ -1166,11 +1167,6 @@ bool L1Menu2016::Loop()
   nLumi.clear();
   bool skipLS = false;
 
-  if (L1Config["doReweighting"] != 0 )
-    {
-      reweight = true;
-    }
-
   while(true)
   {
     i++;
@@ -1239,8 +1235,14 @@ bool L1Menu2016::Loop()
     if (L1Config["SetL1AcceptPS"] == 0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
       continue;
 
+    // Reweighting procedure: info about the reweighting needed in the code (2018 or Run 3?)
+    if (L1Config["doReweighting2018"] != 0)
+      reweight_2018 = true;
+    else if (L1Config["doReweightingRun3"] != 0)
+      reweight_Run3 = true;
+
     // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting 
-    if (L1Config["doReweighting"] != 0 )
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0 )
       {
 	float ev_puweight = -1;
 	ev_puweight = ExtractPileUpWeight();
@@ -1259,7 +1261,7 @@ bool L1Menu2016::Loop()
     nZeroBiasevents_PUrange++;
 
     GetL1Event();
-    RunMenu();
+    RunMenu(ev_pileup, reweight_2018, reweight_Run3);
 
     if (L1Config["doPlotLS"])
       FillLumiSection(currentLumi);
@@ -1463,12 +1465,14 @@ bool L1Menu2016::CheckL1Seed(const std::string L1Seed)
 //         Name:  L1Menu2016::RunMenu
 //  Description:  
 // ===========================================================================
-bool L1Menu2016::RunMenu()
+bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3)
 {
   // Reweighting procedure: info about the pileup of the event passed as argument to the InsertInMenu and CheckCorrelation functions 
   // (defined in PreColumn)
+
   float ev_pileup = -1;
-  ev_pileup = EvaluatePileUp();
+  //ev_pileup = EvaluatePileUp();
+  ev_pileup = pu;
 
   for(auto col : ColumnMap)
   {
@@ -1488,19 +1492,19 @@ bool L1Menu2016::RunMenu()
 
     for(auto col : ColumnMap)
     {
-    if (L1Config["doReweighting"] == 0 ) // Reweighting procedure 
+    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 ) // Reweighting procedure 
       col.second->InsertInMenu(seed.first, IsFired); 
     else
-      col.second->InsertInMenu(seed.first, IsFired, ev_pileup); 
+      col.second->InsertInMenu(seed.first, IsFired, ev_pileup, reweight_2018, reweight_Run3); 
     }
   }
 
   for(auto col : ColumnMap)
   {
-    if (L1Config["doReweighting"] == 0 ) // Reweighting procedure 
+    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 ) // Reweighting procedure 
       col.second->CheckCorrelation(); 
     else
-      col.second->CheckCorrelation(ev_pileup);
+      col.second->CheckCorrelation(ev_pileup, reweight_2018, reweight_Run3);
   }
 
   return true;
@@ -2195,8 +2199,8 @@ bool L1Menu2016::FillPileUpSec()
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Fill Rate per PU ~~~~~
   for(auto col : ColumnMap)
   {
-    col.second->ExtractPileUpWeight(pu);
-    col.second->FillPileUpSec(pu, reweight);
+    col.second->ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+    col.second->FillPileUpSec(pu, reweight_2018, reweight_Run3);
   }
 
   return true;
@@ -2244,10 +2248,20 @@ float L1Menu2016::ExtractPileUpWeight()
   // WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution: 
   // see here -> https://elfontan.web.cern.ch/elfontan/Run3_MENU/PileupReweighting/weights_nPV_True.png.
   // A weight equal to 0 is set in bins where the number of events in data is less than 100.
-  h_weights_2018 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.7805557154345164, 1.8060490539875227, 1.8429444310772023, 1.8847969284653239, 1.9023685309193448, 1.9237248769457562, 1.9052231983237566, 1.9323838791307304, 1.9085059563417344, 1.8603791701197574, 1.7603108386627149, 1.6756647663900748, 1.5370617605401784, 1.3999688210755514, 1.259781632746541, 1.113578483437248, 0.9458259616433159, 0.8004237934065365, 0.67859967863879, 0.5416839609316458, 0.4312760960624466, 0.3410534695481281, 0.2670644366287844, 0.20005146208632094, 0.15028893320205652, 0.10953206021410954, 0.08057347625153384, 0.05889674651099118, 0.04287951951844378, 0.03136484854119283, 0.022045797907650135, 0.015338620880659437, 0.011042294804776033, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+  // 2018 weights
+  if (L1Config["doReweighting2018"] != 0)
+    {
+      h_PUweights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.7805557154345164, 1.8060490539875227, 1.8429444310772023, 1.8847969284653239, 1.9023685309193448, 1.9237248769457562, 1.9052231983237566, 1.9323838791307304, 1.9085059563417344, 1.8603791701197574, 1.7603108386627149, 1.6756647663900748, 1.5370617605401784, 1.3999688210755514, 1.259781632746541, 1.113578483437248, 0.9458259616433159, 0.8004237934065365, 0.67859967863879, 0.5416839609316458, 0.4312760960624466, 0.3410534695481281, 0.2670644366287844, 0.20005146208632094, 0.15028893320205652, 0.10953206021410954, 0.08057347625153384, 0.05889674651099118, 0.04287951951844378, 0.03136484854119283, 0.022045797907650135, 0.015338620880659437, 0.011042294804776033, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    }
+  // Run 3 LumiPOG weights
+  else if (L1Config["doReweightingRun3"] != 0)
+    {
+      h_PUweights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.014980217171626044, 0.02497932301798817, 0.04026173591613769, 0.06374878427829406, 0.09704904158045474, 0.14874959969316015, 0.21861186848819725, 0.31279049709993056, 0.42927330209211356, 0.5866429736421407, 0.765816886861911, 0.9852799948128719, 1.244371824586214, 1.5350611536411727, 1.8101665381325176, 2.1162729865292773, 2.466111735432381, 2.691056232713182, 2.91086238763679, 3.1047992128314394, 3.251239081546728, 3.223965614449251, 3.168336936686766, 2.979593106072432, 2.7849498320944184, 2.5430104930591932, 2.2709956301429477, 1.9991140269352587, 1.6584913197194067, 1.3359135755310627, 1.0926677658439574, 0.8511178445496015, 0.6469457334743107, 0.4846562902282997, 0.3545380430287189, 0.24747158266313138, 0.1740398994794434, 0.11624368681671496, 0.07583973286989196, 0.04912254392413454, 0.030619451513367892, 0.018536698729496384, 0.010984168681913055, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    }
+ 
   pu = event_->nPV_True;
-  weight = h_weights_2018.at(pu); 
+  weight = h_PUweights.at(pu); 
   return weight;
 }
 // -----  end of function L1Menu2016::ExtractPileUpWeight  -----              
