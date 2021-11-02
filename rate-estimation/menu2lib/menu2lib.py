@@ -16,9 +16,11 @@ UTM_VERSION = '0.9.1'
 assert tmGrammar.__version__ == UTM_VERSION, f"invalid utm version {tmGrammar.__version__}, should be {UTM_VERSION}"
 assert tmEventSetup.__version__ == UTM_VERSION, f"invalid utm version {tmEventSetup.__version__}, should be {UTM_VERSION}"
 
-#
-# constants
-#
+
+#############
+# Constants #
+#############
+# Muon showers: PREFIX extended according to `L1AnalysisL1UpgradeDataFormat` vectors
 PREFIX = {
   tmEventSetup.Muon: 'muon',
   tmEventSetup.Egamma: 'eg',
@@ -35,12 +37,24 @@ PREFIX = {
   tmEventSetup.MBT1HFM: 'sum',
   tmEventSetup.MBT1HFP: 'sum',
   tmEventSetup.TOWERCOUNT: 'sum',
+  tmEventSetup.MUS0: 'muonShower',
+  tmEventSetup.MUS1: 'muonShower',
+  tmEventSetup.MUSOOT0: 'muonShower',
+  tmEventSetup.MUSOOT1: 'muonShower'
 }
 
+# Muon showers: Add mapping for event setup types to L1Analysis types;
+# it can be done for Centrality signals, as well
+ANALYSIS_TYPES = {
+  tmEventSetup.MUS0: 'kOneNominal', # how to map these types?
+  tmEventSetup.MUS1: 'kOneTight',
+  tmEventSetup.MUSOOT0: 'kInvalid',
+  tmEventSetup.MUSOOT1: 'kInvalid'
+}
 
-#
-# helpers
-#
+###########
+# Helpers #
+###########
 def getObjectName(key):
   return {
     tmEventSetup.Muon: tmGrammar.MU,
@@ -50,6 +64,14 @@ def getObjectName(key):
     tmEventSetup.ETM: tmGrammar.ETM,
     tmEventSetup.HTM: tmGrammar.HTM,
     tmEventSetup.ETMHF: tmGrammar.ETMHF,
+    tmEventSetup.MUS0: tmGrammar.MUS0,
+    tmEventSetup.MUS1: tmGrammar.MUS1,
+    tmEventSetup.MUSOOT0: tmGrammar.MUSOOT0,
+    tmEventSetup.MUSOOT1: tmGrammar.MUSOOT1
+    #tmEventSetup.MuonShower0: tmGrammar.MUS0,
+    #tmEventSetup.MuonShower1: tmGrammar.MUS1,
+    #tmEventSetup.MuonShowerOutOfTime0: tmGrammar.MUSOOT0,
+    #tmEventSetup.MuonShowerOutOfTime1: tmGrammar.MUSOOT1
   }[key.getType()]
 
 
@@ -72,9 +94,9 @@ def getScaleByName(scaleMap, obj, cut):
   return scaleMap[key]
 
 
-#
-# filters
-#
+###########
+# Filters #
+###########
 def toDecimal(value, bits):
   signed = 1 << (bits - 1);
   return (~signed & value) - signed if (signed & value) else value
@@ -173,6 +195,11 @@ def sortObjects(obj1, obj2):
   elif obj1.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF):
     return obj2, obj1
 
+  # Muon showers
+  elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
+    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
+                              tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
+      return obj2, obj1
   return obj1, obj2
 
 
@@ -305,7 +332,6 @@ def isTau(prefix):
 def isMuon(prefix):
   return prefix == PREFIX[tmEventSetup.Muon]
 
-
 def hasIndexCut(cuts):
   for cut in cuts:
     if cut.getCutType() == tmEventSetup.Slice:
@@ -382,6 +408,9 @@ def warning(message):
   print(message)
   return ''
 
+# Muon showers: add filter function to get analysis type for use in templates
+def getAnalysisType(key):
+  return ANALYSIS_TYPES[key.getType()]
 
 def render(menu, template):
   module_dir = os.path.dirname(os.path.abspath(__file__))
@@ -411,7 +440,7 @@ def render(menu, template):
   j2_env.filters['getIndexCut'] = getIndexCut
   j2_env.filters['getScale'] = getScale
   j2_env.filters['getLookUpTable'] = getLookUpTable
-
+  j2_env.filters['getAnalysisType'] = getAnalysisType # Muon showers
   data = {
     "tmGrammar": tmGrammar,
     "tmEventSetup": tmEventSetup,
