@@ -317,9 +317,8 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   // Muon showers: associate the condition type and a given template;
   // it can be done for Centrality signals, as well
 #}
-  {# {% elif cond.getType() == tmEventSetup.MuonShower0, tmEventSetup.MuonShower1, tmEventSetup.MuonShowerOutOfTime0, tmEventSetup.MuonShowerOutOfTime1 %} #}
   {% elif cond.getType() in ShowerSignalTypes %}
-    {% include 'SignalsTemplate.cc' %}
+    {% include 'MuonShowerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}
