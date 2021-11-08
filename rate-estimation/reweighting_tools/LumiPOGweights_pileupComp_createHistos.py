@@ -41,7 +41,7 @@ f_lumiPOG_PU = args.histroot
 # OUTPUT DIR # 
 ##############
 gSystem.Exec("mkdir -p " + outputDir)
-print "Output directory created!"
+print "Output directory created: ", outputDir
 
 ##########
 # HISTOS # 
@@ -67,7 +67,7 @@ for jEvt in range(chains['Evt'][0].GetEntries()):
     h_nPV.Fill(int(Evt_br.nPV))
     h_nPV_True.Fill(int(Evt_br.nPV_True))
 
-h_PU_lumiPOG.Scale(h_nPV.Integral()/h_PU_lumiPOG.Integral())
+h_PU_lumiPOG.Scale(h_nPV_True.Integral()/h_PU_lumiPOG.Integral())
 
 # Save histograms in a root file 
 print "Saving histograms into root file ..."

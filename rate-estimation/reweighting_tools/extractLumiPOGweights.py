@@ -26,7 +26,7 @@ parser.add_argument('--outfolder',
         type=str)
 parser.add_argument('--json',
         help='Name of the json file containing fraction of events as a function of pileup according to a certain Lumi POG model',
-        default='pileup_distribution_2736_80mb_btb_PoissonStat_LumiWeighted_PU51.json',
+        default='pileup_distribution_53_2700_80mb_noPoisson_noLumiWeighted.json',
         type=str)
 
 args = parser.parse_args()
@@ -57,7 +57,7 @@ h_PU_LumiPOG = TH1F('h_PU_LumiPOG', "Pileup gaussian distribution at the start o
 
 # Fill the histo
 for b in range(0,100):
-    h_PU_LumiPOG.Fill(b, v_frac[b])
+    h_PU_LumiPOG.Fill(b, v_frac[b+1])
 
 # Save the histo in a root file 
 print "Saving histo into root file ..."
