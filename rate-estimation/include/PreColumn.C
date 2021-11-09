@@ -753,6 +753,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
       << std::setw(20)             << "error_rate@13TeV"
       << std::setw(15)             << "pure@13TeV"       
       << std::setw(15)             << "prop@13TeV"       
+      << std::setw(15)             << "passevts@13TeV"
       << "Comments"
       << std::endl;
 
@@ -769,6 +770,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
           << std::setw(20)             << seed.firerateerror
           << std::setw(15)             << seed.purerate      
           << std::setw(15)             << seed.proprate
+          << std::setw(15)             << seed.firerate/scale
           << seed.comment
           << std::endl;
       totalrate +=seed.firerate;
@@ -788,6 +790,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
           << std::setw(20)             << seed.firerateerror
           << std::setw(15)             << seed.purerate      
           << std::setw(15)             << seed.proprate
+          << std::setw(15)             << seed.firerate/scale
           << seed.comment
           << std::endl;
       totalrate +=seed.firerate;

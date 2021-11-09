@@ -104,7 +104,7 @@ Moreover, the possibility to apply a reweighting procedure has been included in 
 The recommended approach at the moment is to use the options `--allPileUp --doReweightingRun3` to get results for the incoming Trigger Review. 
 
 #### Arguments
-The arguments used in the test are as follows:
+The arguments that you can use are as follows:
 
 |Option | Description |
 |-------|-------------|
@@ -116,8 +116,15 @@ The arguments used in the test are as follows:
 |`--allPileUp` | Consider the full pileup profile instead if a default pileup window around 53 |
 |`--doReweightingRun3` | Apply pileup reweighting of the Run 3 flat pileup distribution according to Run 3Lumi POG model (use with `--allPileUp` option!) |
 |`--doReweighting2018` | Apply pileup reweighting of the Run 3 flat pileup distribution to match the Run 2 pileup profile (use with `--allPileUp` option!) |
-|`--UseUnpackTree` | Switch to using UnpackTree; default is EmuTree. |
 |`--SelectRun` | Select a run number; default is full list. |
 |`--SelectLS [startLS,endLS]` | Select lumi sections to run over; default is whole LS provided. |
+|`--SelectCol` | Select the column in the PS table. |
+|`--UseUnpackTree` | Switch to using UnpackTree; default is EmuTree. |
+|`--maxEvent` | Run on a subset of the available events. |
+|`--doPrintPU` | Evaluate and save the rates for different pileup values |
 
 Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
+
+#### Important note:
+Please remember that when you use the --SelectCol option, you just select a specific PS column from the table which contains the information about which seeds are prescaled or unprescaled and about the prescale values. It does not allow to select a certain luminosity. In order to look at rates using a specific luminosity scenario, you would need to use lumi-range-skimmed datasets or to select a specific pileup window when running the rates. 
+(See [here](https://github.com/cms-l1-dpg/L1MenuTools/blob/master/rate-estimation/include/L1Menu2016.C#L1239) for the part of the code that has to be modified in case you need to select the pileup range of interest. Then remember to compile the rate-estimation directory!).
