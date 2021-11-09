@@ -26,7 +26,7 @@ Do not run cmsenv before running this.
 #### ntuple/makeFileList.py
 Creates a file list for a given ntuple.
 
-#### menu/GetLumi\_setup.sh and menu/GetLumi.py
+#### menu/GetLumi_setup.sh and menu/GetLumi.py
 Creates a lumi section information table.
 
 ## Getting Started
