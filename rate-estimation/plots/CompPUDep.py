@@ -10,6 +10,7 @@
 # Description : It allows to create rate vs PU plots starting csv files storing rate per PU information.                                                                    
 #               Two csv file containing lumi and pileup information (for ZeroBias and Run 3 MC) are provided to test the basic running of the script.                         
 #               Fill 7005 is used as a test using ZeroBias (runs 320673 and 320674) with the corresponding csv file.                                                           
+#               EXAMPLE COMMAND: python CompPUDep.py --outfolder Run3MC_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv  --reweightRun3 True --seed L1APhysics
 
 import pandas as pd
 import numpy as np
