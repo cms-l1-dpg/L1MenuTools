@@ -14,25 +14,30 @@ bool
 (L1Analysis::L1AnalysisL1UpgradeDataFormat* data)
 {
   bool pass = false;
-  {# Are signals in same bx? #}
-  if (data->{{ prefix }}Bx.at(0) == {{ object.getBxOffset() }})
-    {
-      {% if cond.getType() == tmEventSetup.MuonShower0 -%}
+
+  {# Is there at least one shower object? #}
+  if (data->nMuonShowers >= 1) {
+
+    {# Are signals in same bx? #}
+    if (data->{{ prefix }}Bx.at(0) == {{ object.getBxOffset() }})
+      {
+        {% if cond.getType() == tmEventSetup.MuonShower0 -%}
         if (data->{{ prefix }}OneNominal.at(0))
           {
             pass = true;
           }
-      {% elif cond.getType() == tmEventSetup.MuonShower1 -%}
+        {% elif cond.getType() == tmEventSetup.MuonShower1 -%}
         if (data->{{ prefix }}OneTight.at(0))
           {
             pass = true;
           }
-      {% elif cond.getType() == tmEventSetup.MuonShowerOutOfTime0 -%}
+        {% elif cond.getType() == tmEventSetup.MuonShowerOutOfTime0 -%}
         {# not implemented #}
-      {% elif cond.getType() == tmEventSetup.MuonShowerOutOfTime1 -%}
+        {% elif cond.getType() == tmEventSetup.MuonShowerOutOfTime1 -%}
         {# not implemented #}
-      {% endif -%}
-    }
+        {% endif -%}
+      }
+  }
   return pass;
 }
 {% endblock MuonShowerTemplate %}
