@@ -26,7 +26,7 @@ Do not run cmsenv before running this.
 #### ntuple/makeFileList.py
 Creates a file list for a given ntuple.
 
-#### menu/GetLumi\_setup.sh and menu/GetLumi.py
+#### menu/GetLumi_setup.sh and menu/GetLumi.py
 Creates a lumi section information table.
 
 ## Getting Started
@@ -40,17 +40,15 @@ Configure rate-estimation using a L1 Menu XML file using `configure.sh`.
 ```
 This will produce the files menulib.hh and menulib.cc.
 
-The latest L1 Menu XML can be found at https://github.com/cms-l1-dpg/L1Menu2018/tree/master/official/XMLs .
+The latest L1 Menu XML can be found [here](https://github.com/cms-l1-dpg/L1Menu2018/tree/master/official/XMLs).
 
-Once these files have been produced, it is safe to run cmsenv.
+Once these files have been produced, it is safe to run `cmsenv`.
 
 ### Ntuple file list
-A ZeroBias ntuple is required to run rate estimation.
-An example for fill 7118 has been provided in
-`ntuple/fill_7118_nanoDST_shifter_lxplus.list`,
-with a subset of that list provided in
-`ntuple/fill_7118_nanoDST_shifter_lxplus_test.list` to be used for short tests
-of the environment.
+A set of ntuples is required to run the rate estimation code.
+To test the code, a list containing Run 3 MC ntuples is provided in
+`ntuple/Run3_NuGun_MC_ntuples.list`.
+You can run the code running on a subset of events using the option `--maxEvent`.
 
 The script `ntuple/makeFileList.py` can be used to create a file list for other
 ntuples:
@@ -61,15 +59,14 @@ cd ..
 ```
 
 ### Lumi section information table
-This table is used to avoid bad LS. It also includes LS vs PU information, which
-can be useful for plotting rate vs PU dependencies.
-An example csv is included in `menu/run_lumi.csv`, including fills 7118, 7131,
-and 7358.
+In case you are using data ntuples, this table is used to avoid bad LS. It also includes LS vs PU information, which
+can be useful for plotting rate vs PU dependencies. 
+An example csv is included in `menu/run_lumi_RunA.csv`, including fill at high pileup.
 To produce your own, modify the beginning of `GetLumi.py` to list the run number
 of your ntuple, then:
 ```bash
 cd menu
-source GetLumi\_setup.sh
+source GetLumi_setup.sh
 ./GetLumi.py
 cd ..
 ```
@@ -79,12 +76,12 @@ While the official PS tables are in .xlsx format for better presentation, ensure
 that the prescale table you use has been converted to
 either a tab-separated .txt file or comma-separated .csv file.
 An example table has been provided for column 2.0e34 in
-`menu/Prescale_2018_v2_1_0_Col_2.0.txt`.
-The 2018 official prescale tables can be found at
-https://github.com/cms-l1-dpg/L1Menu2018/tree/master/official/PrescaleTables
+`menu/Prescale_2022_v0_1_1.csv`.
+The latest 2018 official prescale tables can be found 
+[here](https://github.com/cms-l1-dpg/L1Menu2018/tree/master/official/PrescaleTables).
 
 ### Rate estimation
-Ensure you are in a CMSSW 10 or 11 environment (ie- that you have run cmsenv).
+Ensure you are in a CMSSW_120X environment.
 If the directories objs/ and objs/include/ do not exist, create them.
 Then run `make -j 4`.
 
@@ -94,10 +91,17 @@ Components have been provided to run a short test.
 ./testMenu2016 -u menu/run_lumi.csv \
 -m menu/Prescale_2022_v0_1_1.csv \
 -l ntuple/Run3_NuGun_MC_ntuples.list \
--o test -b 2544 --doPlotRate --doPlotEff --SelectCol 2E+34 \
---UseUnpackTree -- maxEvent 10000
+-o test -b 2544 --doPlotRate --doPlotEff -maxEvent 200000 \
+--allPileUp --doReweightingRun3
 ```
 This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
+
+#### Temporary remark:
+Please note that currently in the context of rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
+A pileup range from 48 to 58, corresponding to the expected average PU during the lumi levelling period in Run 3, is taken into account. 
+If you want to run the rates for the full PU distribution available in the sample, please use the option --allPileUp.
+Moreover, the possibility to apply a reweighting procedure has been included in order to take into account a realistic pileup model according to Run 3 Lumi POG predictions.
+The recommended approach at the moment is to use the options `--allPileUp --doReweightingRun3` to get results for the incoming Trigger Review. 
 
 #### Arguments
 The arguments that you can use are as follows:
@@ -109,6 +113,9 @@ The arguments that you can use are as follows:
 |`-l`   | ntuple list. |
 |`-o`   | Output name. Output files will be saved to `results/[output name].\*` |
 |`-b`   | Number of bunches. |
+|`--allPileUp` | Consider the full pileup profile instead if a default pileup window around 53 |
+|`--doReweightingRun3` | Apply pileup reweighting of the Run 3 flat pileup distribution according to Run 3Lumi POG model (use with `--allPileUp` option!) |
+|`--doReweighting2018` | Apply pileup reweighting of the Run 3 flat pileup distribution to match the Run 2 pileup profile (use with `--allPileUp` option!) |
 |`--SelectRun` | Select a run number; default is full list. |
 |`--SelectLS [startLS,endLS]` | Select lumi sections to run over; default is whole LS provided. |
 |`--SelectCol` | Select the column in the PS table. |
@@ -117,11 +124,6 @@ The arguments that you can use are as follows:
 |`--doPrintPU` | Evaluate and save the rates for different pileup values |
 
 Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
-
-#### Temporary remark:
-Please note that currently in the context of rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
-A pileup range from 48 to 58, corresponding to the expected average PU during the lumi levelling period in Run 3, is taken into account. 
-If you want to run the rates for the full PU distribution available in the sample, please use the option --allPileUp.
 
 #### Important note:
 Please remember that when you use the --SelectCol option, you just select a specific PS column from the table which contains the information about which seeds are prescaled or unprescaled and about the prescale values. It does not allow to select a certain luminosity. In order to look at rates using a specific luminosity scenario, you would need to use lumi-range-skimmed datasets or to select a specific pileup window when running the rates. 

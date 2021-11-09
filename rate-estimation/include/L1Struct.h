@@ -42,10 +42,13 @@ struct L1Seed
   int prescale;
   std::vector<std::string> POG;
   std::vector<std::string> PAG;
-  unsigned int ncounts;
+  //unsigned int ncounts;
+  float ncounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   bool eventfire;
-  unsigned int firecounts;
-  unsigned int purecounts;
+  //unsigned int firecounts;
+  //unsigned int purecounts;
+  float firecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
+  float purecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   float propcounts; // proportional counts;
   double firerate;
   double firerateerror;
@@ -59,10 +62,14 @@ struct L1Seed
     name          = "";
     bit           = -1;
     prescale      = 0;
-    ncounts       = 0;
+    //ncounts       = 0;
+    ncounts       = 0.0;
     eventfire     = false;
-    firecounts    = 0;
-    purecounts    = 0;
+    //firecounts    = 0;
+    //purecounts    = 0;
+    //firecounts_w  = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure
+    firecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure 
+    purecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure 
     propcounts    = 0.0;
     firerate      = 0.0;
     firerateerror = 0.0;

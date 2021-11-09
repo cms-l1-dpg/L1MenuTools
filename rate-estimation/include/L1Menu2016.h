@@ -32,6 +32,7 @@
 #include <functional>
 #include <ctype.h>
 #include <stdlib.h>
+#include "TGraphErrors.h"
 
 // ROOT
 #include "TH1F.h"
@@ -63,6 +64,7 @@ inline bool SingleObjPt(float* obj, double pt)
 {
   return *obj >=pt ;
 }       // -----  end of function SingleObjPt  -----
+
 // ===========================================================================
 //        Class:  L1Menu2016
 //  Description:  A class to handle the L1Menu
@@ -70,7 +72,6 @@ inline bool SingleObjPt(float* obj, double pt)
 class L1Menu2016 : public L1AlgoFactory 
 {
   public:
-
     // ====================  LIFECYCLE     ===============================
     L1Menu2016 (std::string MenuName, std::string filelist); // constructor
     ~L1Menu2016 ();                                          // destructor
@@ -107,7 +108,6 @@ class L1Menu2016 : public L1AlgoFactory
     bool BXReweight_is_1_to_6_11_12(int currentBX);
     bool BXReweight_is_5_to_10(int currentBX);
 
-
     bool ConfigOutput(bool writetext_, bool writecsv_, bool writeplot_, 
         std::string outputdir_, std::string outputname_);
     std::string SetOutputName() const;
@@ -131,6 +131,7 @@ class L1Menu2016 : public L1AlgoFactory
     bool ParseMuEG(const std::string& SeedName);
     bool ParseMuerTauer(const std::string& SeedName);
     bool ParseMuSum(const std::string& SeedName);
+
     // ====================  OPERATORS     ===============================
 
     L1Menu2016& operator = ( const L1Menu2016 &other ); // assignment operator
@@ -144,7 +145,9 @@ class L1Menu2016 : public L1AlgoFactory
     std::fstream *outfile;
     std::fstream *outcsv;
     TFile        *outrootfile;
-
+    std::vector<double> h_PUweights;
+    bool reweight_2018 = false;
+    bool reweight_Run3 = false;
 
   protected:
     // ====================  METHODS       ===============================
@@ -155,13 +158,14 @@ class L1Menu2016 : public L1AlgoFactory
     bool FillLumiSection(int currentLumi);
     bool FillPileUpSec();
     float EvaluatePileUp();
+    float ExtractPileUpWeight();
     bool PrintCSV(std::ostream &out);
     // ====================  DATA MEMBERS  ===============================
 
   private:
     // ====================  METHODS       ===============================
     double CalScale(int nEvents_ = 0, int nBunches_ = 0, bool print=false);
-    bool RunMenu();
+    bool RunMenu(float pu, bool reweight_2018, bool reweight_Run3);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
     void CalLocalHT(float &HTTcut, bool withHF);
     void CalLocalHTM(float &HTMcut);
@@ -178,8 +182,17 @@ class L1Menu2016 : public L1AlgoFactory
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rate variables ~~~~~
     double scale;
-    unsigned int nZeroBiasevents;
-    unsigned int nZeroBiasevents_PUrange;
+    //unsigned int nZeroBiasevents;
+    //unsigned int nZeroBiasevents_PUrange;
+    float nZeroBiasevents; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_PUrange; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_0_10; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_10_20; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_20_30; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_30_40; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_40_50; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_50_60; // float to accept non integer values coming from the reweighting procedure
+    float nZeroBiasevents_over60; // float to accept non integer values coming from the reweighting procedure
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;
