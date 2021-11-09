@@ -92,7 +92,7 @@ Components have been provided to run a short test.
 -m menu/Prescale_2022_v0_1_1.csv \
 -l ntuple/Run3_NuGun_MC_ntuples.list \
 -o test -b 2544 --doPlotRate --doPlotEff -maxEvent 200000 \
---allPileUp --doRe
+--allPileUp --doReweightingRun3
 ```
 This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
 
