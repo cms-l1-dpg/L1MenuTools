@@ -61,7 +61,6 @@ class PreColumn
 
     float ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3);
     std::vector<double> h_PUweights;
-    bool reweight = false;
 
    // ====================  MUTATORS      ===============================
 

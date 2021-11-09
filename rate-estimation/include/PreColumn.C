@@ -167,7 +167,6 @@ bool PreColumn::CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run
 // ===========================================================================
 bool PreColumn::CheckPureFire() 
 {
-
 //**************************************************************************//
 //                              Check Pure Rate                             //
 //**************************************************************************//
@@ -478,11 +477,16 @@ float PreColumn::ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight
 bool PreColumn::FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3)
 {
   bool eFired = false;
-  if (reweight_2018 || reweight_Run3) reweight = true;
-  // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting                                                                                      
+  bool reweight = false;
   float ev_puweight = -1;
-  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
 
+  // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting;
+  // reweight label set to true to allow different event counting 
+  if (reweight_2018 || reweight_Run3) 
+    {
+      reweight = true;
+      ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+    }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ L1Seed ~~~~~
   for(auto l1 : mL1Seed)
   {
@@ -529,8 +533,10 @@ bool PreColumn::FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3)
   if (POGset.size() == 1)
   {
     std::string l1pogpure = "L1T_Pure"+*(POGset.begin());
-    //L1PUCount[l1pogpure][pu]++;
-    L1PUCount[l1pogpure][pu] += ev_puweight; // Reweighting procedure 
+    if (reweight) 
+      L1PUCount[l1pogpure][pu] += ev_puweight; // Reweighting procedure 
+    else
+      L1PUCount[l1pogpure][pu]++;
   }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAG ~~~~~
   std::set<std::string> PAGset;
@@ -884,13 +890,10 @@ bool PreColumn::CalRate(double scale)
 {
   for(auto &seed : mL1Seed)
   {
-    //seed.second.firerate = seed.second.firecounts_w *scale;
     seed.second.firerate = seed.second.firecounts *scale;
     seed.second.firerateerror = sqrt(seed.second.firecounts)*scale;
     seed.second.purerate = seed.second.purecounts *scale;
     seed.second.proprate = seed.second.propcounts *scale;
-    //std::cout << "seed.second.firecounts_w = " << seed.second.firecounts_w << "  with scale => " << seed.second.firecounts_w*scale << std::endl;
-    //std::cout << "seed.second.firecounts = " << seed.second.firecounts << std::endl;
   }
   return true;
 }       // -----  end of function PreColumn::CalRate  -----
@@ -901,11 +904,7 @@ bool PreColumn::CalRate(double scale)
 // ===========================================================================
 bool PreColumn::PrintMenuRate(double scale) const
 {
-  //std::cout << "Col" << ColIdx << ": Menu rate  = " << nFireevents_w / 1000 * scale 
   std::cout << "Col" << ColIdx << ": Menu rate  = " << nFireevents / 1000 * scale 
     <<" +/- " << sqrt(nFireevents) * scale / 1000 << " (kHz)" << std::endl;
-  //std::cout << "===============> nFireevents_w = " << nFireevents_w << std::endl;
-  //std::cout << "===============> nFireevents = " << nFireevents << std::endl;
-
   return true;
 }       // -----  end of function PreColumn::PrintMenuRate  -----
