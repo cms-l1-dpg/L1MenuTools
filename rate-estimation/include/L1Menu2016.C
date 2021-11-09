@@ -136,9 +136,9 @@ bool L1Menu2016::InitConfig()
   L1Config["doBXReweight_1_to_6_11_12"] = 0;
   L1Config["doBXReweight_5_to_10"]      = 0;
   
-  L1ConfigStr["SelectLS"] = "";
-  L1ConfigStr["SelectBX"] = "";
-  L1ConfigStr["Lumilist"] = "";
+  L1ConfigStr["SelectLS"]  = "";
+  L1ConfigStr["SelectBX"]  = "";
+  L1ConfigStr["Lumilist"]  = "";
   L1ConfigStr["SelectCol"] = "";
 
   L1ObjectMap["Jet"]        = &L1Event.JetPt;
@@ -1281,8 +1281,8 @@ bool L1Menu2016::Loop()
 
   std::cout << "============================================" << i << std::endl;
   std::cout << "Total Event: " << i << std::endl;
-  std::cout << "ZeroBias Events: " << nZeroBiasevents << std::endl;
-  std::cout << "ZeroBias Events in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "Events counted without PU requirement: " << nZeroBiasevents << std::endl;
+  std::cout << "Events counted in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
   std::cout << "============================================" << i << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----

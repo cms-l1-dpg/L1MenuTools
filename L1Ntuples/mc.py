@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=112X_mcRun3_2021_realistic_v15 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2018_v1_3 --filein=/store/mc/Run3Winter20DRPremixMiniAOD/Nu_E10-pythia8-gun/GEN-SIM-RAW/SNB_110X_mcRun3_2021_realistic_v6-v1/10000/51FBC4DC-D5C7-824F-9AFA-3025F04F96FA.root
+# with command line options: l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=112X_mcRun3_2021_realistic_v15 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2021_v0_1 --filein=/store/mc/Run3Winter20DRPremixMiniAOD/Nu_E10-pythia8-gun/GEN-SIM-RAW/SNB_110X_mcRun3_2021_realistic_v6-v1/10000/51FBC4DC-D5C7-824F-9AFA-3025F04F96FA.root
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -133,10 +133,10 @@ from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
 process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3 
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2021_v0_1 
 
-#call to customisation function L1TSettingsToCaloParams_2018_v1_3 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2018_v1_3(process)
+#call to customisation function L1TSettingsToCaloParams_2021_v0_1 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2021_v0_1(process)
 
 # End of customisation functions
 
@@ -181,8 +181,9 @@ process.HcalTPGCoderULUT.contain1TSHB = True
 process.HcalTPGCoderULUT.contain1TSHE = True
 
 # Pick one of the pairs of lines below based on the intended scenario for running
-process.HcalTPGCoderULUT.containPhaseNSHB = 1.0 # For Run3 MC
-process.HcalTPGCoderULUT.containPhaseNSHE = 1.0 # For Run3 MC
+#  WARNING!!! Temporary fix until the [[https://github.com/cms-sw/cmssw/pull/34572][PR#34572]] is finalized: 
+process.HcalTPGCoderULUT.containPhaseNSHB = -2 # For Run3 MC
+process.HcalTPGCoderULUT.containPhaseNSHE = -2 # For Run3 MC
 
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
