@@ -1,5 +1,4 @@
-{# Template for signal type conditions like centrality or muon showers #}
-{# MuonShowerType from L1TNtuples: kInvalid, kOneNominal,kOneTight, kTwoLoose #}
+{# Template for signal type conditions like centrality #}
 {# See in: L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h #}
 
 {% block SignalsTemplate scoped %}
