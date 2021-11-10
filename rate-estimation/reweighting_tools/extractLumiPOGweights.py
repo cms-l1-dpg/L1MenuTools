@@ -26,7 +26,7 @@ parser.add_argument('--outfolder',
         type=str)
 parser.add_argument('--json',
         help='Name of the json file containing fraction of events as a function of pileup according to a certain Lumi POG model',
-        default='pileup_distribution_53_2700_80mb_noPoisson_noLumiWeighted.json',
+        default='pileup_distribution_2736_80mb_btb_PoissonStat_PU51.json',
         type=str)
 
 args = parser.parse_args()
@@ -47,7 +47,7 @@ for f in data['fraction']:
 # OUTPUT DIR # 
 ##############
 gSystem.Exec("mkdir -p " + outputDir)
-print "Output directory created!"
+print("Output directory created!")
 
 #############
 # HISTOGRAM # 
@@ -60,7 +60,7 @@ for b in range(0,100):
     h_PU_LumiPOG.Fill(b, v_frac[b+1])
 
 # Save the histo in a root file 
-print "Saving histo into root file ..."
+print("Saving histo into root file ...")
 outfile_histo = TFile.Open(outputDir + "/" + "h_LumiPOG_PU_gaussianStartOfTheFill.root", "RECREATE")
 outfile_histo.cd()
 h_PU_LumiPOG.Write()
