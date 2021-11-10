@@ -1,6 +1,6 @@
 # reweighting_tools
 
-Set of scripts useful in order to retrieve weights from LumiPOG models for the reweighting of the pileup distribution according to Run 3 predictions. 
+Set of scripts useful in order to retrieve weights from Lumi POG models for the reweighting of the pileup distribution according to Run 3 predictions. 
 
 > Find here the [Lumi POG tool](https://cmslumipog.web.cern.ch/cgi-bin/pileupDistribution.py) and related documentation!
 
