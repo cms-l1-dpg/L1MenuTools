@@ -18,8 +18,8 @@ Example command:
 python3 extractLumiPOGweights.py --outfolder PU_REWEIGHTING --json pileup_distribution_2736_80mb_btb_PoissonStat_PU51.json
 ```
 Two json files describing the gaussian PU distribution according to Lumi POG models are provided as an example:
-* Average PU 53 = pileup_distribution_53_2700_80mb_noPoisson_noLumiWeighted.json
-* Average PU 51 = pileup_distribution_2736_80mb_btb_PoissonStat_LumiWeighted_PU51.json
+* Average PU 53 = `pileup_distribution_53_2700_80mb_noPoisson_noLumiWeighted.json`
+* Average PU 51 = `pileup_distribution_2736_80mb_btb_PoissonStat_LumiWeighted_PU51.json`
 The second one is used to produce rootfiles provided as an example.
 An example of the rootfile produced as output of this step is provided: `h_weights_puReweighting_LumiPOG_PU_gaussianStartOfTheFill.root`.
 
@@ -37,5 +37,5 @@ This list of weights can be then included in the rate-estimation code.
 Example command:
 ```
 python3 LumiPOGweights_pileupComp_plotter.py --outfolder PU_REWEIGHTING --histos h_PUreweighting_LumiPOG_PU_gaussianStartOfTheFill.root
-
+```
 An example of the rootfile produced as output of this step is provided: `h_PUreweighting_LumiPOG_PU_gaussianStartOfTheFill.root`.
