@@ -34,7 +34,7 @@ h_input = args.histos
 ###############
 # READ HISTOS # 
 ###############
-print 'Reading file', h_input.GetName(),'...'
+print("Reading file", h_input.GetName(), "...")
 
 h_PU_lumiPOG = h_input.Get("h_PU_LumiPOG")
 h_nPV = h_input.Get("h_nPV")
@@ -58,11 +58,11 @@ for bin in range (h_nPV_True.GetSize() - 2): #h_nPV_True.GetSize() = 102, removi
         h_weight_nPV_True.SetBinError  (bin, 1./(h_PU_lumiPOG.GetBinContent(bin))**0.5)
         l_weights_nPV_True.append(ratio_nPV_True)
 
-print "\nnPV_True weights:"
+print("\nnPV_True weights:")
 print(l_weights_nPV_True)
  
 # Save histograms in a root file                                                                                                                   
-print "Saving histo weights into root file ..."
+print("Saving histo weights into root file ...")
 outfile_weights = TFile.Open(outputDir + "/" + "h_weights_puReweighting_LumiPOG_PU_gaussianStartOfTheFill.root", "RECREATE")
 outfile_weights.cd()
 h_weight_nPV_True.Write()

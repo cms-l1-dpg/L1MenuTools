@@ -136,9 +136,9 @@ bool L1Menu2016::InitConfig()
   L1Config["doBXReweight_1_to_6_11_12"] = 0;
   L1Config["doBXReweight_5_to_10"]      = 0;
   
-  L1ConfigStr["SelectLS"]  = "";
-  L1ConfigStr["SelectBX"]  = "";
-  L1ConfigStr["Lumilist"]  = "";
+  L1ConfigStr["SelectLS"] = "";
+  L1ConfigStr["SelectBX"] = "";
+  L1ConfigStr["Lumilist"] = "";
   L1ConfigStr["SelectCol"] = "";
 
   L1ObjectMap["Jet"]        = &L1Event.JetPt;
@@ -929,7 +929,7 @@ bool L1Menu2016::ParseConfig(const std::string line)
   if (parDouble && parString)
     std::cout<<"\033[0;31mCan't parse config:\033[0m "<<line<< std::endl; 
   else
-    std::cout << "Not reconfiguzed config key " << key<< std::endl;
+    std::cout << "Not reconfigured config key " << key<< std::endl;
   
   return false;
 }       // -----  end of function L1Menu2016::ParseConfig  -----
@@ -1237,12 +1237,12 @@ bool L1Menu2016::Loop()
 
     // Reweighting procedure: info about the reweighting needed in the code (2018 or Run 3?)
     if (L1Config["doReweighting2018"] != 0)
-      reweight_2018 = true;
+	reweight_2018 = true;
     else if (L1Config["doReweightingRun3"] != 0)
-      reweight_Run3 = true;
+	reweight_Run3 = true;
 
     // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting 
-    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0 )
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0)
       {
 	float ev_puweight = -1;
 	ev_puweight = ExtractPileUpWeight();
@@ -1255,7 +1255,6 @@ bool L1Menu2016::Loop()
 
     float ev_pileup = -1;
     ev_pileup = EvaluatePileUp();
-
     // PileUp window around 53, expected average PU value during the lumi levelling period in Run 3
     if ((ev_pileup < 48 || ev_pileup > 58) && L1Config["allPileUp"] == 0) continue;
     nZeroBiasevents_PUrange++;
@@ -1469,9 +1468,7 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3)
 {
   // Reweighting procedure: info about the pileup of the event passed as argument to the InsertInMenu and CheckCorrelation functions 
   // (defined in PreColumn)
-
   float ev_pileup = -1;
-  //ev_pileup = EvaluatePileUp();
   ev_pileup = pu;
 
   for(auto col : ColumnMap)
@@ -2180,7 +2177,6 @@ bool L1Menu2016::FillLumiSection(int currentLumi)
 bool L1Menu2016::FillPileUpSec()
 {
   float pu = -1;
-  //bool eFired = false;
   // Data
   if (event_->run > 1 && DataLSPU.find(event_->run) != DataLSPU.end())
   {
@@ -2199,7 +2195,9 @@ bool L1Menu2016::FillPileUpSec()
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Fill Rate per PU ~~~~~
   for(auto col : ColumnMap)
   {
-    col.second->ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0)
+      col.second->ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+
     col.second->FillPileUpSec(pu, reweight_2018, reweight_Run3);
   }
 

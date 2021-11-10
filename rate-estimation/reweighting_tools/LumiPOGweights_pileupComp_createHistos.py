@@ -41,7 +41,7 @@ f_lumiPOG_PU = args.histroot
 # OUTPUT DIR # 
 ##############
 gSystem.Exec("mkdir -p " + outputDir)
-print "Output directory created: ", outputDir
+print("Output directory created: ", outputDir)
 
 ##########
 # HISTOS # 
@@ -61,7 +61,7 @@ chains['Evt'][0].Add(f_Run3MC)
 Evt_br = ROOT.L1Analysis.L1AnalysisEventDataFormat()
 chains['Evt'][0].SetBranchAddress('Event', ROOT.AddressOf(Evt_br))
 
-print '\nEntering loop over events for chain'
+print("\nEntering loop over events for chain")
 for jEvt in range(chains['Evt'][0].GetEntries()):
     chains['Evt'][0].GetEntry(jEvt)
     h_nPV.Fill(int(Evt_br.nPV))
@@ -70,7 +70,7 @@ for jEvt in range(chains['Evt'][0].GetEntries()):
 h_PU_lumiPOG.Scale(h_nPV_True.Integral()/h_PU_lumiPOG.Integral())
 
 # Save histograms in a root file 
-print "Saving histograms into root file ..."
+print("Saving histograms into root file ...")
 outfile_histos = TFile.Open(outputDir + "/" + "h_PUreweighting_LumiPOG_PU_gaussianStartOfTheFill.root", "RECREATE")
 outfile_histos.cd()
 h_PU_lumiPOG.Write()
