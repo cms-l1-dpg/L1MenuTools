@@ -91,7 +91,7 @@ Components have been provided to run a short test.
 ./testMenu2016 -u menu/run_lumi.csv \
 -m menu/Prescale_2022_v0_1_1.csv \
 -l ntuple/Run3_NuGun_MC_ntuples.list \
--o test -b 2544 --doPlotRate --doPlotEff -maxEvent 200000 \
+-o test -b 2544 --doPlotRate --doPlotEff --maxEvent 200000 \
 --allPileUp --doReweightingRun3
 ```
 This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
