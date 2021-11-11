@@ -88,7 +88,7 @@ Then run `make -j 4`.
 #### Test run
 Components have been provided to run a short test.
 ```bash
-./testMenu2016 -u menu/run_lumi.csv \
+./testMenu2016 \
 -m menu/Prescale_2022_v0_1_1.csv \
 -l ntuple/Run3_NuGun_MC_ntuples.list \
 -o test -b 2544 --doPlotRate --doPlotEff --maxEvent 200000 \
