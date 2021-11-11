@@ -59,8 +59,8 @@ cd ..
 ```
 
 ### Lumi section information table
-In case you are using data ntuples, this table is used to avoid bad LS. It also includes LS vs PU information, which
-can be useful for plotting rate vs PU dependencies. 
+In case you are using data ntuples, this table is used to avoid bad lumi sections (LS). 
+It also includes LS vs PU information, which can be useful for plotting rate vs PU dependencies. 
 An example csv is included in `menu/run_lumi_RunA.csv`, including fill at high pileup.
 To produce your own, modify the beginning of `GetLumi.py` to list the run number
 of your ntuple, then:
@@ -89,17 +89,16 @@ Then run `make -j 4`.
 Components have been provided to run a short test.
 ```bash
 ./testMenu2016 \
--m menu/Prescale_2022_v0_1_1.csv \
--l ntuple/Run3_NuGun_MC_ntuples.list \
--o test -b 2544 --doPlotRate --doPlotEff --maxEvent 200000 \
---allPileUp --doReweightingRun3
+-m menu/Prescale_2022_v0_1_1.csv -l ntuple/Run3_NuGun_MC_ntuples.list \
+-o test -b 2544 --doPlotRate --doPlotEff --SelectCol 2E+34 \    
+--doPrintPU --allPileUp --doReweightingRun3 --maxEvent 200000
 ```
-This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
+This will take only a few minutes and output test.csv, test.root, test.txt, and test_PU.txt into the results/ directory.
 
 #### Temporary remark:
-Please note that currently in the context of rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
+Please note that currently in the context of the rate estimation studies for the Trigger Review and preparation of the Run 3 menu, a selection on the pileup window is applied by default. 
 A pileup range from 48 to 58, corresponding to the expected average PU during the lumi levelling period in Run 3, is taken into account. 
-If you want to run the rates for the full PU distribution available in the sample, please use the option --allPileUp.
+If you want to run the rates for the full PU distribution available in the sample, please use the option `--allPileUp`.
 Moreover, the possibility to apply a reweighting procedure has been included in order to take into account a realistic pileup model according to Run 3 Lumi POG predictions.
 The recommended approach at the moment is to use the options `--allPileUp --doReweightingRun3` to get results for the incoming Trigger Review. 
 
