@@ -16,16 +16,24 @@ local machine.
 #### [`ps-generate`](./docs/ps-generate.md): prescale table generation tool
 
 Prescale table generation tool: create a new prescale table according to a L1 Menu, using information from an existing prescale table.
+&rarr; See the [documentation on `ps-generate`](./docs/ps-generate.md) for further details.
 
-&rarr; see the [documentation on `ps-generate`](./docs/ps-generate.md) for further details.
-
+Example command:
+```
+cmsenv
+bash run-ps-generate.py PStable.xlsx L1Menu.xml
+```
 
 #### [`ps-diff`](./docs/ps-diff.md): prescale table comparison tool
 
 Prescale table comparison tool: create diffs between two PS table in various output formats.
+&rarr; See the [documentation on `ps-diff`](./docs/ps-diff.md) for further details.
 
-&rarr; see the [documentation on `ps-diff`](./docs/ps-diff.md) for further details.
-
+Example command:
+```
+cmsenv
+bash run-ps-diff.py PStable_left.xslx PStable_right.xslx
+```
 
 ### Presentations of PS-tools
 
