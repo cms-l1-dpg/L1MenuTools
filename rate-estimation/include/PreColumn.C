@@ -79,6 +79,7 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value)
   if (post_prescale)
   {
     mL1Seed[L1name].firecounts++;
+    mL1Seed[L1name].uwfirecounts++;
     FireSeed.insert(L1name);
   }
 
@@ -112,6 +113,7 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu, bool rewe
   {
     //mL1Seed[L1name].firecounts_w+=ev_puweight;
     mL1Seed[L1name].firecounts+=ev_puweight;
+    mL1Seed[L1name].uwfirecounts++;
     FireSeed.insert(L1name);
   }
 
@@ -770,7 +772,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
           << std::setw(20)             << seed.firerateerror
           << std::setw(15)             << seed.purerate      
           << std::setw(15)             << seed.proprate
-          << std::setw(15)             << seed.firerate/scale
+          << std::setw(15)             << seed.uwfirecounts
           << seed.comment
           << std::endl;
       totalrate +=seed.firerate;
@@ -790,7 +792,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
           << std::setw(20)             << seed.firerateerror
           << std::setw(15)             << seed.purerate      
           << std::setw(15)             << seed.proprate
-          << std::setw(15)             << seed.firerate/scale
+          << std::setw(15)             << seed.uwfirecounts
           << seed.comment
           << std::endl;
       totalrate +=seed.firerate;

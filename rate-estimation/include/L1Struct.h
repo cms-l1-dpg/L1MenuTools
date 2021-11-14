@@ -45,7 +45,7 @@ struct L1Seed
   //unsigned int ncounts;
   float ncounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   bool eventfire;
-  //unsigned int firecounts;
+  unsigned int uwfirecounts;	//unweighted firecounts
   //unsigned int purecounts;
   float firecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
   float purecounts; // Reweighting: float to accept non integer values coming from the reweighting procedure
@@ -65,7 +65,7 @@ struct L1Seed
     //ncounts       = 0;
     ncounts       = 0.0;
     eventfire     = false;
-    //firecounts    = 0;
+    uwfirecounts    = 0;
     //purecounts    = 0;
     //firecounts_w  = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure
     firecounts    = 0.0; // Reweighting: float to accept non integer values coming from the reweighting procedure 
