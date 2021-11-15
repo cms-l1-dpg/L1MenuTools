@@ -99,44 +99,46 @@ bool L1Menu2016::ConfigOutput(bool writetext_, bool writecsv_, bool writeplot_,
 // ===========================================================================
 bool L1Menu2016::InitConfig()
 {
-  L1Config["SumJetET"]       = 0;
-  L1Config["SumJetEta"]      = 999;
-  L1Config["nBunches"]       = 2544; //default for 2018 nBunches
-  L1Config["doPlotRate"]     = 0;
-  L1Config["doPlotEff"]      = 0;
-  L1Config["doPlotTest"]     = 0;
-  L1Config["doPlotuGt"]      = 0;
-  L1Config["doTnPMuon"]      = 0;
-  L1Config["doPlotLS"]       = 0;
-  L1Config["doPrintPU"]      = 0;
-  L1Config["allPileUp"]      = 0;
-  L1Config["doPrintBX"]      = 0;
-  L1Config["doCompuGT"]      = 0;
-  L1Config["maxEvent"]       = -1;
-  L1Config["SetMuonER"]      = -1;
-  L1Config["SetNoPrescale"]  = 0;
-  L1Config["IgnorePrescale"] = 0;
-  L1Config["UseUpgradeLyr1"] = -1;
-  L1Config["UseL1CaloTower"] = -1;
-  L1Config["SelectFill"]     = -1;
-  L1Config["SelectRun"]      = -1;
-  L1Config["SelectEvent"]    = -1;
-  L1Config["UsePFMETNoMuon"] = 0;
-  L1Config["UseuGTDecision"] = 0;
-  L1Config["UseUnpackTree"]  = 0;
-  L1Config["doScanLS"]       = 0;
-  L1Config["SetL1AcceptPS"]  = 0;
-  L1Config["Select_BX_in_48b"]          = -1;
-  L1Config["Select_BX_in_12b"]          = -1;
+  L1Config["SumJetET"]          = 0;
+  L1Config["SumJetEta"]         = 999;
+  L1Config["nBunches"]          = 2544; //default for Run 2
+  L1Config["doPlotRate"]        = 0;
+  L1Config["doPlotEff"]         = 0;
+  L1Config["doPlotTest"]        = 0;
+  L1Config["doPlotuGt"]         = 0;
+  L1Config["doTnPMuon"]         = 0;
+  L1Config["doPlotLS"]          = 0;
+  L1Config["doPrintPU"]         = 0;
+  L1Config["allPileUp"]         = 0;
+  L1Config["doReweighting2018"] = 0;
+  L1Config["doReweightingRun3"] = 0;
+  L1Config["doPrintBX"]         = 0;
+  L1Config["doCompuGT"]         = 0;
+  L1Config["maxEvent"]          = -1;
+  L1Config["SetMuonER"]         = -1;
+  L1Config["SetNoPrescale"]     = 0;
+  L1Config["IgnorePrescale"]    = 0;
+  L1Config["UseUpgradeLyr1"]    = -1;
+  L1Config["UseL1CaloTower"]    = -1;
+  L1Config["SelectFill"]        = -1;
+  L1Config["SelectRun"]         = -1;
+  L1Config["SelectEvent"]       = -1;
+  L1Config["UsePFMETNoMuon"]    = 0;
+  L1Config["UseuGTDecision"]    = 0;
+  L1Config["UseUnpackTree"]     = 0;
+  L1Config["doScanLS"]          = 0;
+  L1Config["SetL1AcceptPS"]     = 0;
+  L1Config["Select_BX_in_48b"]  = -1;
+  L1Config["Select_BX_in_12b"]  = -1;
   L1Config["doBXReweight_1_to_6_47_48"] = 0;
   L1Config["doBXReweight128"]           = 0;
   L1Config["doBXReweight34567"]         = 0;
   L1Config["doBXReweight_1_to_6_11_12"] = 0;
   L1Config["doBXReweight_5_to_10"]      = 0;
   
-  L1ConfigStr["SelectLS"]  = "";
-  L1ConfigStr["SelectBX"]  = "";
-  L1ConfigStr["Lumilist"]  = "";
+  L1ConfigStr["SelectLS"] = "";
+  L1ConfigStr["SelectBX"] = "";
+  L1ConfigStr["Lumilist"] = "";
   L1ConfigStr["SelectCol"] = "";
 
   L1ObjectMap["Jet"]        = &L1Event.JetPt;
@@ -927,7 +929,7 @@ bool L1Menu2016::ParseConfig(const std::string line)
   if (parDouble && parString)
     std::cout<<"\033[0;31mCan't parse config:\033[0m "<<line<< std::endl; 
   else
-    std::cout << "Not reconfiguzed config key " << key<< std::endl;
+    std::cout << "Not reconfigured config key " << key<< std::endl;
   
   return false;
 }       // -----  end of function L1Menu2016::ParseConfig  -----
@@ -1011,7 +1013,8 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
     //std::cout << "line 1004 end" << std::endl;
   }
 
-  if (event_->run > 1)            
+  // If data, read the csv file and fill the DataLSPU information.
+  if (event_->run > 1)
     {
       const std::string pucsv = L1ConfigStr["Lumilist"];
       std::ifstream csvfile(pucsv);
@@ -1037,45 +1040,46 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
     }
 
   if (L1Config["doPrintPU"] || L1Config["SelectFill"] != -1 )
-  {
-    ReadDataPU();
-  }
-    
+    {
+      ReadDataPU();
+    }
+
   if (L1Config["doTnPMuon"])
-  {
-    l1TnP = new L1TnP(outrootfile, event_, upgrade_, recoJet_,
-		      recoSum_, recoEle_, recoMuon_, recoTau_, recoFilter_, l1CaloTower_, recoVtx_, l1uGT_);
+    {
+      l1TnP = new L1TnP(outrootfile, event_, upgrade_, recoJet_,
+			recoSum_, recoEle_, recoMuon_, recoTau_, recoFilter_, l1CaloTower_, recoVtx_, l1uGT_);
     if (L1Config["doTnPMuon"])
       l1TnP->DoMuonTnP();
-  }
-
+    }
+  
   if (l1unpackuGT_ != NULL)
-  {
-    l1unpackuGT = new L1uGT( outrootfile, event_, l1unpackuGT_, &L1Event, &mL1Seed);
-    //std::cout << "line 1025 start" << std::endl;
-    l1unpackuGT->GetTreeAlias(L1Ntuple::GetuGTAlias(fl1unpackuGT));
-    //std::cout << "line 1025 end" << std::endl;
-  }
-
+    {
+      l1unpackuGT = new L1uGT( outrootfile, event_, l1unpackuGT_, &L1Event, &mL1Seed);
+      //std::cout << "line 1025 start" << std::endl;
+      l1unpackuGT->GetTreeAlias(L1Ntuple::GetuGTAlias(fl1unpackuGT));
+      //std::cout << "line 1025 end" << std::endl;
+    }
+  
   if (L1Config["doCompuGT"] || L1Config["UseuGTDecision"] || L1Config["doPlotuGt"])
-  {
-    assert(l1uGT_ != NULL);
-    l1uGT = new L1uGT( outrootfile, event_, l1uGT_, &L1Event, &mL1Seed);
-    std::cout << "line 1034 start" << std::endl;
-    l1uGT->GetTreeAlias(L1Ntuple::GetuGTAlias(fl1uGT));
-    std::cout << "line 1034 end" << std::endl;
-  }
-
-
+    {
+      assert(l1uGT_ != NULL);
+      l1uGT = new L1uGT( outrootfile, event_, l1uGT_, &L1Event, &mL1Seed);
+      std::cout << "line 1034 start" << std::endl;
+      l1uGT->GetTreeAlias(L1Ntuple::GetuGTAlias(fl1uGT));
+      std::cout << "line 1034 end" << std::endl;
+    }
+  
+  
   if (L1Config["SetMuonER"] != -1) SetMuonER(L1Config["SetMuonER"]);
   if (L1Config["UseUpgradeLyr1"] != -1) SetUseUpgradeLyr1(L1Config["UseUpgradeLyr1"]);
   if (L1Config["UseL1CaloTower"] != -1) SetUseL1CaloTower(L1Config["UseL1CaloTower"]);
-
+  
   if (L1ConfigStr["SelectLS"] != "") 
     ParseRanges("SelectLS", pLS);
-
+  
   if (L1ConfigStr["SelectBX"] != "") 
     ParseRanges("SelectBX", pBX);
+
   return true;
 }       // -----  end of function L1Menu2016::PreLoop  -----
 
@@ -1228,10 +1232,26 @@ bool L1Menu2016::Loop()
     //Use Final decision by default, unless for PlotLS
     //if (l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"]))
     //In case using L1Accept, don't count the Zerobias Event
-    if (L1Config["SetL1AcceptPS"] ==0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
+    if (L1Config["SetL1AcceptPS"] == 0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
       continue;
 
-    nZeroBiasevents++;
+    // Reweighting procedure: info about the reweighting needed in the code (2018 or Run 3?)
+    if (L1Config["doReweighting2018"] != 0)
+	reweight_2018 = true;
+    else if (L1Config["doReweightingRun3"] != 0)
+	reweight_Run3 = true;
+
+    // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting 
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0)
+      {
+	float ev_puweight = -1;
+	ev_puweight = ExtractPileUpWeight();
+	nZeroBiasevents+=ev_puweight; 
+      }
+    else
+      {
+	nZeroBiasevents++;
+      }
 
     float ev_pileup = -1;
     ev_pileup = EvaluatePileUp();
@@ -1240,7 +1260,7 @@ bool L1Menu2016::Loop()
     nZeroBiasevents_PUrange++;
 
     GetL1Event();
-    RunMenu();
+    RunMenu(ev_pileup, reweight_2018, reweight_Run3);
 
     if (L1Config["doPlotLS"])
       FillLumiSection(currentLumi);
@@ -1317,7 +1337,6 @@ bool L1Menu2016::PostLoop()
 // ===========================================================================
 bool L1Menu2016::PrintPUCSV()
 {
-  //const int nBunches = 2736;
   std::fstream pucsv (outputdir + "/" + outputname+"_PU" +".csv", std::fstream::out );
 
   // L1Seeds
@@ -1445,8 +1464,13 @@ bool L1Menu2016::CheckL1Seed(const std::string L1Seed)
 //         Name:  L1Menu2016::RunMenu
 //  Description:  
 // ===========================================================================
-bool L1Menu2016::RunMenu()
+bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3)
 {
+  // Reweighting procedure: info about the pileup of the event passed as argument to the InsertInMenu and CheckCorrelation functions 
+  // (defined in PreColumn)
+  float ev_pileup = -1;
+  ev_pileup = pu;
+
   for(auto col : ColumnMap)
   {
     col.second->EventReset();
@@ -1465,13 +1489,19 @@ bool L1Menu2016::RunMenu()
 
     for(auto col : ColumnMap)
     {
-      col.second->InsertInMenu(seed.first, IsFired);
+    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 ) // Reweighting procedure 
+      col.second->InsertInMenu(seed.first, IsFired); 
+    else
+      col.second->InsertInMenu(seed.first, IsFired, ev_pileup, reweight_2018, reweight_Run3); 
     }
   }
 
   for(auto col : ColumnMap)
   {
-    col.second->CheckCorrelation();
+    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 ) // Reweighting procedure 
+      col.second->CheckCorrelation(); 
+    else
+      col.second->CheckCorrelation(ev_pileup, reweight_2018, reweight_Run3);
   }
 
   return true;
@@ -2147,7 +2177,6 @@ bool L1Menu2016::FillLumiSection(int currentLumi)
 bool L1Menu2016::FillPileUpSec()
 {
   float pu = -1;
-  //bool eFired = false;
   // Data
   if (event_->run > 1 && DataLSPU.find(event_->run) != DataLSPU.end())
   {
@@ -2160,17 +2189,21 @@ bool L1Menu2016::FillPileUpSec()
   // MC
   if (event_->run == 1)
   {
-    pu = event_->nPV_True;
+    pu = (event_->nPV_True);
   }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Fill Rate per PU ~~~~~
   for(auto col : ColumnMap)
   {
-    col.second->FillPileUpSec(pu);
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0)
+      col.second->ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+
+    col.second->FillPileUpSec(pu, reweight_2018, reweight_Run3);
   }
 
   return true;
 }       // -----  end of function L1Menu2016::FillPileUpSec  ----
+
 
 // ===  FUNCTION  ============================================================                                                                                 
 //         Name:  L1Menu2016::EvaluatePileUp                                                                                                                    
@@ -2183,6 +2216,7 @@ float L1Menu2016::EvaluatePileUp()
   // Data                                                                                                                                                   
   if (event_->run > 1)            
     {
+      // NOTE: pucsv file read in the PreLoop where DataLSPU[Run][LS] is filled
       if (DataLSPU.find(event_->run) != DataLSPU.end())                                                                                  
 	{
 	  if (DataLSPU[event_->run].find(event_->lumi) != DataLSPU[event_->run].end())                                                                 
@@ -2192,15 +2226,44 @@ float L1Menu2016::EvaluatePileUp()
 	}
     }
 
-  // MC                                                                                                                                                      
+  // MC
   if (event_->run == 1)
-    {
-      pu = event_->nPV_True;
-    }
+  {
+    pu = (event_->nPV_True);
+  }
 
   return pu;
 }
-// -----  end of function L1Menu2016::EvaluatePileUp  -----              
+
+// ===  FUNCTION  ================================================================                                                                                 
+//         Name:  L1Menu2016::ExtractPileUpWeight                                                                                                                    
+//  Description:  Extract weights for reweighting of the pileup distribution in MC                                                                                                                    
+// ===============================================================================                                                                                   
+float L1Menu2016::ExtractPileUpWeight()
+{
+  double pu = -1;
+  double weight = -1;
+  // WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution: 
+  // see here -> https://elfontan.web.cern.ch/elfontan/Run3_MENU/PileupReweighting/weights_nPV_True.png.
+  // A weight equal to 0 is set in bins where the number of events in data is less than 100.
+
+  // 2018 weights
+  if (L1Config["doReweighting2018"] != 0)
+    {
+      h_PUweights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.7805557154345164, 1.8060490539875227, 1.8429444310772023, 1.8847969284653239, 1.9023685309193448, 1.9237248769457562, 1.9052231983237566, 1.9323838791307304, 1.9085059563417344, 1.8603791701197574, 1.7603108386627149, 1.6756647663900748, 1.5370617605401784, 1.3999688210755514, 1.259781632746541, 1.113578483437248, 0.9458259616433159, 0.8004237934065365, 0.67859967863879, 0.5416839609316458, 0.4312760960624466, 0.3410534695481281, 0.2670644366287844, 0.20005146208632094, 0.15028893320205652, 0.10953206021410954, 0.08057347625153384, 0.05889674651099118, 0.04287951951844378, 0.03136484854119283, 0.022045797907650135, 0.015338620880659437, 0.011042294804776033, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    }
+  // Run 3 LumiPOG weights
+  else if (L1Config["doReweightingRun3"] != 0)
+    {
+      h_PUweights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.11768066610316973, 0.15659943608123963, 0.2062485504625545, 0.268258220098052, 0.33984423319498697, 0.42640469375359685, 0.5188836993090095, 0.6415574459968488, 0.7679292883090271, 0.9038989080521145, 1.0312039036982403, 1.184185989240607, 1.3135745255235602, 1.452683767877649, 1.595818724793107, 1.7332340493078218, 1.8220240159036707, 1.9232725225809801, 2.0500456898039943, 2.0735607093466237, 2.107312361581553, 2.1410569727220117, 2.1657353540686484, 2.1041608280359783, 2.055486270892838, 1.9497829996617755, 1.865648229655712, 1.770365292692509, 1.6681387392525582, 1.573366538275714, 1.4204671249736036, 1.2648609312008994, 1.1619530797268465, 1.032957960295197, 0.9106977649201128, 0.8043353997543611, 0.7051914455399683, 0.5998090800948392, 0.522684322280154, 0.43992380960221283, 0.36786673008123166, 0.31065622561951234, 0.2568458813937691, 0.20984708112111544, 0.1707654623586224, 0.13792878579949355, 0.11263581096823445, 0.08921848542040954, 0.07125932229597162, 0.05617010906326074, 0.04314936365485068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    }
+ 
+  pu = event_->nPV_True;
+  weight = h_PUweights.at(pu); 
+  return weight;
+}
+// -----  end of function L1Menu2016::ExtractPileUpWeight  -----              
+
 
 // ===  FUNCTION  ============================================================
 //         Name:  L1Menu2016::PrintCSV

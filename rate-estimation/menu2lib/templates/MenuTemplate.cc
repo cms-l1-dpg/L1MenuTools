@@ -230,7 +230,20 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 //
 // NB: tmEventSetup.XxxWithOverlapRemoval was removed between utm-overlapRemoval-xsd330 and utm_0.6.5
 //
-// generate conditions
+/////////////////////////
+// Generate conditions //
+/////////////////////////
+{#
+// Muon showers: definition of ShowerSignal types;
+// it can be done for Centrality signals, as well
+#}
+{% set ShowerSignalTypes = (
+  tmEventSetup.MuonShower0,
+  tmEventSetup.MuonShower1,
+  tmEventSetup.MuonShowerOutOfTime0,
+  tmEventSetup.MuonShowerOutOfTime1
+) %}
+
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
   {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.SingleJetOvRm, tmEventSetup.DoubleTauOvRm,
@@ -239,9 +252,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% endif -%}
 
   {%- if cond.getType() in (tmEventSetup.SingleMuon, tmEventSetup.DoubleMuon, tmEventSetup.TripleMuon, tmEventSetup.QuadMuon,
-                           tmEventSetup.SingleEgamma, tmEventSetup.DoubleEgamma, tmEventSetup.TripleEgamma, tmEventSetup.QuadEgamma,
-                           tmEventSetup.SingleTau, tmEventSetup.DoubleTau, tmEventSetup.TripleTau, tmEventSetup.QuadTau,
-                           tmEventSetup.SingleJet, tmEventSetup.DoubleJet, tmEventSetup.TripleJet, tmEventSetup.QuadJet) %}
+			    tmEventSetup.SingleEgamma, tmEventSetup.DoubleEgamma, tmEventSetup.TripleEgamma, tmEventSetup.QuadEgamma,
+			    tmEventSetup.SingleTau, tmEventSetup.DoubleTau, tmEventSetup.TripleTau, tmEventSetup.QuadTau,
+			    tmEventSetup.SingleJet, tmEventSetup.DoubleJet, tmEventSetup.TripleJet, tmEventSetup.QuadJet) %}
     {% include 'ObjectTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.TotalEt, tmEventSetup.TotalHt, tmEventSetup.MissingEt, tmEventSetup.MissingHt,
@@ -303,6 +316,12 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
     {% if combination01 == tmEventSetup.MuonMuonCombination and combination02 == tmEventSetup.MuonMuonCombination %}
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
+{#
+  // Muon showers: associate the condition type and a given template;
+  // it can be done for Centrality signals, as well
+#}
+  {% elif cond.getType() in ShowerSignalTypes %}
+    {% include 'MuonShowerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}
