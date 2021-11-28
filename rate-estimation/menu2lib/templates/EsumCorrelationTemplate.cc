@@ -22,6 +22,8 @@
 
 {% if esum.getType() == tmEventSetup.ETM -%}
   {% set type = 'L1Analysis::kMissingEt' %}
+{% elif esum.getType() == tmEventSetup.ETMHF -%}
+  {% set type = 'L1Analysis::kMissingEtHF' %}
 {% elif object.getType() == tmEventSetup.HTM -%}
   {% set type = 'L1Analysis::kMissingHt' %}
 {% elif object.getType() == tmEventSetup.ETMHF -%}
