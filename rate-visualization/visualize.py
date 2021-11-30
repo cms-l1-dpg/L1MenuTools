@@ -314,7 +314,7 @@ categories = {
     "isMultiMu": {"texName":'Multi $\mu$'},
     "isMuEG":    {"texName":'$\mu$ + e/$\gamma$'},
     "isMuJet":   {"texName": '$\mu$ + Jets or Energy sums'},
-    "isLLP":   {"texName": 'Long Lived Particle'},
+    "isLLP":   {"texName": 'LLP seeds (displaced muon or jets)'},
     "isSingleEG":{"texName":'Single e/$\gamma$'},
     "isMultiEG": {"texName":'Multi e/$\gamma$'},
     "isEGJet":{"texName":'e/$\gamma$ + Jets or Energy sums'},
@@ -382,7 +382,7 @@ colours={
     "$\\tau$ + $\mu$ or e/$\gamma$ or Jets or Energy sums":"lime",
     "Energy Sums":"cyan",
     "Zero Bias":"teal",
-    "Long Lived Particle":"silver",
+    "LLP seeds (displaced muon or jets)":"silver",
 
 }
 wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=[colours[key] for key in labels])
