@@ -55,16 +55,25 @@ df_PS = df[df["pre-scale0"] > 1]
 @np.vectorize
 def isSingleMuSeed(seedname):
     identifiers = ["SingleMu"]
-    vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias"]
+    vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias", "upt"]
     return all([identifier in seedname for identifier in identifiers]) and not any(
         [veto in seedname for veto in vetoes]
     )
 
+@np.vectorize
+def isLLPSeed(seedname):
+    identifiers = ["MuShower", "upt"]
+    vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias"]
+    return ( 
+	any([identifier in seedname for identifier in identifiers]) 
+        and not any([veto in seedname for veto in vetoes])
+        
+    )
 
 @np.vectorize
 def isMultiMuSeed(seedname):
     identifiers = ["DoubleMu", "TripleMu", "QuadMu"]
-    vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias"]
+    vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias", "upt"]
     return any([identifier in seedname for identifier in identifiers]) and not any(
         [veto in seedname for veto in vetoes]
     )
@@ -73,7 +82,7 @@ def isMultiMuSeed(seedname):
 @np.vectorize
 def isMuEGSeed(seedname):
     identifiers = ["Mu", "EG"]
-    vetoes = ["Jet", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias"]
+    vetoes = ["Jet", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias", "upt"]
     return all([identifier in seedname for identifier in identifiers]) and not any(
         [veto in seedname for veto in vetoes]
     )
@@ -83,7 +92,7 @@ def isMuEGSeed(seedname):
 def isMuJetSeed(seedname):
     identifiers = ["Mu"]
     Jetsums = ["Jet", "ETM", "HTT", "ETT", "ETMHF"]
-    vetoes = ["EG", "Tau", "ZeroBias"]
+    vetoes = ["EG", "Tau", "ZeroBias", "upt"]
     return (
         all([identifier in seedname for identifier in identifiers])
         and any([Sum in seedname for Sum in Jetsums])
@@ -211,6 +220,7 @@ functions = {
     "isSumsSeed": isSumsSeed,
     "isZeroBiasSeed": isZeroBiasSeed,
     "isCalibrationSeed": isCalibrationSeed,
+    "isLLPSeed": isLLPSeed,
 }
 # ... define the rest of the functions here, one for each category...
 # extend the dataframe with new columns that contain the return values of the specific categorization functions
@@ -229,11 +239,11 @@ for category in [
     "isLepJet",
     "isSums",
     "isZeroBias",
+    "isLLP",
 ]:  # can be later extended ["isSingleMu", "isMultiMu",...]
     func = category + "Seed"
     function = functions[func]
     df_PS1[category] = function(df_PS1["L1SeedName"])
-
 df_PS["isCalibration"] = isCalibrationSeed(df_PS["L1SeedName"])
 # if df_PS1["PS"].all() > 1:
 # df_PS1["isCalibration"] = isCalibrationSeed(df_PS1["L1SeedName"])
@@ -276,6 +286,7 @@ for rate_type in ["{}".format(rateType)]:
         "isLepJet",
         "isSums",
         "isZeroBias",
+	"isLLP",
     ]:  # can be extended later: ["isSingleMu", "isMultiMu",...]
         sums[rate_type][category] = (df_PS1[df_PS1[category] == True][rate_type]).sum()
 sumCalib = {}
@@ -288,7 +299,7 @@ for rate_type in ["{}".format(rateType)]:
 # check the results
 #from pprint import pprint
 
-# pprint(sums)
+ #pprint(sums)
 # pprint(sumCalib)
 
 # once all rates have been extracted per category and (probably best) stored in
@@ -303,6 +314,7 @@ categories = {
     "isMultiMu": {"texName":'Multi $\mu$'},
     "isMuEG":    {"texName":'$\mu$ + e/$\gamma$'},
     "isMuJet":   {"texName": '$\mu$ + Jets or Energy sums'},
+    "isLLP":   {"texName": 'LLP seeds (displaced muon or jets)'},
     "isSingleEG":{"texName":'Single e/$\gamma$'},
     "isMultiEG": {"texName":'Multi e/$\gamma$'},
     "isEGJet":{"texName":'e/$\gamma$ + Jets or Energy sums'},
@@ -370,6 +382,8 @@ colours={
     "$\\tau$ + $\mu$ or e/$\gamma$ or Jets or Energy sums":"lime",
     "Energy Sums":"cyan",
     "Zero Bias":"teal",
+    "LLP seeds (displaced muon or jets)":"silver",
+
 }
 wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=[colours[key] for key in labels])
 #wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=plt.cm.tab20.colors)
@@ -441,8 +455,16 @@ for e in ext:
 
 #print ("last line of df: ", df_PS1.iloc[-1,3])
 # df_PS1[df_PS1["isSingleEG"] == True]
-df_PS1[df_PS1["isMultiEG"] == True]
+df_PS1[df_PS1["isMultiMu"] == True]
+## check which seed is in which category
+#print (df_PS1[df_PS1["isMultiEG"]==True])
+#print (df_PS1[df_PS1["isSingleMu"]==True])
+#print (df_PS1[df_PS1["isMultiMu"]==True])
+#print (df_PS1[df_PS1["isLepJet"]==True])
+#print (df_PS1[df_PS1["isMuJet"]==True])
+print (df_PS1[df_PS1["isLLP"]==True])
 
+print (df_PS[df_PS["isCalibration"]==True])
 # make sure that each seed is in only one category
 for i in range(len(df_PS1)):
     if list((df_PS1.iloc[i][7:])).count(True) > 1:
