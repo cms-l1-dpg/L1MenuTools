@@ -233,9 +233,10 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 /////////////////////////
 // Generate conditions //
 /////////////////////////
-
-{# Muon showers: definition of ShowerSignal types;
-it can be done for Centrality signals, as well #}
+{#
+// Muon showers: definition of ShowerSignal types;
+// it can be done for Centrality signals, as well
+#}
 {% set ShowerSignalTypes = (
   tmEventSetup.MuonShower0,
   tmEventSetup.MuonShower1,
@@ -312,9 +313,12 @@ it can be done for Centrality signals, as well #}
     {% if combination01 == tmEventSetup.MuonMuonCombination and combination02 == tmEventSetup.MuonMuonCombination %}
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
-
+{#
+  // Muon showers: associate the condition type and a given template;
+  // it can be done for Centrality signals, as well
+#}
   {% elif cond.getType() in ShowerSignalTypes %}
-    {% include 'SignalsTemplate.cc' %}
+    {% include 'MuonShowerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}

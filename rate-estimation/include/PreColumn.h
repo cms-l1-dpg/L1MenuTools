@@ -42,14 +42,16 @@ class PreColumn
 
     // ====================  ACCESSORS     ===============================
     bool CheckCorrelation();
+    bool CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run3);
     bool EventReset();
     bool InsertInMenu(std::string L1name, bool value);
+    bool InsertInMenu(std::string L1name, bool value, float pu, bool reweight_2018, bool reweight_Run3);
     bool PrintCSV(std::vector<std::string> &out, double scale);
     bool WriteHistogram(TFile *outrootfile);
     bool PrintRates(std::ostream &out, double scale);
     bool PrintPUCSV( std::vector<std::string> &csvout);
     bool BookHistogram();
-    bool FillPileUpSec(float pu);
+    bool FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3);
     bool FillDefHist2D(double &scale);
     bool FillDefHist1D(double &scale);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
@@ -57,7 +59,10 @@ class PreColumn
     bool CalRate(double scale);
     bool PrintMenuRate(double scale) const;
 
-    // ====================  MUTATORS      ===============================
+    float ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3);
+    std::vector<double> h_PUweights;
+
+   // ====================  MUTATORS      ===============================
 
     // ====================  OPERATORS     ===============================
 
@@ -67,6 +72,8 @@ class PreColumn
     // ====================  METHODS       ===============================
     bool CheckPureFire();
     bool CheckPhysFire();
+    bool CheckPureFire(float pu, bool reweight_2018, bool reweight_Run3);
+    bool CheckPhysFire(float pu, bool reweight_2018, bool reweight_Run3);
 
     // ====================  DATA MEMBERS  ===============================
 
@@ -76,13 +83,16 @@ class PreColumn
     bool bybit;
     std::map<std::string, L1Seed> mL1Seed;
     double nFireevents;
-
+     
     std::set<std::string> FireSeed;
     std::set<std::string> FiredPhy;
-    std::map<std::string, int > PhyCounts;
-    std::map<std::string, int > PhyPureCounts;
+    //std::map<std::string, int > PhyCounts;
+    //std::map<std::string, int > PhyPureCounts;
+    std::map<std::string, float > PhyCounts; // float to accept non integer values coming from the reweighting procedure
+    std::map<std::string, float > PhyPureCounts; // float to accept non integer values coming from the reweighting procedure
     std::map<std::string, float > PhyPropCounts;
-    std::map<std::string, std::map<float, int> > L1PUCount; // counting lumi section
+    //std::map<std::string, std::map<float, int> > L1PUCount; // counting lumi section
+    std::map<std::string, std::map<float, float> > L1PUCount; // float to accept non integer values coming from the reweighting procedure
 
     std::map<std::string, TH1F*> HistMap;
     std::map<std::string, TH2F*> Hist2D;

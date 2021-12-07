@@ -7,10 +7,10 @@
 # Date        : 2016 Aug 25
 # Updated by  : Elisa Fontanesi (2021 Jul 1)
 #
-# Description : It allows to create rate vs PU plots starting csv files storing rate per PU information.
-#               Fill 7005 is used as a test (runs 320673 and 320674). 
-#               The csv file containing lumi and pileup information for these runs (run_lumi_fill7005.csv) is included here as an example
-#               to test the basic running of the script.
+# Description : It allows to create rate vs PU plots starting csv files storing rate per PU information.                                                                    
+#               Two csv file containing lumi and pileup information (for ZeroBias and Run 3 MC) are provided to test the basic running of the script.                         
+#               Fill 7005 is used as a test using ZeroBias (runs 320673 and 320674) with the corresponding csv file.                                                           
+#               EXAMPLE COMMAND: python CompPUDep.py --outfolder Run3MC_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv  --reweightRun3 True --seed L1APhysics
 
 import pandas as pd
 import numpy as np
@@ -30,7 +30,7 @@ ROOT.gROOT.SetBatch(True)
 parser = argparse.ArgumentParser()
 parser.add_argument('--outfolder',
         help='Specify details for the output folder',
-        default='20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1',
+        default='Run3MC_Prescale_2022_v0_1_1',
         type=str)
 parser.add_argument('--csv',
         help='Name of the csv file containing rates as a function of pileup',
@@ -41,11 +41,22 @@ parser.add_argument('--seed',
         nargs="*",
         default=['L1APhysics'],
         type=str)
+parser.add_argument('--reweight2018',
+        help='Specify if the 2018 reweighting is performed or not',
+        default=False,
+        type=bool)
+parser.add_argument('--reweightRun3',
+        help='Specify if the Run 3 reweighting is performed or not',
+        default=False,
+        type=bool)
 
 args = parser.parse_args()
 outfolder_details = args.outfolder
 csvfile_rateVSpileup = args.csv
 seedList = args.seed
+isReweight2018 = args.reweight2018
+isReweightRun3 = args.reweightRun3
+
 print("List of L1 seeds considered: %r" % args.seed)
 
 plot_min = 0
@@ -55,24 +66,10 @@ maxy = 200
 fit_min = 20
 fit_max = 60
 
-############ For 1866 bunches ############
-#PU = 61		#61.00 for col 1.6
-#PU = 57		#57.19 for col 1.5
-#PU = 50		#49.56 for col 1.3
-#PU = 38		#38.12 for col 1.0
-############ For 2544 bunches ############
-#PU = 62		#61.52 for col 2.2
-#PU = 60
-#PU = 56		#55.93 for col 2.0
-#PU = 50		#50.33 for col 1.8
-#PU = 40
-##########################################
-
 # Setup: Run 2 2018
 freq = 11245.6
 nBunches = 2544
 unit = "kHz"
-config = 2018
 
 fitname = ROOT.TF1("fitname","[0]*x + [1]*x*x",0,70);
 fitname.SetParameters(0.1,0.001);
@@ -88,14 +85,29 @@ pumap = collections.defaultdict(list)
 #PatMap = {seedName : seedName}
 PatMap = {seedName:seedName for seedName in seedList}
 
+if (isReweight2018 or isReweightRun3):
+    isReweight = True
+
+def ExtractPileUpWeight(pu):
+    # WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution: 
+    # see here -> https://elfontan.web.cern.ch/elfontan/Run3_MENU/PileupReweighting/weights_nPV_True.png.
+    # A weight equal to 0 is set in bins where the number of events in data is less than 100.
+    h_weights_2018 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.7805557154345164, 1.8060490539875227, 1.8429444310772023, 1.8847969284653239, 1.9023685309193448, 1.9237248769457562, 1.9052231983237566, 1.9323838791307304, 1.9085059563417344, 1.8603791701197574, 1.7603108386627149, 1.6756647663900748, 1.5370617605401784, 1.3999688210755514, 1.259781632746541, 1.113578483437248, 0.9458259616433159, 0.8004237934065365, 0.67859967863879, 0.5416839609316458, 0.4312760960624466, 0.3410534695481281, 0.2670644366287844, 0.20005146208632094, 0.15028893320205652, 0.10953206021410954, 0.08057347625153384, 0.05889674651099118, 0.04287951951844378, 0.03136484854119283, 0.022045797907650135, 0.015338620880659437, 0.011042294804776033, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    h_weights_Run3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.11768066610316973, 0.15659943608123963, 0.2062485504625545, 0.268258220098052, 0.33984423319498697, 0.42640469375359685, 0.5188836993090095, 0.6415574459968488, 0.7679292883090271, 0.9038989080521145, 1.0312039036982403, 1.184185989240607, 1.3135745255235602, 1.452683767877649, 1.595818724793107, 1.7332340493078218, 1.8220240159036707, 1.9232725225809801, 2.0500456898039943, 2.0735607093466237, 2.107312361581553, 2.1410569727220117, 2.1657353540686484, 2.1041608280359783, 2.055486270892838, 1.9497829996617755, 1.865648229655712, 1.770365292692509, 1.6681387392525582, 1.573366538275714, 1.4204671249736036, 1.2648609312008994, 1.1619530797268465, 1.032957960295197, 0.9106977649201128, 0.8043353997543611, 0.7051914455399683, 0.5998090800948392, 0.522684322280154, 0.43992380960221283, 0.36786673008123166, 0.31065622561951234, 0.2568458813937691, 0.20984708112111544, 0.1707654623586224, 0.13792878579949355, 0.11263581096823445, 0.08921848542040954, 0.07125932229597162, 0.05617010906326074, 0.04314936365485068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    if (isReweight2018):
+        weight = h_weights_2018[pu]
+    elif (isReweightRun3):
+        weight = h_weights_Run3[pu]
+    return weight
+
 def DrawPU(canvas, f, l1seed, count, key=None):
     list_fromDrawPU = [] # Making Python objects used here known within the DrawL1 function  
     df = f[(f.L1Seed == l1seed )]
-
+    #print "\n Dataframe:\n", df
     for i in range(0, len(pubins) -1):
         pumap[pubins[i]] = []
-        pumap[pubins[i]].append(df[np.logical_and(df.PileUp > pubins[i], df.PileUp <= pubins[i+1])].Fired0.sum())
-        pumap[pubins[i]].append(df[np.logical_and(df.PileUp > pubins[i], df.PileUp <= pubins[i+1])].Total.sum())
+        pumap[pubins[i]].append(df[np.logical_and(df.PileUp >= pubins[i], df.PileUp < pubins[i+1])].Fired0.sum() )
+        pumap[pubins[i]].append(df[np.logical_and(df.PileUp >= pubins[i], df.PileUp < pubins[i+1])].Total.sum() )
 
     x = []
     y = []
@@ -105,10 +117,18 @@ def DrawPU(canvas, f, l1seed, count, key=None):
             x.append(k)
             if unit == "Hz":
                 y.append(float(v[0])/v[1] * freq * nBunches )
-                yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches )
+                if (isReweight):
+                    w = ExtractPileUpWeight(k)
+                    yerr.append( math.sqrt(float(v[0])*w)/v[1] * freq * nBunches )
+                else:
+                    yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches )                    
             if unit == "kHz":
                 y.append(float(v[0])/v[1] * freq * nBunches / 1000)
-                yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches / 1000)
+                if (isReweight):
+                    w = ExtractPileUpWeight(k)
+                    yerr.append( math.sqrt(float(v[0])*w)/v[1] * freq * nBunches / 1000 )
+                else:
+                    yerr.append( math.sqrt(float(v[0]))/v[1] * freq * nBunches / 1000 )
 
     ## Draw the plot
     graph = ROOT.TGraphErrors(len(x))

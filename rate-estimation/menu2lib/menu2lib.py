@@ -43,15 +43,6 @@ PREFIX = {
   tmEventSetup.MUSOOT1: 'muonShower'
 }
 
-# Muon showers: Add mapping for event setup types to L1Analysis types;
-# it can be done for Centrality signals, as well
-ANALYSIS_TYPES = {
-  tmEventSetup.MUS0: 'kOneNominal', # how to map these types?
-  tmEventSetup.MUS1: 'kOneTight',
-  tmEventSetup.MUSOOT0: 'kInvalid',
-  tmEventSetup.MUSOOT1: 'kInvalid'
-}
-
 ###########
 # Helpers #
 ###########
@@ -196,10 +187,10 @@ def sortObjects(obj1, obj2):
     return obj2, obj1
 
   # Muon showers
-  #elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
-  #  if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
-  #                            tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
-  #    return obj2, obj1
+  elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
+    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
+                              tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
+      return obj2, obj1
   return obj1, obj2
 
 
@@ -408,10 +399,6 @@ def warning(message):
   print(message)
   return ''
 
-# Muon showers: add filter function to get analysis type for use in templates
-def getAnalysisType(key):
-  return ANALYSIS_TYPES[key.getType()]
-
 def render(menu, template):
   module_dir = os.path.dirname(os.path.abspath(__file__))
   templates_dir = os.path.join(module_dir, 'templates')
@@ -440,7 +427,6 @@ def render(menu, template):
   j2_env.filters['getIndexCut'] = getIndexCut
   j2_env.filters['getScale'] = getScale
   j2_env.filters['getLookUpTable'] = getLookUpTable
-  j2_env.filters['getAnalysisType'] = getAnalysisType # Muon showers
   data = {
     "tmGrammar": tmGrammar,
     "tmEventSetup": tmEventSetup,
