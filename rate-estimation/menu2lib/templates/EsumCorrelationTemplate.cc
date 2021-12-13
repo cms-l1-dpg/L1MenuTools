@@ -26,8 +26,8 @@
   {% set type = 'L1Analysis::kMissingEtHF' %}
 {% elif esum.getType() == tmEventSetup.HTM -%}
   {% set type = 'L1Analysis::kMissingHt' %}
-{#Changed ETMHF-HTM from object to esum yypes#}
 {% endif -%}
+{#Changed ETMHF-HTM from object to esum types#}
 
 {% set iPi = (0.5*(phiScale.getMaximum() - phiScale.getMinimum())/phiScale.getStep()) | int -%}
 
