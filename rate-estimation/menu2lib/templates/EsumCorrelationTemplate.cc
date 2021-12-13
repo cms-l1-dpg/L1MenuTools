@@ -22,10 +22,11 @@
 
 {% if esum.getType() == tmEventSetup.ETM -%}
   {% set type = 'L1Analysis::kMissingEt' %}
-{% elif object.getType() == tmEventSetup.HTM -%}
-  {% set type = 'L1Analysis::kMissingHt' %}
-{% elif object.getType() == tmEventSetup.ETMHF -%}
+{% elif esum.getType() == tmEventSetup.ETMHF -%}
   {% set type = 'L1Analysis::kMissingEtHF' %}
+{% elif esum.getType() == tmEventSetup.HTM -%}
+  {% set type = 'L1Analysis::kMissingHt' %}
+{#Changed ETMHF-HTM from object to esum yypes#}
 {% endif -%}
 
 {% set iPi = (0.5*(phiScale.getMaximum() - phiScale.getMinimum())/phiScale.getStep()) | int -%}
