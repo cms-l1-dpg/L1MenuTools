@@ -5,23 +5,21 @@ print '\nSTART\n'
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-jobName = "menu_Nu_11_0_X"
+jobName = "menu_Nu_12_0_X"
 jobCfg = "mc.py"
 jobScript = "cmsRun.sh"
-rel = "CMSSW_11_2_0"
+rel = "CMSSW_12_0_2"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
 rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-fileList = rootDir + "nu.list" 
-nEvents = 11400 
-nJobs = 88
-
-
-
-
- 
+fileList = rootDir + "nu_PtGun.list" 
+nEvents = 999600  #NuGun_Pt_2-20                                                                         
+nJobs = 2499      #NuGun_Pt_2-20                                                                                                                             
+#fileList = rootDir + "nugun_E10.list"
+#nEvents = 999200  #NuGun_E10                                                                                                                                                
+#nJobs = 2498      #NuGun_E10  
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
