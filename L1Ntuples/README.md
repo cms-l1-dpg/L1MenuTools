@@ -13,6 +13,8 @@ on HTCondor.
 
 ## 1. Environment setup
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
+
+**NOTE**: the LUT file newSFHBHEOnp5_METPUM_211124.txt is not available in central cmssw yet. At the moment, it has to be included manually. See the last comment in [PR#63](https://github.com/cms-l1-dpg/L1MenuTools/pull/63) for the temporary recipe.
 ```
 cmsrel CMSSW_12_0_2
 cd CMSSW_12_0_2/src
