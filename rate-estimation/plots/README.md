@@ -15,7 +15,7 @@ The following arguments can be provided to run the script:
 
 Default settings correspond to the following command provided as an example:
 ```
-python CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv --seed L1APhysics --reweight False
+python3 CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv --seed L1APhysics --reweight False
 ```
 
 NOTES: 
