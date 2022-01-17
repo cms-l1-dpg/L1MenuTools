@@ -112,7 +112,7 @@ def DrawPU(canvas, f, l1seed, count, key=None):
     x = []
     y = []
     yerr = []
-    for k, v in pumap.iteritems():
+    for k, v in pumap.items():
         if v[1] != 0:
             x.append(k)
             if unit == "Hz":
@@ -204,7 +204,7 @@ def DrawL1(key, pattern):
         if pat.match(x):
             inputlist.append(x)
     #print key, " : ",  inputlist
-    print key,
+    print (key, )
 
     for i, seed in enumerate(inputlist):
         pbuf = DrawPU(c1, df, seed, i)
