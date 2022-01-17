@@ -56,6 +56,7 @@ csvfile_rateVSpileup = args.csv
 seedList = args.seed
 isReweight2018 = args.reweight2018
 isReweightRun3 = args.reweightRun3
+isReweight = False
 
 print("List of L1 seeds considered: %r" % args.seed)
 
