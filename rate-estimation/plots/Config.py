@@ -39,6 +39,6 @@ S1S2Map = {
     # "L1_ETM70"            : "L1_HTM100" ,
 }
 
-S2S1Map = dict((v, k) for k, v in S1S2Map.iteritems())
+S2S1Map = dict((v, k) for k, v in S1S2Map.items())
 DualMap = S2S1Map.copy()
 DualMap.update(S1S2Map)
