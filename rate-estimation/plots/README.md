@@ -11,11 +11,11 @@ The following arguments can be provided to run the script:
 * Name of the output folders: --outfolder
 * Name of the csv file containing rates as a function of pileup: --csv
 * Name of the L1 seeds for which rates are plotted as a function of the pileup: --seed 
-* Boolean choice (False or True) if the reweighting is performed or not: --reweight
+* Boolean choice (False or True) if the reweighting is performed or not: --reweightRun3 or --reweight2018
 
 Default settings correspond to the following command provided as an example:
 ```
-python3 CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv --seed L1APhysics --reweight False
+python3 CompPUDep.py --outfolder 20210702_Run2ZB_fill7005_Prescale_2022_v0_1_1 --csv Run3_ZeroBias_123_20212906_rateVSpileup_PU.csv --seed L1APhysics --reweightRun3 False
 ```
 
 NOTES: 
