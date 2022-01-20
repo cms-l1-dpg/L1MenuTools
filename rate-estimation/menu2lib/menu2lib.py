@@ -158,7 +158,7 @@ def hasCorrelationCuts(condition):
 
   for cut in condition.getCuts():
     if cut.getCutType() in (tmEventSetup.DeltaEta, tmEventSetup.OvRmDeltaR, tmEventSetup.Mass, tmEventSetup.MassUpt,
-                            tmEventSetup.OvRmDeltaEta, tmEventSetup.DeltaR):
+                            tmEventSetup.OvRmDeltaEta, tmEventSetup.DeltaR, tmEventSetup.MassDeltaR):
       requireDeltaEta = True
 
   if requireDeltaEta:
@@ -349,6 +349,8 @@ def getLookUpTable(scaleMap, obj1, obj2):
   precisionMath = getPrecision(scaleMap, obj1, obj2, 'Math')
   precisionPt = getPrecision(scaleMap, obj1, obj2, 'MassPt')
 
+  precisionInvDeltaR = getPrecision(scaleMap, obj1, obj2, 'InverseDeltaRMath')
+
   has_deta = not (isVectorSum(obj1) or isVectorSum(obj2))
   convert = ((obj1.getType() != obj2.getType())
              and
@@ -373,6 +375,8 @@ def getLookUpTable(scaleMap, obj1, obj2):
     rc['COSH_DETA'] = "LUT_COSH_DETA_%s_%s" % (getObjectName(obj1), getObjectName(obj2))
     rc['PREC_DR'] = 2*precisionDelta
 
+    rc['PREC_INVDR'] = precisionInvDeltaR
+
   if convert:
     if obj1.getType() == tmEventSetup.Muon:
       rc['CONV_PHI'] = 'LUT_PHI_%s2%s' % (getObjectName(obj2), getObjectName(obj1))
@@ -386,6 +390,8 @@ def getLookUpTable(scaleMap, obj1, obj2):
         rc['ETA_OFFSET'] = 2**getScale(scaleMap, obj1, tmGrammar.ETA).getNbits()
   return rc
 
+def toMassDeltaR(value):
+  return "%.2f" % math.sqrt(2.*value)
 
 def toMass(value):
   return math.sqrt(2.*value)
@@ -419,6 +425,7 @@ def render(menu, template):
   j2_env.filters['warning'] = warning
   j2_env.filters['toMass'] = toMass
   j2_env.filters['toDeltaR'] = toDeltaR
+  j2_env.filters['toMassDeltaR'] = toMassDeltaR
   j2_env.filters['chkChgCor'] = chkChgCor
   j2_env.filters['getPrefix'] = getPrefix
   j2_env.filters['isMuon'] = isMuon
