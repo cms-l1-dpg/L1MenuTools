@@ -59,10 +59,6 @@ def getObjectName(key):
     tmEventSetup.MUS1: tmGrammar.MUS1,
     tmEventSetup.MUSOOT0: tmGrammar.MUSOOT0,
     tmEventSetup.MUSOOT1: tmGrammar.MUSOOT1
-    #tmEventSetup.MuonShower0: tmGrammar.MUS0,
-    #tmEventSetup.MuonShower1: tmGrammar.MUS1,
-    #tmEventSetup.MuonShowerOutOfTime0: tmGrammar.MUSOOT0,
-    #tmEventSetup.MuonShowerOutOfTime1: tmGrammar.MUSOOT1
   }[key.getType()]
 
 
