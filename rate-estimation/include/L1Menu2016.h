@@ -184,15 +184,8 @@ class L1Menu2016 : public L1AlgoFactory
     double scale;
     //unsigned int nZeroBiasevents;
     //unsigned int nZeroBiasevents_PUrange;
-    float nZeroBiasevents; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_PUrange; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_0_10; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_10_20; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_20_30; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_30_40; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_40_50; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_50_60; // float to accept non integer values coming from the reweighting procedure
-    float nZeroBiasevents_over60; // float to accept non integer values coming from the reweighting procedure
+    double nZeroBiasevents; // double to accept non integer values coming from the reweighting procedure
+    double nZeroBiasevents_PUrange; // double to accept non integer values coming from the reweighting procedure
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;
