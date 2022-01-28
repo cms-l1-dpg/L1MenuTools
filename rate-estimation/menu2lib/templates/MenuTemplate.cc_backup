@@ -276,11 +276,8 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, ) %}
     {% include 'CaloMuonCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm) %}
+  {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
     {% include 'CaloCaloCorrelationTemplate.cc' %}
-
-  {% elif cond.getType() in (tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
-    {% include 'CaloThreeObjectCorrelationTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.InvariantMass, tmEventSetup.InvariantMassOvRm) %}
     {% set objects = cond.getObjects() %}
