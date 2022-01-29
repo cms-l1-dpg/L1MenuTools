@@ -204,7 +204,7 @@
 {# set displaced jet bit #}
 {% elif cut.getCutType() == tmEventSetup.Displaced %}
         // displaced jet bit : {{"0x%x" % cut.getData() | int }}
-        if (not (({{"0x%x" % cut.getData() | int}} >> data->{{prefix}}Disp.at({{idx}})) & 1)) continue;
+        if (not (({{"0x%x" % cut.getData() | int}} >> data->{{prefix}}hwQual.at({{idx}})) & 1)) continue;
 
 {# set charge #}
 {% elif cut.getCutType() == tmEventSetup.Charge %}
