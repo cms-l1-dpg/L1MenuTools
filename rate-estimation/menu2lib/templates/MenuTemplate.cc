@@ -290,7 +290,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
     {% elif combination == tmEventSetup.CaloMuonCombination %}
       {% include 'CaloMuonCorrelationTemplate.cc' %}
     {% elif combination == tmEventSetup.CaloCaloCombination %}
-      {% include 'CaloCaloCorrelationTemplate.cc' %}
+      {% if cond.getType() == tmEventSetup.InvariantMass %}
+        {% include 'CaloCaloCorrelationTemplate.cc' %}	
+      {% elif cond.getType() == tmEventSetup.InvariantMassOvRm %}
+        {% include 'CaloThreeObjectCorrelationTemplate.cc' %}	
+      {% endif %}
     {% endif %}
 
   {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, ) %}
