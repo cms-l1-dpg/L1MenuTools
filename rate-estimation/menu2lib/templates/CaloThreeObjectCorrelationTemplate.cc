@@ -115,10 +115,11 @@ bool
 	      if ((cutDeltaR2Min <= deltaR2) and (deltaR2 <= cutDeltaR2Max)) continue;
 		}
 
+	    {% endif %}
+
 	      pass = true;
 	      break;
 
-	    {% endif %}
 	    {% endfor %}
 	  }
 
