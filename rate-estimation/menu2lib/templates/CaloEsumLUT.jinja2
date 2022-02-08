@@ -93,7 +93,6 @@ const int LUT_DPHI_JET_HTM[] = {
 {%- endfor -%}
 };
 
-{% if menu.getVersion() >= "0.3" %}
 {% set key = [tmEventSetup.PRECISION, tmGrammar.JET, tmGrammar.ETMHF, 'Delta'] | join("-") %}
 {% if key in scaleMap.keys() %}
 {% set jet_etmhf_delta = scaleMap | getDeltaLut(tmGrammar.JET, tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
@@ -102,7 +101,6 @@ const int LUT_DPHI_JET_ETMHF[] = {
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
-{% endif %}
 {% endif %}
 
 {# mass #}
@@ -127,7 +125,6 @@ const int LUT_COS_DPHI_JET_HTM[] = {
 {%- endfor -%}
 };
 
-{% if menu.getVersion() >= "0.3" %}
 {% set key = [tmEventSetup.PRECISION, tmGrammar.JET, tmGrammar.ETMHF, 'Delta'] | join("-") %}
 {% if key in scaleMap.keys() %}
 const int prec_jet_etmhf_delta = {{ scaleMap | getPrecisionByName('JET', 'ETMHF', 'Delta') }};
@@ -140,7 +137,6 @@ const int LUT_COS_DPHI_JET_ETMHF[] = {
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
-{% endif %}
 {% endif %}
 
 
@@ -163,7 +159,6 @@ const int LUT_DPHI_TAU_HTM[] = {
 {%- endfor -%}
 };
 
-{% if menu.getVersion() >= "0.3" %}
 {% set key = [tmEventSetup.PRECISION, tmGrammar.TAU, tmGrammar.ETMHF, 'Delta'] | join("-") %}
 {% if key in scaleMap.keys() %}
 {% set tau_etmhf_delta = scaleMap | getDeltaLut(tmGrammar.TAU, tmGrammar.ETMHF, (tmGrammar.PHI,)) %}
@@ -172,7 +167,6 @@ const int LUT_DPHI_TAU_ETMHF[] = {
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
-{% endif %}
 {% endif %}
 
 {# mass #}
@@ -197,7 +191,6 @@ const int LUT_COS_DPHI_TAU_HTM[] = {
 {%- endfor -%}
 };
 
-{% if menu.getVersion() >= "0.3" %}
 {% set key = [tmEventSetup.PRECISION, tmGrammar.TAU, tmGrammar.ETMHF, 'Delta'] | join("-") %}
 {% if key in scaleMap.keys() %}
 const int prec_tau_etmhf_delta = {{ scaleMap | getPrecisionByName('TAU', 'ETMHF', 'Delta') }};
@@ -210,7 +203,6 @@ const int LUT_COS_DPHI_TAU_ETMHF[] = {
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
-{% endif %}
 {% endif %}
 
 
@@ -230,13 +222,11 @@ const int LUT_HTM_ET[] = {
 };
 
 
-{% if menu.getVersion() >= "0.3" %}
 {% set precision = scaleMap | getPrecisionByName(tmGrammar.EG, tmGrammar.ETMHF, 'MassPt') %}
 const int LUT_ETMHF_ET[] = {
 {% for x in scaleMap | getEtLut(tmGrammar.ETMHF, precision) -%}
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
-{% endif %}
 
 {# eof #}

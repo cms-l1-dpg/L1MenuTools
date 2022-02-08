@@ -7,7 +7,7 @@ import os
 import re
 import string
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 import tmGrammar
 import tmEventSetup
@@ -402,7 +402,7 @@ def warning(message):
 def render(menu, template):
   module_dir = os.path.dirname(os.path.abspath(__file__))
   templates_dir = os.path.join(module_dir, 'templates')
-  j2_env = Environment(loader=FileSystemLoader(templates_dir), trim_blocks=True)
+  j2_env = Environment(loader=FileSystemLoader(templates_dir), trim_blocks=True, undefined=StrictUndefined)
 
   j2_env.add_extension('jinja2.ext.loopcontrols')
   j2_env.filters['toDecimal'] = toDecimal
