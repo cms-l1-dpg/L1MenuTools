@@ -227,7 +227,7 @@
     {
   {# local variables #}
   {% set cuts = object.getCuts() %}
-  {% set phiWindow = [] %}
+  {% set phiWindows = [] %}
   {# loop over cuts #}
   {% for cut in cuts %}
     {% if cut.getCutType() == tmEventSetup.Threshold %}
@@ -435,7 +435,7 @@
 
   // remove overlap -- target: {{obj_tgt.getName()}}
   {% for cut in cond.getCuts() %} {# extract cut values #}
-  {% if cut.getCutType() == tmEventSetup.OvRmDelta %}
+  {% if cut.getCutType() == tmEventSetup.OvRmDeltaEta %}
   // {{cut.getMinimum().value}} <= DeltaEta <= {{cut.getMaximum().value}}
   long long minDeltaEta = std::numeric_limits<long long>::max();
   const long long cutDeltaEtaMin = {{(cut.getMinimum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMinimum().value}} * 10^{{LUTS.PREC_DELTA}}
