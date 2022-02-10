@@ -201,6 +201,11 @@
         // impact parameter : {{"0x%x" % cut.getData() | int }}
         if (not (({{"0x%x" % cut.getData() | int}} >> data->{{prefix}}Dxy.at({{idx}})) & 1)) continue;
 
+{# set displaced jet bit #}
+{% elif cut.getCutType() == tmEventSetup.Displaced %}
+        // displaced jet bit : {{"0x%x" % cut.getData() | int }}
+        if (not (({{"0x%x" % cut.getData() | int}} & data->{{prefix}}HwQual.at({{idx}})) & 1)) continue;
+
 {# set charge #}
 {% elif cut.getCutType() == tmEventSetup.Charge %}
         // charge : {{ cut.getData() }}
