@@ -60,7 +60,7 @@ bool
 {{ macros.getSameTypeCorrelationCuts(prefix0, 'ii', 'jj', cond, tmEventSetup, LUTS, iPi) }}
 
   {% for cut in cond.getCuts() %} {# extract cut values #}
-    {% if cut.getCutType() == tmEventSetup.OvRmDeltaR %}
+    {% if cut.getCutType() == tmEventSetup.OvRmDeltaEta %}
      // {{cut.getMinimum().value}} <= DeltaEta <= {{cut.getMaximum().value}}
      const long long cutDeltaEtaMin = {{(cut.getMinimum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMinimum().value}} * 10^{{LUTS.PREC_DELTA}}
      const long long cutDeltaEtaMax = {{(cut.getMaximum().value * 10**LUTS.PREC_DELTA) | int}}; // {{cut.getMaximum().value}} * 10^{{LUTS.PREC_DELTA}}
