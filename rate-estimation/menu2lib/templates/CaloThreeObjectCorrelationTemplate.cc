@@ -116,11 +116,11 @@ bool
 		}
 
 	    {% endif %}
+	    {% endfor %}
 
 	      pass = true;
 	      break;
 
-	    {% endfor %}
 	  }
 
       if (pass) break;
