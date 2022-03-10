@@ -47,7 +47,7 @@ bool
 {{ macros.getObjectCuts(prefix0, 'ii', objects[0], tmEventSetup, nEtaBits0) }}
 
     size_t nobj1 = 0;
-    for (size_t jj = 0; jj < data->{{prefix1}}Bx.size(); jj++)
+    for (size_t jj = ii+1 ; jj < data->{{prefix1}}Bx.size(); jj++)
     {
       if (not (data->{{prefix1}}Bx.at(jj) == {{ objects[1].getBxOffset() }})) continue;
       nobj1++;
