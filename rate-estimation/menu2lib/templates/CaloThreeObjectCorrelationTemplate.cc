@@ -30,12 +30,13 @@
 
 bool
 {{ cond.getName() }}
-//test
 (L1Analysis::L1AnalysisL1UpgradeDataFormat* data)
 {
 {{ macros.getReference(reference, tmEventSetup, nEtaBits) }}
   bool pass = false;
   size_t nobj0 = 0;
+
+  //Loop over leg1
   for (size_t ii = 0; ii < data->{{prefix0}}Bx.size(); ii++)
   {
     if (not (data->{{prefix0}}Bx.at(ii) == {{ objects[0].getBxOffset() }})) continue;
@@ -47,6 +48,7 @@ bool
 {{ macros.getObjectCuts(prefix0, 'ii', objects[0], tmEventSetup, nEtaBits0) }}
 
     size_t nobj1 = 0;
+    //Loop over leg2, starting from index of leg1 + 1 to avoid double counting pairs.
     for (size_t jj = ii+1 ; jj < data->{{prefix1}}Bx.size(); jj++)
     {
       if (not (data->{{prefix1}}Bx.at(jj) == {{ objects[1].getBxOffset() }})) continue;
@@ -57,6 +59,7 @@ bool
       {{ macros.checkObjectIndex(objects[1], 'nobj1') }}
 
 {{ macros.getObjectCuts(prefix1, 'jj', objects[1], tmEventSetup, nEtaBits1) }}
+//Check for correlation requirements between leg1 and leg2
 {{ macros.getSameTypeCorrelationCuts(prefix0, 'ii', 'jj', cond, tmEventSetup, LUTS, iPi) }}
 
   {% for cut in cond.getCuts() %} {# extract cut values #}
@@ -77,9 +80,12 @@ bool
      {% endif %}
   {% endfor %}
 
+	//Loop over saved reference objects (leg3)
 	for (size_t kk = 0; kk < reference.size(); kk++)
 	  {
 	    const int index = reference.at(kk);
+
+	    //Check for correlation conditions between leg1-leg3 and leg2-leg3
 	    {% for cut in cond.getCuts() %}
 	    {% if cut.getCutType() == tmEventSetup.OvRmDeltaEta %}
 		{
