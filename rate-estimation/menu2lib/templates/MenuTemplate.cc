@@ -276,8 +276,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() in (tmEventSetup.CaloMuonCorrelation, ) %}
     {% include 'CaloMuonCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
+  {% elif cond.getType() in (tmEventSetup.CaloCaloCorrelation, tmEventSetup.CaloCaloCorrelationOvRm) %}
     {% include 'CaloCaloCorrelationTemplate.cc' %}
+
+  {% elif cond.getType() in (tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
+    {% include 'CaloThreeObjectCorrelationTemplate.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.InvariantMass, tmEventSetup.InvariantMassOvRm) %}
     {% set objects = cond.getObjects() %}
@@ -287,7 +290,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
     {% elif combination == tmEventSetup.CaloMuonCombination %}
       {% include 'CaloMuonCorrelationTemplate.cc' %}
     {% elif combination == tmEventSetup.CaloCaloCombination %}
-      {% include 'CaloCaloCorrelationTemplate.cc' %}
+      {% if cond.getType() == tmEventSetup.InvariantMass %}
+        {% include 'CaloCaloCorrelationTemplate.cc' %}	
+      {% elif cond.getType() == tmEventSetup.InvariantMassOvRm %}
+        {% include 'CaloThreeObjectCorrelationTemplate.cc' %}	
+      {% endif %}
     {% endif %}
 
   {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, ) %}
