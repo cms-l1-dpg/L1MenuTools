@@ -1,7 +1,6 @@
 # L1Ntuples production recipe
 
-The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples
-for L1 menu studies.
+The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples for L1 menu studies.
 
 The targeted environment is Lxplus and assumes a standard session:
 ```
@@ -30,8 +29,8 @@ scram b -j 8
 ```
 
 ## 2. Download the L1MenuTools/L1Ntuples code
-Clone this repository into your `$CMSSW_BASE/src/` folder. If you followed the
-instructions above, all you need to do is
+Clone this repository into your `$CMSSW_BASE/src/` folder. 
+If you followed the instructions above, all you need to do is
 ```
 git clone https://github.com/cms-l1-dpg/L1MenuTools.git
 ```
@@ -44,7 +43,7 @@ cd L1MenuTools/L1Ntuples
 and customize the HTCondor submission script `condor_sub.py` according to your needs:
 - `eosDir`: output folder for batch jobs (user must have write permissions)
 - `nEvents`: number of events to process
-- `nJobs`: number of jobs to run
+- `nJobs`: number of jobs to run corresponding to the number of files
 
 
 ## 4. Submit the production

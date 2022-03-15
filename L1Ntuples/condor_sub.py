@@ -14,12 +14,12 @@ rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-#fileList = rootDir + "nugun_Pt2-20.list" 
-#nEvents = 1000000  #NuGun_Pt_2-20                                                                         
-#nJobs = 1250      #NuGun_Pt_2-20                                                                                                                             
-fileList = rootDir + "nugun_E10.list"
-nEvents = 1000000  #NuGun_E10                                                                                                                                                
-nJobs = 1250      #NuGun_E10  
+fileList = rootDir + "nugun_Pt2-20.list" 
+nEvents = 1000000  #NuGun_Pt_2-20                                                                         
+nJobs = 1250      #NuGun_Pt_2-20                                                                                                                             
+#fileList = rootDir + "nugun_E10.list"
+#nEvents = 1000000  #NuGun_E10                                                                                                                                                
+#nJobs = 1250      #NuGun_E10  
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
@@ -37,7 +37,7 @@ while ret == 0:
 
    with open(jobDir + jobName + '.jdl', 'w') as jdl:
       jdl.write("universe = vanilla\n")
-      #jdl.write("x509userproxy = $ENV(X509_USER_PROXY)\n")
+      jdl.write("x509userproxy = $ENV(X509_USER_PROXY)\n")
       jdl.write("Executable = " + jobScript + "\n")
       jdl.write("Should_Transfer_Files = YES\n")
       jdl.write("WhenToTransferOutput = ON_EXIT\n")
