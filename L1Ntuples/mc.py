@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=123X_mcRun3_2021_realistic_v11 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2022_v0_1 --filein=/store/mc/Run3Summer21DRPremix/SingleNeutrino_E-10-gun/GEN-SIM-DIGI-RAW/SNB_120X_mcRun3_2021_realistic_v6-v2/2540000/f1c1570f-fa5e-4463-8fa0-65ab504c4303.root 
+# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=123X_mcRun3_2021_realistic_v11 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2021_v0_2 --filein=/store/mc/Run3Summer21DRPremix/SingleNeutrino_E-10-gun/GEN-SIM-DIGI-RAW/SNB_120X_mcRun3_2021_realistic_v6-v2/2540000/f1c1570f-fa5e-4463-8fa0-65ab504c4303.root 
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -132,10 +132,10 @@ from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
 process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2022_v0_1
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2021_v0_2
 
-#call to customisation function L1TSettingsToCaloParams_2022_v0_1 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2022_v0_1(process)
+#call to customisation function L1TSettingsToCaloParams_2021_v0_2 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2021_v0_2(process)
 
 # End of customisation functions
 
