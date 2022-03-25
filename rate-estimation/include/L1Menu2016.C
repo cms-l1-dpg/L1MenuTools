@@ -101,7 +101,7 @@ bool L1Menu2016::InitConfig()
 {
   L1Config["SumJetET"]          = 0;
   L1Config["SumJetEta"]         = 999;
-  L1Config["nBunches"]          = 2544; //default for Run 2
+  L1Config["nBunches"]          = 2736; // Default for Run 2 = 2544 
   L1Config["doPlotRate"]        = 0;
   L1Config["doPlotEff"]         = 0;
   L1Config["doPlotTest"]        = 0;
