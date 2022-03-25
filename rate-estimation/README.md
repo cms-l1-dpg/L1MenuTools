@@ -90,7 +90,7 @@ Components have been provided to run a short test.
 ```bash
 ./testMenu2016 \
 -m menu/Prescale_2022_v0_1_1.csv -l ntuple/Run3_NuGun_MC_ntuples.list \
--o test -b 2544 --doPlotRate --doPlotEff --SelectCol 2E+34 \    
+-o test -b 2736 --doPlotRate --doPlotEff --SelectCol 2E+34 \    
 --doPrintPU --allPileUp --doReweightingRun3 --maxEvent 200000
 ```
 This will take only a few minutes and output test.csv, test.root, test.txt, and test_PU.txt into the results/ directory.

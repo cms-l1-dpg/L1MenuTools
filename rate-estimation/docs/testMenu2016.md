@@ -17,7 +17,7 @@ Finally, run `make -j 4`.
 
 ## Test run
 Components (apart from menulib.hh and menulib.cc) are provided to run a short test.
-`./testMenu2016 -u menu/run_lumi.csv -m menu/Prescale_2018_v2_1_0_Col_2.0.txt -l ntuple/fill_7118_nanoDST_shifter_lxplus_test.list -o test -b 2544 --doPlotRate --doPlotEff --UseUnpackTree`
+`./testMenu2016 -u menu/run_lumi.csv -m menu/Prescale_2018_v2_1_0_Col_2.0.txt -l ntuple/fill_7118_nanoDST_shifter_lxplus_test.list -o test -b 2736 --doPlotRate --doPlotEff --UseUnpackTree`
 This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
 Make sure you have set up the virtual environment as specified in the rate-estimation README, are in a CMSSW environment (ie- you have run `cmsenv`), and have run `make -j 4` since acquiring menulib.hh and menulib.cc.
 
