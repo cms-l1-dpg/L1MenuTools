@@ -264,6 +264,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
                              tmEventSetup.TowerCount) %}
     {% include 'EsumTemplate.cc' %}
 
+  {% elif cond.getType() in (tmEventSetup.AsymmetryEt, tmEventSetup.AsymmetryHt, tmEventSetup.AsymmetryEtHF, tmEventSetup.AsymmetryHtHF)  %}
+    {% include 'AsymTemplate.cc' %}
+
   {% elif cond.getType() == tmEventSetup.Externals %}
     {% include 'Externals.cc' %}
 
