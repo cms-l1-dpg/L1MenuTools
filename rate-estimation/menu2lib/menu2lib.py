@@ -37,14 +37,33 @@ PREFIX = {
   tmEventSetup.MBT1HFM: 'sum',
   tmEventSetup.MBT1HFP: 'sum',
   tmEventSetup.TOWERCOUNT: 'sum',
-  tmEventSetup. ASYMET: 'sum',
-  tmEventSetup. ASYMHT: 'sum',
-  tmEventSetup. ASYMETHF: 'sum',
-  tmEventSetup. ASYMHTHF: 'sum',
+  tmEventSetup.ASYMET: 'sum',
+  tmEventSetup.ASYMHT: 'sum',
+  tmEventSetup.ASYMETHF: 'sum',
+  tmEventSetup.ASYMHTHF: 'sum',
+  tmEventSetup.CENT0: 'sum',
+  tmEventSetup.CENT1: 'sum',
+  tmEventSetup.CENT2: 'sum',
+  tmEventSetup.CENT3: 'sum',
+  tmEventSetup.CENT4: 'sum',
+  tmEventSetup.CENT5: 'sum',
+  tmEventSetup.CENT6: 'sum',
+  tmEventSetup.CENT7: 'sum',
   tmEventSetup.MUS0: 'muonShower',
   tmEventSetup.MUS1: 'muonShower',
   tmEventSetup.MUSOOT0: 'muonShower',
   tmEventSetup.MUSOOT1: 'muonShower'
+}
+
+ANALYSIS_TYPES = {
+  tmEventSetup.CENT0: 'kCentrality', 
+  tmEventSetup.CENT1: 'kCentrality', 
+  tmEventSetup.CENT2: 'kCentrality', 
+  tmEventSetup.CENT3: 'kCentrality', 
+  tmEventSetup.CENT4: 'kCentrality', 
+  tmEventSetup.CENT5: 'kCentrality', 
+  tmEventSetup.CENT6: 'kCentrality', 
+  tmEventSetup.CENT7: 'kCentrality'
 }
 
 ###########
@@ -97,6 +116,9 @@ def toCharge(charge):
   """Return encoded charge."""
   return {'positive': 1, 'negative': -1}.get(charge, 0)
 
+# Add filter function to get analysis type for use in templates
+def getAnalysisType(key):
+  return ANALYSIS_TYPES[key.getType()]
 
 def chkChgCor(cuts, prefix, nobjects):
   data = {}
@@ -407,6 +429,7 @@ def render(menu, template):
   j2_env.add_extension('jinja2.ext.loopcontrols')
   j2_env.filters['toDecimal'] = toDecimal
   j2_env.filters['toCharge'] = toCharge
+  j2_env.filters['getAnalysisType'] = getAnalysisType
   j2_env.filters['hasCorrelationCuts'] = hasCorrelationCuts
   j2_env.filters['sortObjects'] = sortObjects
   j2_env.filters['toCpp'] = toCpp

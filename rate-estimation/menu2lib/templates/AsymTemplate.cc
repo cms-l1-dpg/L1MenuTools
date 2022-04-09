@@ -4,8 +4,8 @@
 {% block AsymTemplate scoped %}
 {% import 'macros.jinja2' as macros %}
 {% set object = cond.getObjects()[0] %}
-
 {% set prefix = object | getPrefix  %}
+
 {% if object.getType() == tmEventSetup.ASYMET -%}
   {% set type = 'L1Analysis::kAsymEt' %}
 {% elif object.getType() == tmEventSetup.ASYMHT -%}

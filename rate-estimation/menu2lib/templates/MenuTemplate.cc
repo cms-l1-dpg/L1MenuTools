@@ -244,6 +244,17 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   tmEventSetup.MuonShowerOutOfTime1
 ) %}
 
+{% set CentralitySignalTypes = (
+  tmEventSetup.Centrality0,
+  tmEventSetup.Centrality1,
+  tmEventSetup.Centrality2,
+  tmEventSetup.Centrality3,
+  tmEventSetup.Centrality4,
+  tmEventSetup.Centrality5,
+  tmEventSetup.Centrality6,
+  tmEventSetup.Centrality7
+) %}
+
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- set overlap_removal = 0 -%}
   {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm,
@@ -329,6 +340,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 #}
   {% elif cond.getType() in ShowerSignalTypes %}
     {% include 'MuonShowerTemplate.cc' %}
+
+  {% elif cond.getType() in CentralitySignalTypes %}
+    {% include 'SignalsTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}
