@@ -1,4 +1,4 @@
-{# Template for signal type conditions like centrality #}
+{# Template for signal type conditions: centrality triggers for the Heavy Ion Menu #}
 {# See in: L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h #}
 
 {% block SignalsTemplate scoped %}
