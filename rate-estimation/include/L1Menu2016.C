@@ -109,7 +109,8 @@ bool L1Menu2016::InitConfig()
   L1Config["doTnPMuon"]         = 0;
   L1Config["doPlotLS"]          = 0;
   L1Config["doPrintPU"]         = 0;
-  L1Config["allPileUp"]         = 0;
+  L1Config["lowerPUbound"]      = -1;
+  L1Config["upperPUbound"]      = -1;
   L1Config["doReweighting2018"] = 0;
   L1Config["doReweightingRun3"] = 0;
   L1Config["doPrintBX"]         = 0;
@@ -1255,8 +1256,15 @@ bool L1Menu2016::Loop()
 
     float ev_pileup = -1;
     ev_pileup = EvaluatePileUp();
-    // PileUp window around 53, expected average PU value during the lumi levelling period in Run 3
-    if ((ev_pileup < 48 || ev_pileup > 58) && L1Config["allPileUp"] == 0) continue;
+    // only use events from the given PileUp window
+    if (L1Config["upperPUbound"] != - 1)  // an upper bound is defined
+    {
+      if (ev_pileup < L1Config["lowerPUbound"] || ev_pileup > L1Config["upperPUbound"]) continue;  // skip all events outside the PU window
+    }
+    else  // no upper bound given
+    {
+      if (ev_pileup < L1Config["lowerPUbound"]) continue;  // skip all events outside the PU window
+    }
     nZeroBiasevents_PUrange++;
 
     GetL1Event();
@@ -1281,7 +1289,7 @@ bool L1Menu2016::Loop()
   std::cout << "============================================" << i << std::endl;
   std::cout << "Total Event: " << i << std::endl;
   std::cout << "Events counted without PU requirement: " << nZeroBiasevents << std::endl;
-  std::cout << "Events counted in a predefined PU range [48, 58]: " << nZeroBiasevents_PUrange << std::endl;
+  std::cout << "Events counted in a predefined PU range [" << L1Config["lowerPUbound"] << ", " << L1Config["upperPUbound"] << "] (-1 for no bound): " << nZeroBiasevents_PUrange << std::endl;
   std::cout << "============================================" << i << std::endl;
   return true;
 }       // -----  end of function L1Menu2016::Loop  -----
@@ -1516,7 +1524,7 @@ double L1Menu2016::CalScale(int nEvents_, int nBunches_, bool print)
 {
   double scale = 0.0;
   int nEvents = 0;
-  if (L1Config["allPileUp"] == 0)
+  if ((L1Config["lowerPUbound"] != -1) || (L1Config["upperPUbound"] != -1))  // if PU window is defined
     {  
       nEvents = nEvents_ == 0 ? nZeroBiasevents_PUrange : nEvents_;
     }
