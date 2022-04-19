@@ -141,6 +141,7 @@ bool L1Menu2016::InitConfig()
   L1ConfigStr["SelectBX"] = "";
   L1ConfigStr["Lumilist"] = "";
   L1ConfigStr["SelectCol"] = "";
+  L1ConfigStr["customReweighting"] = "";
 
   L1ObjectMap["Jet"]        = &L1Event.JetPt;
   L1ObjectMap["JetC"]       = &L1Event.JetCenPt;
@@ -821,7 +822,7 @@ bool L1Menu2016::FormPrescaleColumns()
     {
       tempL1Seed.at(VarSeeds.at(j)).prescale = (i & 1 << j) > 0 ; 
     }
-    ColumnMap[i] = new PreColumn(i, tempL1Seed);
+    ColumnMap[i] = new PreColumn(i, tempL1Seed, &customPUweights);
     ColumnMap[i]->PassRelation( vL1Seed, BitMap, POGMap, PAGMap);
   }
 
@@ -990,6 +991,12 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
   ReadMenu();
   BuildRelation();
   L1SeedFunc();
+  
+  if (L1ConfigStr["customReweighting"] != "")
+  {
+    if (!ReadCustomPUweights()) exit(EXIT_FAILURE);
+  }
+  
   FormPrescaleColumns();
 
   PrintConfig();
@@ -1241,9 +1248,11 @@ bool L1Menu2016::Loop()
 	reweight_2018 = true;
     else if (L1Config["doReweightingRun3"] != 0)
 	reweight_Run3 = true;
+    else if (L1ConfigStr["customReweighting"] != "")
+      custom_weights = true;
 
     // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting 
-    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0)
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0 || L1ConfigStr["customReweighting"] != "")
       {
 	float ev_puweight = -1;
 	ev_puweight = ExtractPileUpWeight();
@@ -1268,7 +1277,7 @@ bool L1Menu2016::Loop()
     nZeroBiasevents_PUrange++;
 
     GetL1Event();
-    RunMenu(ev_pileup, reweight_2018, reweight_Run3);
+    RunMenu(ev_pileup, reweight_2018, reweight_Run3, custom_weights);
 
     if (L1Config["doPlotLS"])
       FillLumiSection(currentLumi);
@@ -1472,7 +1481,7 @@ bool L1Menu2016::CheckL1Seed(const std::string L1Seed)
 //         Name:  L1Menu2016::RunMenu
 //  Description:  
 // ===========================================================================
-bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3)
+bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool custom_weights)
 {
   // Reweighting procedure: info about the pileup of the event passed as argument to the InsertInMenu and CheckCorrelation functions 
   // (defined in PreColumn)
@@ -1497,19 +1506,19 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3)
 
     for(auto col : ColumnMap)
     {
-    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 ) // Reweighting procedure 
+    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 && !custom_weights) // Reweighting procedure
       col.second->InsertInMenu(seed.first, IsFired); 
     else
-      col.second->InsertInMenu(seed.first, IsFired, ev_pileup, reweight_2018, reweight_Run3); 
+      col.second->InsertInMenu(seed.first, IsFired, ev_pileup, reweight_2018, reweight_Run3, custom_weights);
     }
   }
 
   for(auto col : ColumnMap)
   {
-    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 ) // Reweighting procedure 
+    if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 && !custom_weights) // Reweighting procedure
       col.second->CheckCorrelation(); 
     else
-      col.second->CheckCorrelation(ev_pileup, reweight_2018, reweight_Run3);
+      col.second->CheckCorrelation(ev_pileup, reweight_2018, reweight_Run3, custom_weights);
   }
 
   return true;
@@ -2203,10 +2212,10 @@ bool L1Menu2016::FillPileUpSec()
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Fill Rate per PU ~~~~~
   for(auto col : ColumnMap)
   {
-    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0)
-      col.second->ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+    if (L1Config["doReweighting2018"] != 0 || L1Config["doReweightingRun3"] != 0 || L1ConfigStr["customReweighting"] != "")
+      col.second->ExtractPileUpWeight(pu, reweight_2018, reweight_Run3, custom_weights);
 
-    col.second->FillPileUpSec(pu, reweight_2018, reweight_Run3);
+    col.second->FillPileUpSec(pu, reweight_2018, reweight_Run3, custom_weights);
   }
 
   return true;
@@ -2243,13 +2252,70 @@ float L1Menu2016::EvaluatePileUp()
   return pu;
 }
 
+// ===  FUNCTION  ======================================================================================
+//         Name:  ReadCustomPUweights
+//  Description:  Extract custom weights from json-file for reweighting of the pileup distribution in MC
+// =====================================================================================================
+bool L1Menu2016::ReadCustomPUweights()
+{
+  if (L1Config["doReweighting2018"] || L1Config["doReweightingRun3"])
+  {
+    std::cout << "Custom weights cannot be used together with \"--doReweighting2018\" or \"--doReweightingRun3\"" << std::endl;
+    return false;
+  }
+  
+  std::ifstream PUweightFile(L1ConfigStr["customReweighting"]);
+  if (!PUweightFile)
+  {
+    std::cout << "Custom PU weight file "<<L1ConfigStr["customReweighting"]<<" is not found !"<<std::endl;
+    return false;
+  }
+  
+  std::string line;
+  bool parsed = false;  // true if a line is parsed. If a line is parsed but the file contains further lines that can be parsed, the file is invalid
+  while (std::getline(PUweightFile, line))
+  {
+    line.erase( std::remove(line.begin(), line.end(), '\r'), line.end() );
+    if (line.empty()) continue;
+    if (line.at(0) == '#') continue;
+    if (parsed)
+    {
+      std::cout << "Invalid PU weight file! The file is has to contain exactly one json line." << std::endl;
+      return false;
+    }
+    else
+    {
+      customPUweights = nlohmann::json::parse(line);
+      parsed = true;
+    }
+  }
+  if (parsed)
+  {
+    if (customPUweights.contains("fraction"))
+    {
+      customPUweights = customPUweights["fraction"];
+      return true;
+    }
+    else
+    {
+      std::cout << "The PU weight Json-file must contain the key \"fraction\"." << std::endl;
+      return false;
+    }
+  }
+  else
+  {
+    std::cout << "The PU weight file does not contain a json line" << std::endl;
+    return false;
+  }
+}
+
 // ===  FUNCTION  ================================================================                                                                                 
 //         Name:  L1Menu2016::ExtractPileUpWeight                                                                                                                    
 //  Description:  Extract weights for reweighting of the pileup distribution in MC                                                                                                                    
 // ===============================================================================                                                                                   
 float L1Menu2016::ExtractPileUpWeight()
 {
-  double pu = -1;
+  double pu = event_->nPV_True;
   double weight = -1;
   // WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution: 
   // see here -> https://elfontan.web.cern.ch/elfontan/Run3_MENU/PileupReweighting/weights_nPV_True.png.
@@ -2265,8 +2331,18 @@ float L1Menu2016::ExtractPileUpWeight()
     {
       h_PUweights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.11768066610316973, 0.15659943608123963, 0.2062485504625545, 0.268258220098052, 0.33984423319498697, 0.42640469375359685, 0.5188836993090095, 0.6415574459968488, 0.7679292883090271, 0.9038989080521145, 1.0312039036982403, 1.184185989240607, 1.3135745255235602, 1.452683767877649, 1.595818724793107, 1.7332340493078218, 1.8220240159036707, 1.9232725225809801, 2.0500456898039943, 2.0735607093466237, 2.107312361581553, 2.1410569727220117, 2.1657353540686484, 2.1041608280359783, 2.055486270892838, 1.9497829996617755, 1.865648229655712, 1.770365292692509, 1.6681387392525582, 1.573366538275714, 1.4204671249736036, 1.2648609312008994, 1.1619530797268465, 1.032957960295197, 0.9106977649201128, 0.8043353997543611, 0.7051914455399683, 0.5998090800948392, 0.522684322280154, 0.43992380960221283, 0.36786673008123166, 0.31065622561951234, 0.2568458813937691, 0.20984708112111544, 0.1707654623586224, 0.13792878579949355, 0.11263581096823445, 0.08921848542040954, 0.07125932229597162, 0.05617010906326074, 0.04314936365485068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     }
+  else if (L1ConfigStr["customReweighting"] != "")
+  {
+    if (pu < customPUweights.size())
+    {
+      return customPUweights[pu];
+    }
+    else
+    {
+      return 0;
+    }
+  }
  
-  pu = event_->nPV_True;
   weight = h_PUweights.at(pu); 
   return weight;
 }

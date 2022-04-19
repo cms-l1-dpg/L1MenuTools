@@ -19,6 +19,7 @@
 #define  MY_PRECOLUMN_INC
 
 #include <map>
+#include <nlohmann/json.hpp>
 #include "L1Struct.h"
 #include "TFile.h"
 #include "TH1F.h"
@@ -33,7 +34,7 @@ class PreColumn
   public:
 
     // ====================  LIFECYCLE     ===============================
-    PreColumn (int ColIdx, std::map<std::string, L1Seed> mL1Seed); // constructor
+    PreColumn (int ColIdx, std::map<std::string, L1Seed> mL1Seed, nlohmann::json* customPUweights); // constructor
     ~PreColumn ();
     bool PassRelation( std::vector<std::string> vL1Seed_, 
         std::map<int, std::string> BitMap_, 
@@ -42,16 +43,16 @@ class PreColumn
 
     // ====================  ACCESSORS     ===============================
     bool CheckCorrelation();
-    bool CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run3);
+    bool CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
     bool EventReset();
     bool InsertInMenu(std::string L1name, bool value);
-    bool InsertInMenu(std::string L1name, bool value, float pu, bool reweight_2018, bool reweight_Run3);
+    bool InsertInMenu(std::string L1name, bool value, float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
     bool PrintCSV(std::vector<std::string> &out, double scale);
     bool WriteHistogram(TFile *outrootfile);
     bool PrintRates(std::ostream &out, double scale);
     bool PrintPUCSV( std::vector<std::string> &csvout);
     bool BookHistogram();
-    bool FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3);
+    bool FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
     bool FillDefHist2D(double &scale);
     bool FillDefHist1D(double &scale);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
@@ -59,7 +60,7 @@ class PreColumn
     bool CalRate(double scale);
     bool PrintMenuRate(double scale) const;
 
-    float ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3);
+    float ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
     std::vector<double> h_PUweights;
 
    // ====================  MUTATORS      ===============================
@@ -72,8 +73,8 @@ class PreColumn
     // ====================  METHODS       ===============================
     bool CheckPureFire();
     bool CheckPhysFire();
-    bool CheckPureFire(float pu, bool reweight_2018, bool reweight_Run3);
-    bool CheckPhysFire(float pu, bool reweight_2018, bool reweight_Run3);
+    bool CheckPureFire(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
+    bool CheckPhysFire(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
 
     // ====================  DATA MEMBERS  ===============================
 
@@ -101,6 +102,8 @@ class PreColumn
     std::map<int, std::string> BitMap;
     std::map<std::string, std::vector<int> > POGMap;
     std::map<std::string, std::vector<int> > PAGMap;
+    
+    nlohmann::json* customPUweights; // json object containing custom Pile Up weights from a json-file
     // ====================  DATA MEMBERS  ===============================
 
 }; // -----  end of class PreColumn  -----
