@@ -69,7 +69,7 @@ fit_max = 60
 
 # Setup: Run 2 2018
 freq = 11245.6
-nBunches = 2544
+nBunches = 2748 #nBunches = 2736
 unit = "kHz"
 
 fitname = ROOT.TF1("fitname","[0]*x + [1]*x*x",0,70);
