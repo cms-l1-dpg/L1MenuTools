@@ -3,7 +3,7 @@
 Rate estimation tools for L1 Menu operations in CMS
 
 > See the [official twiki page](https://twiki.cern.ch/twiki/bin/view/CMS/HowToL1TriggerMenu) for updated instructions!
-  Reference slides at [CMS Week](https://indico.cern.ch/event/1140491/contributions/4810922/attachments/2422605/4146959/RC_plenary.pdf)
+
 
 ## Overview
 
