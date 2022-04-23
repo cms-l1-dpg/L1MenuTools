@@ -20,7 +20,7 @@ cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline l1t-integration-CMSSW_12_3_0_pre6
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v125.0
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v126.0
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
@@ -41,9 +41,12 @@ Go to the L1Ntuples subfolder
 cd L1MenuTools/L1Ntuples
 ```
 and customize the HTCondor submission script `condor_sub.py` according to your needs:
-- `eosDir`: output folder for batch jobs (user must have write permissions)
 - `nEvents`: number of events to process
-- `nJobs`: number of jobs to run corresponding to the number of files
+- `nJobs`: number of jobs for the splitting (corresponding to the number of files by default)
+- `fileList`: list of GEN-SIM-RAW files
+- `jobScript`: bash script containing the cmsRun command. NOTE: the default is `cmsRun.sh`, but if you need to run on the latest 122X NuGun sample, the number of files is very large so the script needs some changes (included in `NuGun_122X_cmsRun.sh`)for a successful condor submission
+- `eosDir`: output folder for batch jobs (user must have write permissions)
+- 'jobName': name of the directory created in eosDir and locally
 
 
 ## 4. Submit the production
@@ -60,6 +63,7 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
+- It includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
 - Input datasets (120X): `/SingleNeutrino_Pt-2To20-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`,
 `/SingleNeutrino_E-10-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`
-- It includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
+- Input datasets (122X - Realistic PU distribution with an average PU of 48): `/SingleNeutrino_E-10-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`

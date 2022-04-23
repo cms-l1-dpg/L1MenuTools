@@ -6,13 +6,19 @@ ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
 jobName = "menu_NuGun_12_3_X"
-jobCfg = "mc.py"
 jobScript = "cmsRun.sh"
+#jobScript = "NuGun_122X_cmsRun.sh" # New NuGun_E10 samples in 122X
+jobCfg = "mc.py"
 rel = "CMSSW_12_3_0_pre6"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
 rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
+
+## NOTE: For this submission, use NuGun_122X_cmsRun.sh as job script
+#fileList = rootDir + "newNuGun_mcRun3_realisticPU.list" 
+#nEvents = 11216000 # New NuGun_E10 samples in 122X                                                                   
+#nJobs = 7010       # New NuGun_E10 samples in 122X - Tot files: nJobs*4 (grouped in et of four for the submission) 
 
 fileList = rootDir + "nugun_Pt2-20.list" 
 nEvents = 1000000  #NuGun_Pt_2-20                                                                         
@@ -28,10 +34,8 @@ while ret == 0:
    ret = os.system("mkdir " + jobDir + "log/")
    ret = os.system("mkdir " + eosDir)
    ret = os.chdir(os.environ["CMSSW_BASE"]+"/../")
-   print('Tarballing ' + rel + "/ into " + jobName + ".tgz...")
    ret = os.system("tar --exclude='L1Ntuple.root' --exclude='ignore' --exclude='.git' " + 
                    "-zcf " + jobName + ".tgz " + rel)
-   print 'Done!'
    ret = os.system("mv " + jobName + ".tgz " + eosDir) 
    ret = os.chdir(rootDir)
 
