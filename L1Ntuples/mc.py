@@ -37,12 +37,6 @@ options.register('outFile',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  'Output file')
-options.register('inputFile',
-                 'file:ttMTDPU200.root',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 'Input file')
-                                  
 
 options.parseArguments()
 
@@ -54,13 +48,10 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring(
     'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree', 
     'l1UpgradeTfMuonTree','l1UpgradeTree','l1HOTree', 'l1Phase2CaloTree')
 
-#fileList = FileUtils.loadListFromFile(options.inputFile)
-#readFiles = cms.untracked.vstring(*fileList)
-
 # Input source
 process.source = cms.Source("PoolSource",
     skipEvents = cms.untracked.uint32(options.skipEvents), #added
-    fileNames = cms.untracked.vstring(options.inputFile),
+    fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
 
