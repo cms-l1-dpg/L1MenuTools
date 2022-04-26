@@ -16,7 +16,7 @@ bool
   if (data->{{ prefix }}Bx.at(18) == {{ object.getBxOffset() }})
   {
     {# Is signal bit set? #}
-    if ((data->sumIEt.at(18) & {{ bitmask }})) 
+    if ((data->{{ prefix }}IEt.at(18) & {{ bitmask }})) 
     {
       pass = true;
     }
