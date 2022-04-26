@@ -342,7 +342,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
     {% include 'MuonShowerTemplate.cc' %}
 
   {% elif cond.getType() in CentralitySignalTypes %}
-    {% include 'SignalsTemplate.cc' %}
+    {% include 'CentralityTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}

@@ -55,15 +55,15 @@ PREFIX = {
   tmEventSetup.MUSOOT1: 'muonShower'
 }
 
-ANALYSIS_TYPES = {
-  tmEventSetup.CENT0: 'kCentrality', 
-  tmEventSetup.CENT1: 'kCentrality', 
-  tmEventSetup.CENT2: 'kCentrality', 
-  tmEventSetup.CENT3: 'kCentrality', 
-  tmEventSetup.CENT4: 'kCentrality', 
-  tmEventSetup.CENT5: 'kCentrality', 
-  tmEventSetup.CENT6: 'kCentrality', 
-  tmEventSetup.CENT7: 'kCentrality'
+CentralityBitmasks = {
+  tmEventSetup.Centrality0: 0x1 << 0,
+  tmEventSetup.Centrality1: 0x1 << 1,
+  tmEventSetup.Centrality2: 0x1 << 2,
+  tmEventSetup.Centrality3: 0x1 << 3,
+  tmEventSetup.Centrality4: 0x1 << 4,
+  tmEventSetup.Centrality5: 0x1 << 5,
+  tmEventSetup.Centrality6: 0x1 << 6,
+  tmEventSetup.Centrality7: 0x1 << 7
 }
 
 ###########
@@ -116,10 +116,10 @@ def toCharge(charge):
   """Return encoded charge."""
   return {'positive': 1, 'negative': -1}.get(charge, 0)
 
-# Add filter function to get analysis type for use in templates
-def getAnalysisType(key):
-  return ANALYSIS_TYPES[key.getType()]
-
+# Add filter function to get the bit masking for centrality triggers
+def getCentralityBitmask(conditionType):
+  return CentralityBitmasks[conditionType]
+  
 def chkChgCor(cuts, prefix, nobjects):
   data = {}
   data['prefix'] = prefix;
@@ -429,7 +429,7 @@ def render(menu, template):
   j2_env.add_extension('jinja2.ext.loopcontrols')
   j2_env.filters['toDecimal'] = toDecimal
   j2_env.filters['toCharge'] = toCharge
-  j2_env.filters['getAnalysisType'] = getAnalysisType
+  j2_env.filters['getCentralityBitmask'] = getCentralityBitmask
   j2_env.filters['hasCorrelationCuts'] = hasCorrelationCuts
   j2_env.filters['sortObjects'] = sortObjects
   j2_env.filters['toCpp'] = toCpp
