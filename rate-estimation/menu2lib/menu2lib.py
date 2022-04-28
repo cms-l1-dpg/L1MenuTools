@@ -231,6 +231,8 @@ def toCpp(value):
       array.append(tmGrammar.AND.lower())
     elif token == tmGrammar.OR:
       array.append(tmGrammar.OR.lower())
+    elif token == tmGrammar.XOR:
+      array.append("^")
     else:
       if tmGrammar.NOT in token:
         token = token.replace(tmGrammar.NOT, tmGrammar.NOT.lower())
