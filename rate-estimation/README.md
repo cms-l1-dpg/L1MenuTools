@@ -10,8 +10,7 @@ Rate estimation tools for L1 Menu operations in CMS
 ### Available tools
 
 #### testMenu2016
-Primary tool for performing rate estimation. The rest of the tools in this
-directory are used for setting up the components required.
+Primary tool for performing rate estimation. The rest of the tools in this directory are used for setting up the components required.
 
 Requires:
 * C++ conversion of a menu
@@ -53,7 +52,8 @@ You can run the code running on a subset of events using the option `--maxEvent`
 
 The script `ntuple/makeFileList.py` can be used to create a file list for other
 ntuples:
-```bash
+```
+bash
 cd ntuple
 ./makeFileList.py <your_ntuple_location>
 cd ..
@@ -65,7 +65,8 @@ It also includes LS vs PU information, which can be useful for plotting rate vs 
 An example csv is included in `menu/run_lumi_RunA.csv`, including fill at high pileup.
 To produce your own, modify the beginning of `GetLumi.py` to list the run number
 of your ntuple, then:
-```bash
+```
+bash
 cd menu
 source GetLumi_setup.sh
 ./GetLumi.py
@@ -92,7 +93,7 @@ Components have been provided to run a short test.
 ./testMenu2016 \
 -m menu/Prescale_2022_v0_1_1.csv -l ntuple/Run3_NuGun_MC_ntuples.list \
 -o test -b 2748 --doPlotRate --doPlotEff --SelectCol 2E+34 \    
---doPrintPU --allPileUp --doReweightingRun3 --maxEvent 200000
+--doPrintPU --allPileUp --maxEvent 200000
 ```
 This will take only a few minutes and output test.csv, test.root, test.txt, and test_PU.txt into the results/ directory.
 
