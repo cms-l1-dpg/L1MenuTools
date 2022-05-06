@@ -32,6 +32,7 @@
 #include <functional>
 #include <ctype.h>
 #include <stdlib.h>
+#include <nlohmann/json.hpp>
 #include "TGraphErrors.h"
 
 // ROOT
@@ -93,6 +94,7 @@ class L1Menu2016 : public L1AlgoFactory
     bool ReadMenuCSV(std::ifstream &menufile);
     bool ReadMenuTXT(std::ifstream &menufile);
     bool ReadDataPU();
+    bool ReadCustomPUweights();
     bool BuildRelation();
     bool PrintPUCSV();
     bool WriteHistogram();
@@ -148,6 +150,7 @@ class L1Menu2016 : public L1AlgoFactory
     std::vector<double> h_PUweights;
     bool reweight_2018 = false;
     bool reweight_Run3 = false;
+    bool custom_weights = false;
 
   protected:
     // ====================  METHODS       ===============================
@@ -165,7 +168,7 @@ class L1Menu2016 : public L1AlgoFactory
   private:
     // ====================  METHODS       ===============================
     double CalScale(int nEvents_ = 0, int nBunches_ = 0, bool print=false);
-    bool RunMenu(float pu, bool reweight_2018, bool reweight_Run3);
+    bool RunMenu(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights);
     bool Fill2DCorrelations(const std::string &histname, std::set<std::string> &event) const;
     void CalLocalHT(float &HTTcut, bool withHF);
     void CalLocalHTM(float &HTMcut);
@@ -189,6 +192,7 @@ class L1Menu2016 : public L1AlgoFactory
     std::set<unsigned int> nLumi;
     std::vector<std::pair<unsigned int, unsigned int> > pLS;
     std::vector<std::pair<unsigned int, unsigned int> > pBX;
+    nlohmann::json customPUweights; // json object to save Pile Up weights from a json-file
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ L1Seeds ~~~~~
     StructL1Event L1Event;

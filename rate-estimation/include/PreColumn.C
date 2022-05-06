@@ -23,8 +23,8 @@
 //      Method:  PreColumn
 // Description:  constructor
 //----------------------------------------------------------------------------
-PreColumn::PreColumn (int ColIdx_, std::map<std::string, L1Seed> mL1Seed_):
-  ColIdx(ColIdx_), mL1Seed(mL1Seed_)
+PreColumn::PreColumn (int ColIdx_, std::map<std::string, L1Seed> mL1Seed_, nlohmann::json* customPUweights_):
+  ColIdx(ColIdx_), mL1Seed(mL1Seed_), customPUweights(customPUweights_)
 {
   bybit = false;
   nFireevents = 0;  
@@ -87,11 +87,11 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value)
 }  // -----  end of function PreColumn::InsertInMenu  -----
 
 // Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
-bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu, bool reweight_2018, bool reweight_Run3) 
+bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights)
 {
   bool post_prescale = false;
   float ev_puweight = -1;
-  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3, custom_weights);
 
   if ( mL1Seed.find(L1name) == mL1Seed.end() ) {
     std::cout << "This shouldn't happen!" << std::endl;
@@ -147,10 +147,10 @@ bool PreColumn::CheckCorrelation()
 }       // -----  end of function PreColumn::CheckCorrelation  -----
 
 // Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
-bool PreColumn::CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run3)
+bool PreColumn::CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights)
 {
   float ev_puweight = -1;
-  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3, custom_weights);
 
   if (FireSeed.size() > 0)
     {
@@ -158,8 +158,8 @@ bool PreColumn::CheckCorrelation(float pu, bool reweight_2018, bool reweight_Run
       nFireevents += ev_puweight;
     }
 
-  CheckPhysFire(pu, reweight_2018, reweight_Run3);
-  CheckPureFire(pu, reweight_2018, reweight_Run3);
+  CheckPhysFire(pu, reweight_2018, reweight_Run3, custom_weights);
+  CheckPureFire(pu, reweight_2018, reweight_Run3, custom_weights);
   return true;
 }       // -----  end of function PreColumn::CheckCorrelation(float pu)  -----
 
@@ -221,10 +221,10 @@ bool PreColumn::CheckPureFire()
 }       // -----  end of function PreColumn::CheckPureFire  -----
 
 // Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
-bool PreColumn::CheckPureFire(float pu, bool reweight_2018, bool reweight_Run3) 
+bool PreColumn::CheckPureFire(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights)
 {
   float ev_puweight = -1;
-  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3, custom_weights);
 
 //**************************************************************************//
 //                              Check Pure Rate                             //
@@ -316,10 +316,10 @@ bool PreColumn::CheckPhysFire()
 }       // -----  end of function PreColumn::CheckPhysFire  -----
 
 // Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
-bool PreColumn::CheckPhysFire(float pu, bool reweight_2018, bool reweight_Run3)
+bool PreColumn::CheckPhysFire(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights)
 {
   float ev_puweight = -1;
-  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+  ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3, custom_weights);
   std::set<std::string> eventPOG;
   std::set<std::string> eventPAG;
 
@@ -449,7 +449,7 @@ bool PreColumn::WriteHistogram(TFile *outrootfile)
 //  Description:  Extract weights for reweighting of the pileup distribution in MC                                                                                  
 // ===============================================================================                                                                         
 // Reweighting procedure: information about the weight corresponding to a given pileup needed for the counting
-float PreColumn::ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3)
+float PreColumn::ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights)
 {
   double weight = -1;
   // WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution:               
@@ -466,6 +466,17 @@ float PreColumn::ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight
     {
       h_PUweights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.11768066610316973, 0.15659943608123963, 0.2062485504625545, 0.268258220098052, 0.33984423319498697, 0.42640469375359685, 0.5188836993090095, 0.6415574459968488, 0.7679292883090271, 0.9038989080521145, 1.0312039036982403, 1.184185989240607, 1.3135745255235602, 1.452683767877649, 1.595818724793107, 1.7332340493078218, 1.8220240159036707, 1.9232725225809801, 2.0500456898039943, 2.0735607093466237, 2.107312361581553, 2.1410569727220117, 2.1657353540686484, 2.1041608280359783, 2.055486270892838, 1.9497829996617755, 1.865648229655712, 1.770365292692509, 1.6681387392525582, 1.573366538275714, 1.4204671249736036, 1.2648609312008994, 1.1619530797268465, 1.032957960295197, 0.9106977649201128, 0.8043353997543611, 0.7051914455399683, 0.5998090800948392, 0.522684322280154, 0.43992380960221283, 0.36786673008123166, 0.31065622561951234, 0.2568458813937691, 0.20984708112111544, 0.1707654623586224, 0.13792878579949355, 0.11263581096823445, 0.08921848542040954, 0.07125932229597162, 0.05617010906326074, 0.04314936365485068, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     }
+  else if (custom_weights)
+  {
+    if (pu < customPUweights->size())
+    {
+      return (*customPUweights)[pu];
+    }
+    else
+    {
+      return 0;
+    }
+  }
 
   weight = h_PUweights.at(pu);  
   return weight;
@@ -476,7 +487,7 @@ float PreColumn::ExtractPileUpWeight(float pu, bool reweight_2018, bool reweight
 //         Name:  PreColumn::FillPileUpSec
 //  Description:  
 // ===========================================================================
-bool PreColumn::FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3)
+bool PreColumn::FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3, bool custom_weights)
 {
   bool eFired = false;
   bool reweight = false;
@@ -484,10 +495,10 @@ bool PreColumn::FillPileUpSec(float pu, bool reweight_2018, bool reweight_Run3)
 
   // Reweighting procedure: info about the pileup of the event and the corresponding weight needed for the counting;
   // reweight label set to true to allow different event counting 
-  if (reweight_2018 || reweight_Run3) 
+  if (reweight_2018 || reweight_Run3 || custom_weights)
     {
       reweight = true;
-      ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3);
+      ev_puweight = ExtractPileUpWeight(pu, reweight_2018, reweight_Run3, custom_weights);
     }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ L1Seed ~~~~~
   for(auto l1 : mL1Seed)
