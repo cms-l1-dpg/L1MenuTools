@@ -9,9 +9,12 @@ bool
 (L1Analysis::L1AnalysisL1UpgradeDataFormat* data)
 {
   // Before the start of Run 3, the decision was always set FALSE;
-  // It has been switched to be always TRUE as it is done in the emulator (according to the request from the Heavy Ion group).
-  // NOTE: in general, the decision could be checked in the UGT data...
-  bool pass = true;
+  // This is set to be always TRUE in the emulator. This is important to do for Heavy Ion studies (as requested by the Heavy Ions team).
+  //  bool pass = true;
+  
+  // However, this affects the rate quite significantly for pp collisions studies, and therefore has to be set to FALSE for pp studies.
+  bool pass = false;
+  
   return pass;
 }
 {% endblock Externals %}
