@@ -46,7 +46,7 @@ and customize the HTCondor submission script `condor_sub.py` according to your n
 - `fileList`: list of GEN-SIM-RAW files
 - `jobScript`: bash script containing the cmsRun command. NOTE: the default is `cmsRun.sh`, but if you need to run on the latest 122X NuGun sample, the number of files is very large so the script needs some changes (included in `NuGun_122X_cmsRun.sh`)for a successful condor submission
 - `eosDir`: output folder for batch jobs (user must have write permissions)
-- 'jobName': name of the directory created in eosDir and locally
+- `jobName`: name of the directory created in eosDir and locally
 
 
 ## 4. Submit the production
@@ -63,7 +63,13 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
-- It includes the PFA1' Filter (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter)
-- Input datasets (120X): `/SingleNeutrino_Pt-2To20-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`,
-`/SingleNeutrino_E-10-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`
-- Input datasets (122X - Realistic PU distribution with an average PU of 55): `/SingleNeutrino_E-10-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`, `/SingleNeutrino_Pt-2To20-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW` 
+- The Global Tag includes the menu [L1Menu_Collisions2022_v1_2_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2022_v1_2_0)
+- The [PFA1' Filter](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter) is currently configured from the GT
+- Input datasets (120X): 
+   - [`/SingleNeutrino_Pt-2To20-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_Pt-2To20-gun%2FRun3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2%2FGEN-SIM-DIGI-RAW)
+   - [`/SingleNeutrino_E-10-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2%2FGEN-SIM-DIGI-RAW)
+- Input datasets (122X - Realistic PU distribution with an average PU of 55): 
+   - [`/SingleNeutrino_E-10-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 14262400; Number of files: 35656) 
+   - [`/SingleNeutrino_Pt-2To20-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_Pt-2To20-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 12764800; Number of files: 31912) 
+
+
