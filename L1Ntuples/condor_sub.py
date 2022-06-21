@@ -15,14 +15,18 @@ rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-## NOTE: For this submission, use NuGun_122X_cmsRun.sh as job script
-#fileList = rootDir + "newNuGun_mcRun3_realisticPU.list" 
-#nEvents = 11216000 # New NuGun_E10 samples in 122X                                                                   
-#nJobs = 7010       # New NuGun_E10 samples in 122X - Tot files: nJobs*4 (grouped in et of four for the submission) 
+## NOTE for the 122X NuGun_E10 samples: For this submission, use NuGun_122X_cmsRun.sh as job script
+fileList = rootDir + "122X_NuGun_E10_mcRun3_realisticPU.list" 
+nEvents = 14262400 # New NuGun_E10 samples in 122X                                                                   
+nJobs = 8914       # New NuGun_E10 samples in 122X - Tot files: nJobs*4=35656 (grouped in set of four for the submission) 
+## NOTE for the 122X NuGun_Pt2-20 samples: For this submission, use NuGun_122X_cmsRun.sh as job script
+#fileList = rootDir + "122X_NuGun_Pt2-20_mcRun3_realisticPU.list" 
+#nEvents = 12764800 # New NuGun_Pt2-20 samples in 122X                                                                   
+#nJobs = 7978       # New NuGun_Pt2-20 samples in 122X - Tot files: nJobs*4=31912 (grouped in set of four for the submission) 
 
-fileList = rootDir + "nugun_Pt2-20.list" 
-nEvents = 1000000  #NuGun_Pt_2-20                                                                         
-nJobs = 1250      #NuGun_Pt_2-20                                                                                                                             
+#fileList = rootDir + "nugun_Pt2-20.list" 
+#nEvents = 1000000  #NuGun_Pt_2-20                                                                         
+#nJobs = 1250      #NuGun_Pt_2-20                                                                                                                             
 #fileList = rootDir + "nugun_E10.list"
 #nEvents = 1000000  #NuGun_E10                                                                                                                                                
 #nJobs = 1250      #NuGun_E10  
