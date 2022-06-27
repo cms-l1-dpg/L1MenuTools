@@ -15,6 +15,6 @@ The output lists the L1 bit index, L1 seed name, and the triggered counts.
 
 ## Usage
 
-python3 getEmulatorDecision.py <L1Ntuple>
+python3 getEmulatorDecision.py \<L1Ntuple\>
 
-<L1Ntuple> : location of the L1Ntuple.root file
+\<L1Ntuple\> : location of the L1Ntuple.root file
