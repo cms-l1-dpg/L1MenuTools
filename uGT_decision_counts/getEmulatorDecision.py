@@ -3,7 +3,10 @@ from algo_map import algo_map
 
 import sys
 
-if len(sys.argv) != 2 : sys.exit("Error : Missing ntuple location\n")
+helpstr = '\nUsage : python3 getEmulatorDecision.py <L1Ntuple>\n'
+helpstr += '\n<L1Ntuple> : location of the L1Ntuple.root file\n'
+
+if len(sys.argv) != 2 : sys.exit("\nError : Missing ntuple location\n"+helpstr)
 
 # Input file name
 file_in_name = sys.argv[1]
