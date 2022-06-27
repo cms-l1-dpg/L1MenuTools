@@ -2,14 +2,17 @@ from ROOT import *
 from algo_map import algo_map
 
 import sys
+import os
 
 helpstr = '\nUsage : python3 getEmulatorDecision.py <L1Ntuple>\n'
 helpstr += '\n<L1Ntuple> : location of the L1Ntuple.root file\n'
 
-if len(sys.argv) != 2 : sys.exit("\nError : Missing ntuple location\n"+helpstr)
+if len(sys.argv) != 2 : sys.exit("\nError ! Missing argument : ntuple location\n"+helpstr)
 
 # Input file name
 file_in_name = sys.argv[1]
+if not os.path.exists(file_in_name) : sys.exit("\nError ! L1Ntuple does not exist at this location.\n")
+
 fin = TFile(file_in_name,"READ")
 #fin = TFile("/afs/cern.ch/user/s/sonawane/private/ntuple_test/CMSSW_12_4_0_pre4/src/L1Ntuple.root","READ")
 
