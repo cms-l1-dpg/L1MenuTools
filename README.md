@@ -23,6 +23,6 @@ Contains the following tools:
 * `ps-generate` (prescale table generation tool): create a new prescale table according to a L1 Menu, using information from an existing prescale table ([documentation](pstools/docs/ps-generate.md))
 * `ps-diff` (prescale table comparison tool): create diffs between two PS table in various output formats ([documentation](pstools/docs/ps-diff.md))
 
-### Script to extract emulator trigger counts from L1Ntuple
+### Script to extract emulator trigger counts from L1Ntuple ([uGT_decision_counts/](uGT_decision_counts/))
 
 uGT_decision_counts contains a script that obtains the emulated trigger counts from L1Ntuple, and prints as output the L1 bit index, L1 seed name, and the trigger count.
