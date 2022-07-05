@@ -10,6 +10,12 @@ Script to produce the algo map from a provided L1 Prescale Table. Please ensure 
 
 python3 parse_algo_map.py L1Menu_Collisions2022_v1_1_0.csv
 
+## Obtaining L1 Prescale Table
+
+The following command may be used to obtain an L1 prescale table :
+
+wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2022_v1_1_0/PrescaleTable/L1Menu_Collisions2022_v1_1_0.csv
+
 ### algo_map
 
 Contains a list of the form [L1_bit, "L1_seed_name"], used to return the emulated counts as stored in the ntuple.
