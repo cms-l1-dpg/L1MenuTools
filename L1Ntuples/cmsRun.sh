@@ -15,7 +15,7 @@ eval `scramv1 runtime -sh` # cmsenv is an alias not on the workers
 skipEvents=$((${4}*${5}))
 line=$((${4}+1))
 inFile=$(awk "NR == ${line}" ${7})
-cmsRun L1MenuTools/L1Ntuples/${6} inputFile=${inFile} #maxEvents=${5} #skipEvents=${skipEvents}
+cmsRun L1MenuTools/L1Ntuples/${6} inputFiles=${inFile} #maxEvents=${5} #skipEvents=${skipEvents}
 cp ${8} ${1}/${4}.root
 rm ${8}
 cd ${_CONDOR_SCRATCH_DIR}
