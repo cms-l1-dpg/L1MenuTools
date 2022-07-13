@@ -22,6 +22,7 @@ import argparse
 import os
 import re
 import tdrstyle
+import json
 from matplotlib import pyplot as plt
 from Config import DualMap, S1S2Map, S2S1Map
 
@@ -49,6 +50,10 @@ parser.add_argument('--reweightRun3',
         help='Specify if the Run 3 reweighting is performed or not',
         default=False,
         type=bool)
+parser.add_argument('--customReweighting',
+        help='Path to a json file containing custom PU weights for reweighting',
+        default='',
+        type=str)
 
 args = parser.parse_args()
 outfolder_details = args.outfolder
@@ -56,7 +61,10 @@ csvfile_rateVSpileup = args.csv
 seedList = args.seed
 isReweight2018 = args.reweight2018
 isReweightRun3 = args.reweightRun3
+customWeightFileName = args.customReweighting
+isCustomReweighting = customWeightFileName != ''
 isReweight = False
+customWeights = None
 
 print("List of L1 seeds considered: %r" % args.seed)
 
@@ -67,9 +75,9 @@ maxy = 200
 fit_min = 20
 fit_max = 60
 
-# Setup: Run 2 2018
+# Setup: Run 3
 freq = 11245.6
-nBunches = 2736 # default nBunches = 2544
+nBunches = 2748 # Default value for Run 2 = 2544
 unit = "kHz"
 
 fitname = ROOT.TF1("fitname","[0]*x + [1]*x*x",0,70);
@@ -86,8 +94,13 @@ pumap = collections.defaultdict(list)
 #PatMap = {seedName : seedName}
 PatMap = {seedName:seedName for seedName in seedList}
 
-if (isReweight2018 or isReweightRun3):
+if (isReweight2018 or isReweightRun3 or isCustomReweighting):
     isReweight = True
+
+if isCustomReweighting:
+    with open(customWeightFileName, 'r') as customWeightFile:
+        customWeights = json.load(customWeightFile)  # read the json object (dictionary) from the file
+    customWeights = customWeights['fraction']  # extract the list of weights from the the json object
 
 def ExtractPileUpWeight(pu):
     # WEIGHTS obtained as the ratio between the 2018 pileup profile and the Run 3 MC nPV_True distribution: 
@@ -99,6 +112,8 @@ def ExtractPileUpWeight(pu):
         weight = h_weights_2018[pu]
     elif (isReweightRun3):
         weight = h_weights_Run3[pu]
+    elif (isCustomReweighting):
+        weight = customWeights[pu]
     return weight
 
 def DrawPU(canvas, f, l1seed, count, key=None):

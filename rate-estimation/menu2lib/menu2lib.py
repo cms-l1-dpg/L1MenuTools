@@ -37,10 +37,33 @@ PREFIX = {
   tmEventSetup.MBT1HFM: 'sum',
   tmEventSetup.MBT1HFP: 'sum',
   tmEventSetup.TOWERCOUNT: 'sum',
+  tmEventSetup.ASYMET: 'sum',
+  tmEventSetup.ASYMHT: 'sum',
+  tmEventSetup.ASYMETHF: 'sum',
+  tmEventSetup.ASYMHTHF: 'sum',
+  tmEventSetup.CENT0: 'sum',
+  tmEventSetup.CENT1: 'sum',
+  tmEventSetup.CENT2: 'sum',
+  tmEventSetup.CENT3: 'sum',
+  tmEventSetup.CENT4: 'sum',
+  tmEventSetup.CENT5: 'sum',
+  tmEventSetup.CENT6: 'sum',
+  tmEventSetup.CENT7: 'sum',
   tmEventSetup.MUS0: 'muonShower',
   tmEventSetup.MUS1: 'muonShower',
   tmEventSetup.MUSOOT0: 'muonShower',
   tmEventSetup.MUSOOT1: 'muonShower'
+}
+
+CentralityBitmasks = {
+  tmEventSetup.Centrality0: 0x1 << 0,
+  tmEventSetup.Centrality1: 0x1 << 1,
+  tmEventSetup.Centrality2: 0x1 << 2,
+  tmEventSetup.Centrality3: 0x1 << 3,
+  tmEventSetup.Centrality4: 0x1 << 4,
+  tmEventSetup.Centrality5: 0x1 << 5,
+  tmEventSetup.Centrality6: 0x1 << 6,
+  tmEventSetup.Centrality7: 0x1 << 7
 }
 
 ###########
@@ -93,7 +116,10 @@ def toCharge(charge):
   """Return encoded charge."""
   return {'positive': 1, 'negative': -1}.get(charge, 0)
 
-
+# Add filter function to get the bit masking for centrality triggers
+def getCentralityBitmask(conditionType):
+  return CentralityBitmasks[conditionType]
+  
 def chkChgCor(cuts, prefix, nobjects):
   data = {}
   data['prefix'] = prefix;
@@ -205,6 +231,8 @@ def toCpp(value):
       array.append(tmGrammar.AND.lower())
     elif token == tmGrammar.OR:
       array.append(tmGrammar.OR.lower())
+    elif token == tmGrammar.XOR:
+      array.append("^")
     else:
       if tmGrammar.NOT in token:
         token = token.replace(tmGrammar.NOT, tmGrammar.NOT.lower())
@@ -403,6 +431,7 @@ def render(menu, template):
   j2_env.add_extension('jinja2.ext.loopcontrols')
   j2_env.filters['toDecimal'] = toDecimal
   j2_env.filters['toCharge'] = toCharge
+  j2_env.filters['getCentralityBitmask'] = getCentralityBitmask
   j2_env.filters['hasCorrelationCuts'] = hasCorrelationCuts
   j2_env.filters['sortObjects'] = sortObjects
   j2_env.filters['toCpp'] = toCpp

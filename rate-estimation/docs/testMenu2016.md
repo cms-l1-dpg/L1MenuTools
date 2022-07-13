@@ -17,7 +17,7 @@ Finally, run `make -j 4`.
 
 ## Test run
 Components (apart from menulib.hh and menulib.cc) are provided to run a short test.
-`./testMenu2016 -u menu/run_lumi.csv -m menu/Prescale_2018_v2_1_0_Col_2.0.txt -l ntuple/fill_7118_nanoDST_shifter_lxplus_test.list -o test -b 2736 --doPlotRate --doPlotEff --UseUnpackTree`
+`./testMenu2016 -u menu/run_lumi.csv -m menu/Prescale_2018_v2_1_0_Col_2.0.txt -l ntuple/fill_7118_nanoDST_shifter_lxplus_test.list -o test -b 2748 --doPlotRate --doPlotEff --UseUnpackTree`
 This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
 Make sure you have set up the virtual environment as specified in the rate-estimation README, are in a CMSSW environment (ie- you have run `cmsenv`), and have run `make -j 4` since acquiring menulib.hh and menulib.cc.
 
@@ -106,6 +106,25 @@ Compares emulation with uGT tree.
 
 ### --doScanLS
 Quickly scan files for selected LS from --SelectLS option.
+
+### --lowerPUbound: lower PU bound
+Consider only events with PU >= lowerPUbound for the rate estimation; default is -1 -> no lower bound
+
+### --upperPUbound: upper PU bound
+Consider only events with PU <= upperPUbound for the rate estimation; default is -1 -> no upper bound
+
+### --doReweighting2018
+Apply pileup reweighting of the Run 3 flat pileup distribution according to Run 3Lumi POG model (do not use with `--lowerPUbound` or `--upperPUbound` option!)
+
+### --doReweightingRun3
+Apply pileup reweighting of the Run 3 flat pileup distribution to match the Run 2 pileup profile (do not use with `--lowerPUbound` or `--upperPUbound` option!)
+
+### --customReweighting: cutom weight json-file
+Apply pileup reweighting using a custom set of weights, set a json-file containing the custom weights; default is no custom weights
+Requirements for the weight json-file:
+* The file is has to contain exactly one json line.
+* The PU weight Json-file must contain the key `fraction`.
+* The key `fraction` has to contain a list of PU weights, the list index of the weight corresponds to the PU value. E.g. to get the weight of an event with a PU value of 45 the rate estimation code picks the weight at position 45 in the list.
 
 ### --Select\_BX\_in\_48b
 Selects target bunch crossings in 48b

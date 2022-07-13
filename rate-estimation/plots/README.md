@@ -12,6 +12,7 @@ The following arguments can be provided to run the script:
 * Name of the csv file containing rates as a function of pileup: --csv
 * Name of the L1 seeds for which rates are plotted as a function of the pileup: --seed 
 * Boolean choice (False or True) if the reweighting is performed or not: --reweightRun3 or --reweight2018
+* Name of the json-file containing the custom weights for reweighting if custom reweighting was used for the rate estimation: --customReweighting
 
 Default settings correspond to the following command provided as an example:
 ```
