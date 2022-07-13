@@ -1,14 +1,14 @@
 # L1Ntuples production recipe
 
-The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples for L1 menu studies.
+The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples for L1 menu studies. 
+====> **PLEASE NOTE** that the recipe is the latest one but is still under development!!
 
 The targeted environment is Lxplus and assumes a standard session:
 ```
 ssh -XY <username>@lxplus.cern.ch
 ```
 
-Follow the below instructions in the given order to produce your own set of L1Ntuples
-on HTCondor.
+Follow the below instructions in the given order to produce your own set of L1Ntuples on HTCondor.
 
 ## 1. Environment setup
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
@@ -20,7 +20,7 @@ cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline l1t-integration-CMSSW_12_4_0
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v129.0-CMSSW_12_4_0
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v131
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
@@ -71,5 +71,3 @@ python condor_sub.py
 - Input datasets (122X - Realistic PU distribution with an average PU of 52): 
    - [`/SingleNeutrino_E-10-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 14262400; Number of files: 35656) 
    - [`/SingleNeutrino_Pt-2To20-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_Pt-2To20-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 12764800; Number of files: 31912) 
-
-
