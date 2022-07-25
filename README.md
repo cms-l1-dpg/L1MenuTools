@@ -29,7 +29,7 @@ The MenuTools are intended to quickly produce rate estimates for L1 algorithms, 
 
 The trigger decision of interest for each L1 algorithm is stored in the L1Ntuples as m_algoDecisionFinal. The relevant CMSSW code may be found here : https://cmssdt.cern.ch/lxr/source/DataFormats/L1TGlobal/src/GlobalAlgBlk.cc
 
-uGT_decision_counts contains a script that obtains the emulated trigger counts from L1Ntuple, and prints as output the L1 bit index, L1 seed name, and the trigger count. This is mean to be a validation test, and it is sufficient to produce an L1ntuple containing a small number of events with the desired L1 menu emulated.
+uGT_decision_counts contains a script that obtains the emulated trigger counts from L1Ntuple, and prints as output the L1 bit index, L1 seed name, and the trigger count. This is meant to be a validation test, and it is sufficient to produce an L1Ntuple based on the desired L1 menu.
 
 Provided tools are :
 * 'parse_algo_map.py' : Converts the given prescale table that corresponds to the emulated L1 menu into a list that maps the L1 bit index to the L1 seed name.
