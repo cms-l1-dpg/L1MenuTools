@@ -27,7 +27,7 @@ Contains the following tools:
 
 The MenuTools are intended to quickly produce rate estimates for L1 algorithms, allowing the flexibility to add new algorithms or modify existing ones. Thus the rate-estimation scripts use trigger primitives and objects to reproduce the trigger decision without having to re-produce L1Ntuples after re-run the emulator with the new menu over the raw data events. It is therefore important that the triggered event counts computed by the MenuTools matches the trigger counts given by the L1 emulator.
 
-The trigger decision for each L1 algorithm is stored in the L1Ntuples as m_algoDecisionFinal. The relevant script in CMSSW may be found here : https://cmssdt.cern.ch/lxr/source/DataFormats/L1TGlobal/src/GlobalAlgBlk.cc
+The trigger decision of interest for each L1 algorithm is stored in the L1Ntuples as m_algoDecisionFinal. The relevant CMSSW code may be found here : https://cmssdt.cern.ch/lxr/source/DataFormats/L1TGlobal/src/GlobalAlgBlk.cc
 
 uGT_decision_counts contains a script that obtains the emulated trigger counts from L1Ntuple, and prints as output the L1 bit index, L1 seed name, and the trigger count. This is mean to be a validation test, and it is sufficient to produce an L1ntuple containing a small number of events with the desired L1 menu emulated.
 

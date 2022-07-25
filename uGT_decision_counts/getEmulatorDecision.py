@@ -4,24 +4,31 @@ from algo_map import algo_map
 import sys
 import os
 
-helpstr = '\nUsage : python3 getEmulatorDecision.py <L1Ntuple>\n'
-helpstr += '\n<L1Ntuple> : location of the L1Ntuple.root file\n'
+helpstr = '\nUsage : python3 getEmulatorDecision.py\n'
 
-if len(sys.argv) != 2 : sys.exit("\nError ! Missing argument : ntuple location\n"+helpstr)
+# Input files
+file_list = open("ntuples.list")
+lines = file_list.readlines()
 
-# Input file name
-file_in_name = sys.argv[1]
-if not os.path.exists(file_in_name) : sys.exit("\nError ! L1Ntuple does not exist at this location.\n")
+ntuple_list = []
 
-fin = TFile(file_in_name,"READ")
-#fin = TFile("/afs/cern.ch/user/s/sonawane/private/ntuple_test/CMSSW_12_4_0_pre4/src/L1Ntuple.root","READ")
+for line in lines:
+	ntuple_path = line.rstrip()
+	if os.path.exists(ntuple_path) : ntuple_list.append(ntuple_path)
 
-#t_L1UpgradeTree = fin.Get("l1UpgradeTree/L1UpgradeTree")
-#t_l1uGTEmuTree.AddFriend("l1uGTTree/L1uGTTree")
-t_l1uGTEmuTree = fin.Get("l1uGTEmuTree/L1uGTTree")
+chain = {}
+
+chain['uGTEmuTree'] =  TChain('l1uGTEmuTree/L1uGTTree')
+#chain['UpgradeTree'] =  TChain('l1UpgradeTree/L1UpgradeTree')
+#chain['uGTTree'] =  TChain('l1uGTTree/L1uGTTree')
+
+for ntuple_path in ntuple_list :
+	chain['uGTEmuTree'].Add(ntuple_path)
+#	chain['UpgradeTree'].Add(ntuple_path)
+#	chain['uGTTree'].Add(ntuple_path)
 
 for bit, algo_name in algo_map:
         s_algoSelection = "m_algoDecisionFinal[" + str(bit) + "]==1"
-        #print(s_algoSelection)
-        nentriesPerBit = t_l1uGTEmuTree.GetEntries(s_algoSelection)
-        print(bit, '\t', algo_name, '\t', nentriesPerBit)
+       #print(s_algoSelection)
+        nentriesPerBit = chain['uGTEmuTree'].GetEntries(s_algoSelection)
+        print("{}  \t {:<40} \t {}".format(bit, algo_name, nentriesPerBit))
