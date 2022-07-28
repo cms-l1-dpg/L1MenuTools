@@ -8,12 +8,12 @@ The trigger decision of interest for each L1 algorithm is stored in the L1Ntuple
 
 ### parse_algo_map.py
 
-Script to produce the algo map from a provided L1 Prescale Table. Please ensure that the Prescale Table version corresponds to the L1 menu used to produce the ntuples. This is because the L1 ntuple does not store the L1 seed names. This mapping of the L1 bit indices to the L1 seed names via this script/map is for convenience and readability.
+Script to produce the algo map from a provided L1 Prescale Table. Please ensure that the Prescale Table version corresponds to the L1 menu used to produce the ntuples. This is because the L1 ntuple does not store the L1 seed names. This mapping of the L1 bit indices to the L1 seed names via this script/map is for convenience and readability. Default map provided is for L1Menu_Collisions2022_v1_2_0.csv
 
 ## Usage
 
 ```
-python3 parse_algo_map.py L1Menu_Collisions2022_v1_1_0.csv
+python3 parse_algo_map.py L1Menu_Collisions2022_v1_2_0.csv
 ```
 
 ## Obtaining L1 Prescale Table
@@ -26,7 +26,7 @@ wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/
 
 ### algo_map.py
 
-Contains a list of the form [L1_bit, "L1_seed_name"], used to return the emulated counts as stored in the ntuple.
+Contains a list of the form [L1_bit, "L1_seed_name"], used to return the emulated counts as stored in the ntuple. Default map provided is for L1Menu_Collisions2022_v1_2_0.csv
 
 ### ntuple.list
 

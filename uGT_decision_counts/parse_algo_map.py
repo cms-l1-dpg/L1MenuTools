@@ -11,6 +11,9 @@ def main() :
 	lines = infile.readlines()
 	
 	outfile = open("algo_map.py", "w")
+
+	menu_name = infilename.split(".")
+	outfile.write("#Menu used : "+menu_name[0]+"\n\n")
 	
 	outfile.write("algo_map = [\n")
 	
@@ -22,3 +25,5 @@ def main() :
 	
 	outfile.write("]")
 	outfile.close()
+
+main()
