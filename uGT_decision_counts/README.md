@@ -2,7 +2,7 @@
 
 Returns the emulated trigger counts in an ntuple for a given (L1_bit, L1_seed)  map.
 
-The MenuTools are intended to quickly produce rate estimates for L1 algorithms, allowing the flexibility to add new algorithms or modify existing ones. Thus the rate-estimation scripts use trigger primitives and objects to reproduce the trigger decision without having to re-produce L1Ntuples after re-run the emulator with the new menu over the raw data events. It is therefore important that the triggered event counts computed by the MenuTools matches the trigger counts given by the L1 emulator. 
+The MenuTools are intended to quickly produce rate estimates for L1 algorithms, allowing the flexibility to add new algorithms or modify existing ones. Thus the rate-estimation scripts use trigger primitives and objects to reproduce the trigger decision without having to re-produce L1Ntuples after re-running the emulator with the new menu over the raw data events. It is therefore important that the triggered event counts computed by the MenuTools matches the trigger counts given by the L1 emulator. 
 
 The trigger decision of interest for each L1 algorithm is stored in the L1Ntuples as m_algoDecisionFinal. The relevant CMSSW code may be found here : https://cmssdt.cern.ch/lxr/source/DataFormats/L1TGlobal/src/GlobalAlgBlk.cc
 
@@ -21,7 +21,7 @@ python3 parse_algo_map.py L1Menu_Collisions2022_v1_2_0.csv
 The following command may be used to obtain an L1 prescale table :
 
 ```
-wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2022_v1_1_0/PrescaleTable/L1Menu_Collisions2022_v1_1_0.csv
+wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2022_v1_2_0/PrescaleTable/L1Menu_Collisions2022_v1_2_0.csv
 ```
 
 ### algo_map.py
