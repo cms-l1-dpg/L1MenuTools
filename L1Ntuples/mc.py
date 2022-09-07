@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=124X_mcRun3_2022_realistic_v6 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2022_v0_2 --filein=/store/mc/Run3Winter22DR/SingleNeutrino_E-10-gun/GEN-SIM-DIGI-RAW/L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/2520004/23eb7d6b-ffbd-4368-9d99-92c5f153f570.root
+# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=124X_mcRun3_2022_realistic_v10 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2022_v0_4 --filein=/store/mc/Run3Winter22DR/SingleNeutrino_E-10-gun/GEN-SIM-DIGI-RAW/L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/2520004/23eb7d6b-ffbd-4368-9d99-92c5f153f570.root
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -97,7 +97,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '124X_mcRun3_2022_realistic_v6', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '124X_mcRun3_2022_realistic_v10', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -123,57 +123,14 @@ from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
 process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2022_v0_2
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2022_v0_4
 
 #call to customisation function L1TSettingsToCaloParams_2022_v0_2 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2022_v0_2(process)
+process = L1TSettingsToCaloParams_2022_v0_4(process)
 
 # End of customisation functions
 
-
 # Customisation from command line
-process.load("SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff")
-
-process.simHcalTriggerPrimitiveDigis.numberOfFilterPresamplesHBQIE11 = 1
-process.simHcalTriggerPrimitiveDigis.numberOfFilterPresamplesHEQIE11 = 1
-process.simHcalTriggerPrimitiveDigis.weightsQIE11 = {
-    "ieta1" :  [-0.47, 1.0],
-    "ieta2" :  [-0.47, 1.0],
-    "ieta3" :  [-0.47, 1.0],
-    "ieta4" :  [-0.47, 1.0],
-    "ieta5" :  [-0.47, 1.0],
-    "ieta6" :  [-0.47, 1.0],
-    "ieta7" :  [-0.47, 1.0],
-    "ieta8" :  [-0.47, 1.0],
-    "ieta9" :  [-0.47, 1.0],
-    "ieta10" : [-0.47, 1.0],
-    "ieta11" : [-0.47, 1.0],
-    "ieta12" : [-0.47, 1.0],
-    "ieta13" : [-0.47, 1.0],
-    "ieta14" : [-0.47, 1.0],
-    "ieta15" : [-0.47, 1.0],
-    "ieta16" : [-0.47, 1.0],
-    "ieta17" : [-0.47, 1.0],
-    "ieta18" : [-0.47, 1.0],
-    "ieta19" : [-0.47, 1.0],
-    "ieta20" : [-0.47, 1.0],
-    "ieta21" : [-0.43, 1.0],
-    "ieta22" : [-0.43, 1.0],
-    "ieta23" : [-0.43, 1.0],
-    "ieta24" : [-0.43, 1.0],
-    "ieta25" : [-0.43, 1.0],
-    "ieta26" : [-0.43, 1.0],
-    "ieta27" : [-0.43, 1.0],
-    "ieta28" : [-0.43, 1.0]
-}
-
-process.HcalTPGCoderULUT.contain1TSHB = True
-process.HcalTPGCoderULUT.contain1TSHE = True
-
-# Pick one of the pairs of lines below based on the intended scenario for running
-#  WARNING!!! Temporary fix until the [[https://github.com/cms-sw/cmssw/pull/34572][PR#34572]] is finalized: 
-process.HcalTPGCoderULUT.containPhaseNSHB = -2 # For Run3 MC
-process.HcalTPGCoderULUT.containPhaseNSHE = -2 # For Run3 MC
 
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
