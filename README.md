@@ -20,13 +20,13 @@ Latest snapshot of a recipe to produce L1Ntuples on HTCondor.
 Collection of prescale table tools for offline L1 Menu operations in CMS. 
 
 Contains the following tools:
-* `ps-generate` (prescale table generation tool): create a new prescale table according to a L1 Menu, using information from an existing prescale table ([documentation](pstools/docs/ps-generate.md))
-* `ps-diff` (prescale table comparison tool): create diffs between two PS table in various output formats ([documentation](pstools/docs/ps-diff.md))
+* `ps-generate` (prescale table generation tool): create a new prescale table according to a L1 Menu, using information from an existing prescale table ([documentation](pstools/docs/ps-generate.md)).
+* `ps-diff` (prescale table comparison tool): create diffs between two PS table in various output formats ([documentation](pstools/docs/ps-diff.md)).
 
 ### Emulated trigger counts ([uGT_decision_counts/](uGT_decision_counts/))
 Tool to extract the emulated trigger counts from the L1Ntuples. Useful for validating that the rate-estimation tools and the emulator work in the same way.
 
 Provided tools are :
-* 'parse_algo_map.py' : Converts the given prescale table that corresponds to the emulated L1 menu into a list that maps the L1 bit index to the L1 seed name.
-* 'algo_map.py' : Contains the list mapping the L1 bit index to the L1 seed name
-* 'getEmulatorDecision.py' : script to obtain the emulated trigger counts (stored in m_algoDecisionFinal in the L1Ntuples) for each L1 bit/seed.
+* `parse_algo_map.py` : Converts the given prescale table that corresponds to the emulated L1 menu into a list that maps the L1 bit index to the L1 seed name.
+* `algo_map.py` : Contains the list mapping the L1 bit index to the L1 seed name.
+* `getEmulatorDecision.py` : script to obtain the emulated trigger counts (stored in *m_algoDecisionFinal* in the L1Ntuples) for each L1 bit/seed.
