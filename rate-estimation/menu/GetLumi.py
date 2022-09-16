@@ -18,9 +18,9 @@ else:
 
 runlist = [
 
-#	two runs in Fill 7118
-	322079,
-	322088
+#	two runs in Fill 8124
+	357440,
+	357442
 ]
 
 def Runcmd(run):
@@ -30,7 +30,7 @@ def Runcmd(run):
     cmd += " -r %d " % run
     #testcmd = cmd + " --normtag /afs/cern.ch/user/l/lumipro/public/normtag_file/normtag_DATACERT.json "
     #testcmd = cmd + " -i /afs/cern.ch/user/d/deguio/public/Certification/Cert_13TeV_2017_HCAL_DCS_GOOD.txt "
-    testcmd = cmd + " -i json_DCSONLY.txt "
+    testcmd = cmd + " -i Cert_Collisions2022_355100_357900_13p6TeV_DCSOnly_TkPx.json "
     pipe = subprocess.Popen(testcmd, shell=True, stdout=subprocess.PIPE)
     out, err = pipe.communicate()
     if len(out) == 221: # Empty output
