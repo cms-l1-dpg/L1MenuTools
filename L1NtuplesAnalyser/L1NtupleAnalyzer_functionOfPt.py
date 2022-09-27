@@ -1,8 +1,8 @@
 #!/usr/bin/env python3                                                                                
-# ********************************                                                                                                
+# ********************************************                                                                                                
 # usage:                                                                                                                    
 #    python3 L1NtupleAnalyzer_functionOfPt.py  
-# ********************************                                                                                              
+# ********************************************                                                                                              
 
 print("------> Setting Environment")
 
@@ -32,7 +32,7 @@ PRT_EVT  = 1000     ## Print every Nth event
 # List on ntuples:
 # ----------------
 # ZB2022 run357688 (4819637 events):
-f_ZB2022 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run357688.csv"
+f_ZB2022 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
 # ZB2018 run325097 (672287 events):
 f_ZB2018 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run325097.csv"
 
@@ -57,10 +57,10 @@ with open(f_ZB2018) as file:
         list_ZB2018.append(line)
 
   
-for f in range(len(list_ZB2018)):
-    evt_tree.Add(list_ZB2018[f])
+for f in range(len(list_ZB2022)):
+    evt_tree.Add(list_ZB2022[f])
     #print("INTERMEDIATE Nentries evt_tree: ", evt_tree.GetEntries())
-    L1_tree.Add(list_ZB2018[f])
+    L1_tree.Add(list_ZB2022[f])
 
     if f == MAX_FILE: break    
 
@@ -72,7 +72,7 @@ mu_pt = [20, 21, 22, 23, 24, 25, 26, 27]
 n_SingleEG_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
 eg_pt = [32, 33, 34, 35, 36, 37, 38, 39, 40]
 
-n_DoubleLooseIsoEG_thr = [0, 0, 0, 0, 0, 0, 0, 0] #8
+n_DoubleLooseIsoEG_thr = [0, 0, 0, 0, 0, 0, 0, 0] #7
 doubleeg_pt = [20, 21, 22, 23, 24, 25, 26]
 
 n_SingleTau_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #11
@@ -95,7 +95,7 @@ for iEvt in range(evt_tree.GetEntries()):
     if iEvt % PRT_EVT is 0: print("Event #", iEvt)
     
     evt_tree.GetEntry(iEvt)
-    if not ((evt_tree.Event.run == 357688 and (evt_tree.Event.lumi > 35 and evt_tree.Event.lumi < 85)) or (evt_tree.Event.run == 325097 and (evt_tree.Event.lumi > 58 and evt_tree.Event.lumi < 93))):
+    if not ((evt_tree.Event.run == 357688 and (evt_tree.Event.lumi >= 35 and evt_tree.Event.lumi < 85)) or (evt_tree.Event.run == 325097 and (evt_tree.Event.lumi >= 58 and evt_tree.Event.lumi < 94))):
         nEvt_outLSrange += 1
         continue
 
@@ -128,7 +128,7 @@ for iEvt in range(evt_tree.GetEntries()):
                 n_SingleEG_thr[thr] += 1
 
         for thr in range(len(doubleeg_pt)):
-            if (preUGT_tree.egEt[eg] >= doubleeg_pt[thr] and abs(preUGT_tree.egEta[eg]) <= 2.1 and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr == 0): #egEt = 0.5*egIEt
+            if (preUGT_tree.egEt[eg] >= doubleeg_pt[thr] and abs(preUGT_tree.egEta[eg]) <= 2.1 and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr[thr] == 0): #egEt = 0.5*egIEt
                 for eg2 in range(preUGT_tree.nEGs):
                     if ((not eg2 == eg) and preUGT_tree.egEt[eg2] >= doubleeg_pt[thr] and abs(preUGT_tree.egEta[eg2]) <= 2.1 and (preUGT_tree.egIso[eg2] == 2 or preUGT_tree.egIso[eg2] == 3) and preUGT_tree.egBx[eg2] == 0): #egEt = 0.5*egIEt
                         i_doubleeg_thr[thr] += 1
