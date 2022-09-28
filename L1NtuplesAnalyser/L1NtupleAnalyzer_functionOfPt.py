@@ -31,10 +31,10 @@ PRT_EVT  = 1000     ## Print every Nth event
 # ----------------
 # List on ntuples:
 # ----------------
-# ZB2022 run357688 (4819637 events):
-f_ZB2022 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
-# ZB2018 run325097 (672287 events):
-f_ZB2018 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run325097.csv"
+# ZB2022 run357688:
+f_ZB2022 = "EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
+# ZB2018 run325097:
+f_ZB2018 = "EphemeralZBHLTPhysics_data_run325097.csv"
 
 # -----------------
 # L1Ntuple branches
