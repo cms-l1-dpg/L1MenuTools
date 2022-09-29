@@ -1,8 +1,8 @@
 #!/usr/bin/env python3                                                                                
-# ********************************************                                                                                                
+# *******************************************                                                                                                
 # usage:                                                                                                                    
 #    python3 L1NtupleAnalyzer_functionOfPt.py  
-# ********************************************                                                                                              
+# *******************************************                                                                                              
 
 print("------> Setting Environment")
 
@@ -31,10 +31,10 @@ PRT_EVT  = 1000     ## Print every Nth event
 # ----------------
 # List on ntuples:
 # ----------------
-# ZB2022 run357688:
-f_ZB2022 = "EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
-# ZB2018 run325097:
-f_ZB2018 = "EphemeralZBHLTPhysics_data_run325097.csv"
+# ZB2022 run357688 (4819637 events):
+f_ZB2022 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
+# ZB2018 run325097 (672287 events):
+f_ZB2018 = "/afs/cern.ch/work/e/elfontan/private/L1TMenu/13p6TeVcollisions_ntupleProduction/CMSSW_12_4_0/src/L1MenuTools/rate-estimation/ntuple/EphemeralZBHLTPhysics_data_run325097.csv"
 
 # -----------------
 # L1Ntuple branches
@@ -66,26 +66,26 @@ for f in range(len(list_ZB2022)):
 
 nEvt_outLSrange = 0
 
-n_SingleMu_thr = [0, 0, 0, 0, 0, 0, 0, 0] #8 
-mu_pt = [20, 21, 22, 23, 24, 25, 26, 27] 
+n_SingleMu_countings = [0, 0, 0, 0, 0, 0, 0, 0] #8 
+n_SingleMu_thresholds = [20, 21, 22, 23, 24, 25, 26, 27] 
 
-n_SingleEG_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
-eg_pt = [32, 33, 34, 35, 36, 37, 38, 39, 40]
+n_SingleEG_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
+n_SingleEG_thresholds = [32, 33, 34, 35, 36, 37, 38, 39, 40]
 
-n_DoubleLooseIsoEG_thr = [0, 0, 0, 0, 0, 0, 0, 0] #7
-doubleeg_pt = [20, 21, 22, 23, 24, 25, 26]
+n_DoubleLooseIsoEG_countings = [0, 0, 0, 0, 0, 0, 0, 0] #7
+n_DoubleLooseIsoEG_thresholds = [20, 21, 22, 23, 24, 25, 26]
 
-n_SingleTau_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #11
-tau_pt = [120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130]
+n_SingleTau_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #11
+n_SingleTau_thresholds = [120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130]
 
-n_DoubleIsoTau_thr = [0, 0, 0, 0, 0, 0, 0] #7
-doubleisotau_pt = [30, 31, 32, 33, 34, 35, 36]
+n_DoubleIsoTau_countings = [0, 0, 0, 0, 0, 0, 0] #7
+n_DoubleIsoTau_thresholds = [30, 31, 32, 33, 34, 35, 36]
 
-n_SingleJet_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
-jet_pt = [120, 125, 130, 135, 140, 145, 150, 155, 160]
+n_SingleJet_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
+n_SingleJet_thresholds = [120, 125, 130, 135, 140, 145, 150, 155, 160]
 
-n_ETMHF_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
-etmhf_pt = [70, 72, 75, 78, 80, 85, 90, 95, 100]
+n_ETMHF_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
+n_ETMHF_thresholds = [70, 72, 75, 78, 80, 85, 90, 95, 100]
 
 # -------------------------
 # Loop over events in TFile
@@ -111,10 +111,10 @@ for iEvt in range(evt_tree.GetEntries()):
     # -----------------
     i_mu_thr = [0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two mu objects in the same event passing the requirement
     for mu in range(preUGT_tree.nMuons):
-        for thr in range(len(mu_pt)):
-            if (preUGT_tree.muonEt[mu] >= mu_pt[thr] and preUGT_tree.muonQual[mu] >= 12 and preUGT_tree.muonBx[mu] == 0 and i_mu_thr[thr] == 0): #muonEt = 0.5*muonIEt
+        for thr in range(len(n_SingleMu_thresholds)):
+            if (preUGT_tree.muonEt[mu] >= n_SingleMu_thresholds[thr] and preUGT_tree.muonQual[mu] >= 12 and preUGT_tree.muonBx[mu] == 0 and i_mu_thr[thr] == 0): #muonEt = 0.5*muonIEt
                 i_mu_thr[thr] += 1
-                n_SingleMu_thr[thr] += 1
+                n_SingleMu_countings[thr] += 1
 
     # -----------------
     #        EG       #
@@ -122,17 +122,17 @@ for iEvt in range(evt_tree.GetEntries()):
     i_eg_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two eg objects in the same event passing the requirement
     i_doubleeg_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two eg objects in the same event passing the requirement
     for eg in range(preUGT_tree.nEGs):
-        for thr in range(len(eg_pt)):
-            if (preUGT_tree.egEt[eg] >= eg_pt[thr] and abs(preUGT_tree.egEta[eg]) <= 2.5 and preUGT_tree.egBx[eg] == 0 and i_eg_thr[thr] == 0): #egEt = 0.5*egIEt
+        for thr in range(len(n_SingleEG_thresholds)):
+            if (preUGT_tree.egEt[eg] >= n_SingleEG_thresholds[thr] and abs(preUGT_tree.egEta[eg]) <= 2.5 and preUGT_tree.egBx[eg] == 0 and i_eg_thr[thr] == 0): #egEt = 0.5*egIEt
                 i_eg_thr[thr] += 1
-                n_SingleEG_thr[thr] += 1
+                n_SingleEG_countings[thr] += 1
 
-        for thr in range(len(doubleeg_pt)):
-            if (preUGT_tree.egEt[eg] >= doubleeg_pt[thr] and abs(preUGT_tree.egEta[eg]) <= 2.1 and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr[thr] == 0): #egEt = 0.5*egIEt
+        for thr in range(len(n_DoubleLooseIsoEG_thresholds)):
+            if (preUGT_tree.egEt[eg] >= n_DoubleLooseIsoEG_thresholds[thr] and abs(preUGT_tree.egEta[eg]) <= 2.1 and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr[thr] == 0): #egEt = 0.5*egIEt
                 for eg2 in range(preUGT_tree.nEGs):
-                    if ((not eg2 == eg) and preUGT_tree.egEt[eg2] >= doubleeg_pt[thr] and abs(preUGT_tree.egEta[eg2]) <= 2.1 and (preUGT_tree.egIso[eg2] == 2 or preUGT_tree.egIso[eg2] == 3) and preUGT_tree.egBx[eg2] == 0): #egEt = 0.5*egIEt
+                    if ((not eg2 == eg) and preUGT_tree.egEt[eg2] >= n_DoubleLooseIsoEG_thresholds[thr] and abs(preUGT_tree.egEta[eg2]) <= 2.1 and (preUGT_tree.egIso[eg2] == 2 or preUGT_tree.egIso[eg2] == 3) and preUGT_tree.egBx[eg2] == 0): #egEt = 0.5*egIEt
                         i_doubleeg_thr[thr] += 1
-                        n_DoubleLooseIsoEG_thr[thr] += 1
+                        n_DoubleLooseIsoEG_countings[thr] += 1
 
 
     # -----------------
@@ -141,17 +141,17 @@ for iEvt in range(evt_tree.GetEntries()):
     i_tau_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two taus in the same event passing the requirement
     i_doubleisotau_thr = [0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two taus in the same event passing the requirement
     for tau in range(preUGT_tree.nTaus):
-        for thr in range(len(tau_pt)):
-            if (preUGT_tree.tauEt[tau] >= tau_pt[thr] and abs(preUGT_tree.tauEta[tau]) <= 2.1 and preUGT_tree.tauBx[tau] == 0 and i_tau_thr[thr] == 0): #tauEt = 0.5*tauIEt
+        for thr in range(len(n_SingleTau_thresholds)):
+            if (preUGT_tree.tauEt[tau] >= n_SingleTau_thresholds[thr] and abs(preUGT_tree.tauEta[tau]) <= 2.1 and preUGT_tree.tauBx[tau] == 0 and i_tau_thr[thr] == 0): #tauEt = 0.5*tauIEt
                 i_tau_thr[thr] += 1
-                n_SingleTau_thr[thr] += 1
+                n_SingleTau_countings[thr] += 1
 
-        for thr in range(len(doubleisotau_pt)):
-            if (preUGT_tree.tauEt[tau] >= doubleisotau_pt[thr] and preUGT_tree.tauIso[tau] == 1 and preUGT_tree.tauBx[tau] == 0 and i_doubleisotau_thr[thr] == 0): #tauEt = 0.5*tauIEt
+        for thr in range(len(n_DoubleIsoTau_thresholds)):
+            if (preUGT_tree.tauEt[tau] >= n_DoubleIsoTau_thresholds[thr] and preUGT_tree.tauIso[tau] == 1 and preUGT_tree.tauBx[tau] == 0 and i_doubleisotau_thr[thr] == 0): #tauEt = 0.5*tauIEt
                 for tau2 in range(preUGT_tree.nTaus):
-                    if ((not tau2 == tau) and preUGT_tree.tauEt[tau2] >= doubleisotau_pt[thr] and preUGT_tree.tauIso[tau2] == 1 and preUGT_tree.tauBx[tau2] == 0):
+                    if ((not tau2 == tau) and preUGT_tree.tauEt[tau2] >= n_DoubleIsoTau_thresholds[thr] and preUGT_tree.tauIso[tau2] == 1 and preUGT_tree.tauBx[tau2] == 0):
                         i_doubleisotau_thr[thr] += 1
-                        n_DoubleIsoTau_thr[thr] += 1
+                        n_DoubleIsoTau_countings[thr] += 1
 
 
     # -----------------
@@ -159,10 +159,10 @@ for iEvt in range(evt_tree.GetEntries()):
     # -----------------
     i_jet_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two jets in the same event passing the requirement
     for jet in range(preUGT_tree.nJets):
-        for thr in range(len(jet_pt)):
-            if (preUGT_tree.jetEt[jet] >= jet_pt[thr] and abs(preUGT_tree.jetEta[jet]) <= 2.5 and preUGT_tree.jetBx[jet] == 0 and i_jet_thr[thr] == 0): #jetEt = 0.5*tauIEt
+        for thr in range(len(n_SingleJet_thresholds)):
+            if (preUGT_tree.jetEt[jet] >= n_SingleJet_thresholds[thr] and abs(preUGT_tree.jetEta[jet]) <= 2.5 and preUGT_tree.jetBx[jet] == 0 and i_jet_thr[thr] == 0): #jetEt = 0.5*tauIEt
                 i_jet_thr[thr] += 1
-                n_SingleJet_thr[thr] += 1
+                n_SingleJet_countings[thr] += 1
 
 
     # -----------------
@@ -170,11 +170,11 @@ for iEvt in range(evt_tree.GetEntries()):
     # -----------------
     i_etmhf_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two met values in the same event passing the requirement
     for met in range(preUGT_tree.nSums):
-        for thr in range(len(etmhf_pt)):
+        for thr in range(len(n_ETMHF_thresholds)):
             if (not(preUGT_tree.sumType[met] == 8)): continue # 8 = 'kMissingEtHF'
-            if (preUGT_tree.sumEt[met] >= etmhf_pt[thr] and preUGT_tree.sumBx[met] == 0 and i_etmhf_thr[thr] == 0): #sumEt = 0.5*sumIEt
+            if (preUGT_tree.sumEt[met] >= n_ETMHF_thresholds[thr] and preUGT_tree.sumBx[met] == 0 and i_etmhf_thr[thr] == 0): #sumEt = 0.5*sumIEt
                 i_etmhf_thr[thr] += 1
-                n_ETMHF_thr[thr] += 1
+                n_ETMHF_countings[thr] += 1
 
 
 print("-------------------------")
@@ -185,25 +185,25 @@ print("FINAL Nentries evt_tree in LS range: ", (evt_tree.GetEntries() - nEvt_out
 print("-------------------------")
 
 print("# MU #")
-print("mu pt thresholds = ", mu_pt)
-print("n_SingleMu_Countings = ", n_SingleMu_thr)
+print("mu pt thresholds = ", n_SingleMu_thresholds)
+print("n_SingleMu_Countings = ", n_SingleMu_countings)
 
 print("# EG #")
-print("eg pt thresholds = ", eg_pt)
-print("n_SingleEG_Countings = ", n_SingleEG_thr)
-print("doubleeg pt thresholds = ", doubleeg_pt)
-print("n_DoubleLooseIsoEG_Countings = ", n_DoubleLooseIsoEG_thr)
+print("eg pt thresholds = ", n_SingleEG_thresholds)
+print("n_SingleEG_Countings = ", n_SingleEG_countings)
+print("doubleeg pt thresholds = ", n_DoubleLooseIsoEG_thresholds)
+print("n_DoubleLooseIsoEG_Countings = ", n_DoubleLooseIsoEG_countings)
 
 print("# TAU #")
-print("tau pt thresholds = ", tau_pt)
-print("n_SingleTau_Countings = ", n_SingleTau_thr)
-print("doubleisotau pt thresholds = ", doubleisotau_pt)
-print("n_DoubleIsoTau_Countings = ", n_DoubleIsoTau_thr)
+print("tau pt thresholds = ", n_SingleTau_thresholds)
+print("n_SingleTau_Countings = ", n_SingleTau_countings)
+print("doubleisotau pt thresholds = ", n_DoubleIsoTau_thresholds)
+print("n_DoubleIsoTau_Countings = ", n_DoubleIsoTau_countings)
 
 print("# JET #")
-print("jet pt thresholds = ", jet_pt)
-print("n_SingleJet_Countings = ", n_SingleJet_thr)
+print("jet pt thresholds = ", n_SingleJet_thresholds)
+print("n_SingleJet_Countings = ", n_SingleJet_countings)
 
 print("# MET #")
-print("met thresholds = ", etmhf_pt)
-print("n_ETMHF_Countings = ", n_ETMHF_thr)
+print("met thresholds = ", n_ETMHF_thresholds)
+print("n_ETMHF_Countings = ", n_ETMHF_countings)
