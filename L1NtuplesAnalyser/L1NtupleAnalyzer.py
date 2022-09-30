@@ -31,10 +31,11 @@ PRT_EVT  = 1000     ## Print every Nth event
 # ----------------
 # List on ntuples:
 # ----------------
-# ZB2022 run357688:
+# ZB2022 run357688 (5150338 events; 50 LS in LS = [35,84] for PU=52: 939081 events):
 f_ZB2022 = "EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
-# ZB2018 run325097:
+# ZB2018 run325097 (626090 events; 36 LS in LS = [58,93] for PU=52: 469101 events):
 f_ZB2018 = "EphemeralZBHLTPhysics_data_run325097.csv"
+
 
 # -----------------
 # L1Ntuple branches
