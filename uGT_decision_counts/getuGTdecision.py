@@ -7,7 +7,7 @@ import os
 
 argparser = argparse.ArgumentParser(description='Parser used for non default arguments', formatter_class=argparse.ArgumentDefaultsHelpFormatter, add_help=True)
 argparser.add_argument('--ntuples'      , dest='ntuple_list'     , default='ntuples.list'   , help='List of ntuples')
-argparser.add_argument('--selections'   , dest='selections'      , default=None             , help='Additional selections')
+argparser.add_argument('--selections'   , dest='selections'      , default=''               , help='Additional selections')
 
 args = argparser.parse_args()
  
