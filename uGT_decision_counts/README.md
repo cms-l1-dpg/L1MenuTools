@@ -28,7 +28,7 @@ wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/
 
 Contains a list of the form [L1_bit, "L1_seed_name"], used to return the emulated counts as stored in the ntuple. Default map provided is for L1Menu_Collisions2022_v1_3_0.csv
 
-### getEmulatorDecision.py
+### getuGTdecision.py
 
 Script that takes ntuples as input, using the provided algo map to obtain the emulated trigger counts.
 
@@ -37,7 +37,7 @@ The output lists the L1 bit index, L1 seed name, and the triggered counts.
 ## Usage
 
 ```
-python3 getEmulatorDecision.py --ntuples <ntuples.list> --selections <additional selections>
+python3 getuGTdecision.py --ntuples <ntuples.list> --selections <additional selections>
 ```
 >NOTE : This runs over the list of ntuples given in, for example, ntuples.list. Therefore, the path to the ntuples must be listed in this file. A default list has been provided for reference, but in principle any list may be used. The recommended way is to do :
 ```

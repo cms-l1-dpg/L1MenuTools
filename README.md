@@ -29,4 +29,4 @@ Tool to extract the emulated trigger counts from the L1Ntuples. Useful for valid
 Provided tools are :
 * `parse_algo_map.py` : Converts the given prescale table that corresponds to the emulated L1 menu into a list that maps the L1 bit index to the L1 seed name.
 * `algo_map.py` : Contains the list mapping the L1 bit index to the L1 seed name.
-* `getEmulatorDecision.py` : script to obtain the emulated trigger counts (stored in *m_algoDecisionFinal* in the L1Ntuples) for each L1 bit/seed.
+* `getuGTdecision.py` : script to obtain the emulated trigger counts (stored in *m_algoDecisionInitial* in the L1Ntuples) for each L1 bit/seed.
