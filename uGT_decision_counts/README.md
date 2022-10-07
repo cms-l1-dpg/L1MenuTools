@@ -4,7 +4,7 @@ Returns the emulated trigger counts in an ntuple for a given (L1_bit, L1_seed)  
 
 The MenuTools are intended to quickly produce rate estimates for L1 algorithms, allowing the flexibility to add new algorithms or modify existing ones. Thus the rate-estimation scripts use trigger primitives and objects to reproduce the trigger decision without having to re-produce L1Ntuples after re-running the emulator with the new menu over the raw data events. It is therefore important that the triggered event counts computed by the MenuTools matches the trigger counts given by the L1 emulator. 
 
-The trigger decision of interest for each L1 algorithm is stored in the L1Ntuples as m_algoDecisionFinal. The relevant CMSSW code may be found here : https://cmssdt.cern.ch/lxr/source/DataFormats/L1TGlobal/src/GlobalAlgBlk.cc
+The trigger decision of interest for each L1 algorithm is stored in the L1Ntuples as m_algoDecisionInitial. The relevant CMSSW code may be found here : https://cmssdt.cern.ch/lxr/source/DataFormats/L1TGlobal/src/GlobalAlgBlk.cc
 
 ### parse_algo_map.py
 
@@ -41,7 +41,7 @@ python3 getuGTdecision.py --ntuples <ntuples.list> --selections <additional sele
 ```
 >NOTE : This runs over the list of ntuples given in, for example, ntuples.list. Therefore, the path to the ntuples must be listed in this file. A default list has been provided for reference, but in principle any list may be used. The recommended way is to do :
 ```
-ls \<path_to_ntuples_directory\*.root> \> ntuple.list
+ls <path_to_ntuples_directory/*.root> > ntuple.list
 ```
 ### ntuples.list
 
