@@ -1,8 +1,8 @@
 #!/usr/bin/env python3                                                                                
-# ********************************************                                                                                                
+# ********************************************************                                                                                                
 # usage:                                                                                                                    
-#    python3 L1NtupleAnalyzer_functionOfPt.py  
-# ********************************************                                                                                              
+#    python3 L1NtupleAnalyzer_functionOfPt_etaSplitting.py 
+# ********************************************************                                                                                              
 
 print("------> Setting Environment")
 
@@ -31,9 +31,9 @@ PRT_EVT  = 1000     ## Print every Nth event
 # ----------------
 # List on ntuples:
 # ----------------
-# ZB2022 run357688 (5150338 events; 50 LS in LS = [35,84] for PU=52: 939081 events):
+# ZB2022 run357688 (4819637 events):
 f_ZB2022 = "EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
-# ZB2018 run325097 (626090 events; 36 LS in LS = [58,93] for PU=52: 469101 events):
+# ZB2018 run325097 (672287 events):
 f_ZB2018 = "EphemeralZBHLTPhysics_data_run325097.csv"
 
 # -----------------
@@ -66,14 +66,21 @@ for f in range(len(list_ZB2022)):
 
 nEvt_outLSrange = 0
 
-n_SingleMu_countings = [0, 0, 0, 0, 0, 0, 0, 0] #8 
 n_SingleMu_thresholds = [20, 21, 22, 23, 24, 25, 26, 27] 
+n_SingleMu_countings = [0, 0, 0, 0, 0, 0, 0, 0] #8 
+n_SingleMu_countings_B = [0, 0, 0, 0, 0, 0, 0, 0] #8 
+n_SingleMu_countings_O = [0, 0, 0, 0, 0, 0, 0, 0] #8 
+n_SingleMu_countings_E = [0, 0, 0, 0, 0, 0, 0, 0] #8 
 
-n_SingleEG_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
 n_SingleEG_thresholds = [32, 33, 34, 35, 36, 37, 38, 39, 40]
+n_SingleEG_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
+n_SingleEG_countings_B = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
+n_SingleEG_countings_E = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
 
-n_DoubleLooseIsoEG_countings = [0, 0, 0, 0, 0, 0, 0] #7
 n_DoubleLooseIsoEG_thresholds = [20, 21, 22, 23, 24, 25, 26]
+n_DoubleLooseIsoEG_countings = [0, 0, 0, 0, 0, 0, 0] #7
+n_DoubleLooseIsoEG_countings_B = [0, 0, 0, 0, 0, 0, 0] #7
+n_DoubleLooseIsoEG_countings_E = [0, 0, 0, 0, 0, 0, 0] #7
 
 n_SingleTau_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #11
 n_SingleTau_thresholds = [120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130]
@@ -81,8 +88,11 @@ n_SingleTau_thresholds = [120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130]
 n_DoubleIsoTau_countings = [0, 0, 0, 0, 0, 0, 0] #7
 n_DoubleIsoTau_thresholds = [30, 31, 32, 33, 34, 35, 36]
 
+n_SingleJet_thresholds = [140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200]
 n_SingleJet_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0] #13
-n_SingleJet_thresholds = [120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180]
+n_SingleJet_countings_B = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0] #13
+n_SingleJet_countings_E = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0] #13
+n_SingleJet_countings_F = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0] #13
 
 n_ETMHF_countings = [0, 0, 0, 0, 0, 0, 0, 0, 0] #9
 n_ETMHF_thresholds = [70, 72, 75, 78, 80, 85, 90, 95, 100]
@@ -109,23 +119,54 @@ for iEvt in range(evt_tree.GetEntries()):
     # ----------------- 
     #        MU       #
     # -----------------
+    #-----------#
+    # ETA range #
+    # ----------#
+    # MU: split per track finder i.e. |eta| in 0-0.83-1.24-2.4
+
     i_mu_thr = [0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two mu objects in the same event passing the requirement
+    i_mu_thr_B = [0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two mu objects in the same event passing the requirement
+    i_mu_thr_O = [0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two mu objects in the same event passing the requirement
+    i_mu_thr_E = [0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two mu objects in the same event passing the requirement
     for mu in range(preUGT_tree.nMuons):
         for thr in range(len(n_SingleMu_thresholds)):
-            if (preUGT_tree.muonEt[mu] >= n_SingleMu_thresholds[thr] and preUGT_tree.muonQual[mu] >= 12 and preUGT_tree.muonBx[mu] == 0 and i_mu_thr[thr] == 0): #muonEt = 0.5*muonIEt
+            if (preUGT_tree.muonEt[mu] >= n_SingleMu_thresholds[thr] and preUGT_tree.muonQual[mu] >= 12 and abs(preUGT_tree.muonBx[mu]) == 0 and i_mu_thr[thr] == 0): #muonEt = 0.5*muonIEt
                 i_mu_thr[thr] += 1
                 n_SingleMu_countings[thr] += 1
+            if (preUGT_tree.muonEt[mu] >= n_SingleMu_thresholds[thr] and preUGT_tree.muonQual[mu] >= 12 and (abs(preUGT_tree.muonEta[mu]) <= 0.83) and abs(preUGT_tree.muonBx[mu]) == 0 and i_mu_thr_B[thr] == 0): #muonEt = 0.5*muonIEt
+                i_mu_thr_B[thr] += 1
+                n_SingleMu_countings_B[thr] += 1
+            if (preUGT_tree.muonEt[mu] >= n_SingleMu_thresholds[thr] and preUGT_tree.muonQual[mu] >= 12 and (abs(preUGT_tree.muonEta[mu]) > 0.83 and abs(preUGT_tree.muonEta[mu]) <= 1.24) and preUGT_tree.muonBx[mu] == 0 and i_mu_thr_O[thr] == 0): #muonEt = 0.5*muonIEt
+                i_mu_thr_O[thr] += 1
+                n_SingleMu_countings_O[thr] += 1
+            if (preUGT_tree.muonEt[mu] >= n_SingleMu_thresholds[thr] and preUGT_tree.muonQual[mu] >= 12 and (abs(preUGT_tree.muonEta[mu]) > 1.24 and abs(preUGT_tree.muonEta[mu]) <= 2.4) and preUGT_tree.muonBx[mu] == 0 and i_mu_thr_E[thr] == 0): #muonEt = 0.5*muonIEt
+                i_mu_thr_E[thr] += 1
+                n_SingleMu_countings_E[thr] += 1
 
     # -----------------
     #        EG       #
     # -----------------
+    #-----------#
+    # ETA range #
+    # ----------#
+    # EG: 0-1.479-2.5
     i_eg_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two eg objects in the same event passing the requirement
-    i_doubleeg_thr = [0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two eg objects in the same event passing the requirement
+    i_eg_thr_B = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two eg objects in the same event passing the requirement
+    i_eg_thr_E = [0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two eg objects in the same event passing the requirement
+    i_doubleeg_thr = [0, 0, 0, 0, 0, 0, 0]
+    i_doubleeg_thr_B = [0, 0, 0, 0, 0, 0, 0]
+    i_doubleeg_thr_E = [0, 0, 0, 0, 0, 0, 0]
     for eg in range(preUGT_tree.nEGs):
         for thr in range(len(n_SingleEG_thresholds)):
             if (preUGT_tree.egEt[eg] >= n_SingleEG_thresholds[thr] and abs(preUGT_tree.egEta[eg]) <= 2.5 and preUGT_tree.egBx[eg] == 0 and i_eg_thr[thr] == 0): #egEt = 0.5*egIEt
                 i_eg_thr[thr] += 1
                 n_SingleEG_countings[thr] += 1
+            if (preUGT_tree.egEt[eg] >= n_SingleEG_thresholds[thr] and abs(preUGT_tree.egEta[eg]) <= 1.479 and preUGT_tree.egBx[eg] == 0 and i_eg_thr_B[thr] == 0): #egEt = 0.5*egIEt
+                i_eg_thr_B[thr] += 1
+                n_SingleEG_countings_B[thr] += 1
+            if (preUGT_tree.egEt[eg] >= n_SingleEG_thresholds[thr] and (abs(preUGT_tree.egEta[eg]) > 1.479 and abs(preUGT_tree.egEta[eg]) <= 2.5) and preUGT_tree.egBx[eg] == 0 and i_eg_thr_E[thr] == 0): #egEt = 0.5*egIEt
+                i_eg_thr_E[thr] += 1
+                n_SingleEG_countings_E[thr] += 1
 
         for thr in range(len(n_DoubleLooseIsoEG_thresholds)):
             if (preUGT_tree.egEt[eg] >= n_DoubleLooseIsoEG_thresholds[thr] and abs(preUGT_tree.egEta[eg]) <= 2.1 and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr[thr] == 0): #egEt = 0.5*egIEt
@@ -133,6 +174,18 @@ for iEvt in range(evt_tree.GetEntries()):
                     if ((not eg2 == eg) and preUGT_tree.egEt[eg2] >= n_DoubleLooseIsoEG_thresholds[thr] and abs(preUGT_tree.egEta[eg2]) <= 2.1 and (preUGT_tree.egIso[eg2] == 2 or preUGT_tree.egIso[eg2] == 3) and preUGT_tree.egBx[eg2] == 0): #egEt = 0.5*egIEt
                         i_doubleeg_thr[thr] += 1
                         n_DoubleLooseIsoEG_countings[thr] += 1
+
+            if (preUGT_tree.egEt[eg] >= n_DoubleLooseIsoEG_thresholds[thr] and abs(preUGT_tree.egEta[eg]) <= 1.479 and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr_B[thr] == 0): #egEt = 0.5*egIEt
+                for eg2 in range(preUGT_tree.nEGs):
+                    if ((not eg2 == eg) and preUGT_tree.egEt[eg2] >= n_DoubleLooseIsoEG_thresholds[thr] and abs(preUGT_tree.egEta[eg2]) <= 1.479 and (preUGT_tree.egIso[eg2] == 2 or preUGT_tree.egIso[eg2] == 3) and preUGT_tree.egBx[eg2] == 0): #egEt = 0.5*egIEt
+                        i_doubleeg_thr_B[thr] += 1
+                        n_DoubleLooseIsoEG_countings_B[thr] += 1
+
+            if (preUGT_tree.egEt[eg] >= n_DoubleLooseIsoEG_thresholds[thr] and (abs(preUGT_tree.egEta[eg]) > 1.479 and abs(preUGT_tree.egEta[eg]) <= 2.1) and (preUGT_tree.egIso[eg] == 2 or preUGT_tree.egIso[eg] == 3) and preUGT_tree.egBx[eg] == 0 and i_doubleeg_thr_E[thr] == 0): #egEt = 0.5*egIEt
+                for eg2 in range(preUGT_tree.nEGs):
+                    if ((not eg2 == eg) and preUGT_tree.egEt[eg2] >= n_DoubleLooseIsoEG_thresholds[thr] and (abs(preUGT_tree.egEta[eg]) > 1.479 and abs(preUGT_tree.egEta[eg]) <= 2.1) and (preUGT_tree.egIso[eg2] == 2 or preUGT_tree.egIso[eg2] == 3) and preUGT_tree.egBx[eg2] == 0): #egEt = 0.5*egIEt
+                        i_doubleeg_thr_E[thr] += 1
+                        n_DoubleLooseIsoEG_countings_E[thr] += 1
 
 
     # -----------------
@@ -157,12 +210,28 @@ for iEvt in range(evt_tree.GetEntries()):
     # -----------------
     #       JET       #
     # -----------------
+    #-----------#
+    # ETA range #
+    # ----------#
+    # JET: 0-1.3-2.5-3-5
     i_jet_thr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two jets in the same event passing the requirement
+    i_jet_thr_B = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two jets in the same event passing the requirement
+    i_jet_thr_E = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two jets in the same event passing the requirement
+    i_jet_thr_F = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # Counter to avoid to count twice an event because of two jets in the same event passing the requirement
     for jet in range(preUGT_tree.nJets):
         for thr in range(len(n_SingleJet_thresholds)):
             if (preUGT_tree.jetEt[jet] >= n_SingleJet_thresholds[thr] and abs(preUGT_tree.jetEta[jet]) <= 2.5 and preUGT_tree.jetBx[jet] == 0 and i_jet_thr[thr] == 0): #jetEt = 0.5*tauIEt
                 i_jet_thr[thr] += 1
                 n_SingleJet_countings[thr] += 1
+            if (preUGT_tree.jetEt[jet] >= n_SingleJet_thresholds[thr] and abs(preUGT_tree.jetEta[jet]) <= 1.3 and preUGT_tree.jetBx[jet] == 0 and i_jet_thr_B[thr] == 0): #jetEt = 0.5*tauIEt
+                i_jet_thr_B[thr] += 1
+                n_SingleJet_countings_B[thr] += 1
+            if (preUGT_tree.jetEt[jet] >= n_SingleJet_thresholds[thr] and (abs(preUGT_tree.jetEta[jet]) > 1.3 and abs(preUGT_tree.jetEta[jet]) <= 2.5) and preUGT_tree.jetBx[jet] == 0 and i_jet_thr_E[thr] == 0): #jetEt = 0.5*tauIEt
+                i_jet_thr_E[thr] += 1
+                n_SingleJet_countings_E[thr] += 1
+            if (preUGT_tree.jetEt[jet] >= n_SingleJet_thresholds[thr] and (abs(preUGT_tree.jetEta[jet]) > 2.5 and abs(preUGT_tree.jetEta[jet]) <= 3.5) and preUGT_tree.jetBx[jet] == 0 and i_jet_thr_F[thr] == 0): #jetEt = 0.5*tauIEt
+                i_jet_thr_F[thr] += 1
+                n_SingleJet_countings_F[thr] += 1
 
 
     # -----------------
@@ -187,12 +256,19 @@ print("-------------------------")
 print("# MU #")
 print("mu pt thresholds = ", n_SingleMu_thresholds)
 print("n_SingleMu_Countings = ", n_SingleMu_countings)
+print("n_SingleMu_Countings_B = ", n_SingleMu_countings_B)
+print("n_SingleMu_Countings_O = ", n_SingleMu_countings_O)
+print("n_SingleMu_Countings_E = ", n_SingleMu_countings_E)
 
 print("# EG #")
 print("eg pt thresholds = ", n_SingleEG_thresholds)
 print("n_SingleEG_Countings = ", n_SingleEG_countings)
+print("n_SingleEG_Countings_B = ", n_SingleEG_countings_B)
+print("n_SingleEG_Countings_E = ", n_SingleEG_countings_E)
 print("doubleeg pt thresholds = ", n_DoubleLooseIsoEG_thresholds)
 print("n_DoubleLooseIsoEG_Countings = ", n_DoubleLooseIsoEG_countings)
+print("n_DoubleLooseIsoEG_Countings_B = ", n_DoubleLooseIsoEG_countings_B)
+print("n_DoubleLooseIsoEG_Countings_E = ", n_DoubleLooseIsoEG_countings_E)
 
 print("# TAU #")
 print("tau pt thresholds = ", n_SingleTau_thresholds)
@@ -203,6 +279,9 @@ print("n_DoubleIsoTau_Countings = ", n_DoubleIsoTau_countings)
 print("# JET #")
 print("jet pt thresholds = ", n_SingleJet_thresholds)
 print("n_SingleJet_Countings = ", n_SingleJet_countings)
+print("n_SingleJet_Countings_B = ", n_SingleJet_countings_B)
+print("n_SingleJet_Countings_E = ", n_SingleJet_countings_E)
+print("n_SingleJet_Countings_F = ", n_SingleJet_countings_F)
 
 print("# MET #")
 print("met thresholds = ", n_ETMHF_thresholds)
