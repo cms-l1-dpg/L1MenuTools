@@ -10,8 +10,11 @@ The main script starts from the uGMT and Calo Layer 2 objects (`l1UpgradeTree/L1
 ```L1NtupleAnalyzer_functionOfPt_etaSplitting.py```.
 It returns the number of countings for each seed type and each threshold.
 The two lists of files used to compare the Run 2 and Run 3 rates per bunch-crossing are also provided:
+```
   * EphemeralZBHLTPhysics_data_run325097.csv
   * EphemeralZBHLTPhysics_data_run357688_part0-8.csv
+```
+
 A jupyter notebook is provided to compute the rates starting from the list of countings for each seed and each threshold under consideration taking into account the proper scaling.
 The approach for the scaling is described in the notebook.
 It includes also the plotting part.
