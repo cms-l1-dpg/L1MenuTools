@@ -6,7 +6,8 @@
 
 print("------> Setting Environment")
 
-import sys
+import sys, os
+import argparse
 import math
 from subprocess import Popen,PIPE
 from ROOT import *
@@ -20,6 +21,17 @@ ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 gSystem.Load('libRooFit')
 
+argparser = argparse.ArgumentParser(description='Parser used for non default arguments', formatter_class=argparse.ArgumentDefaultsHelpFormatter, add_help=True)
+argparser.add_argument('--ntuples',
+        help='Specify list of L1Ntuples',
+        default='EphemeralZBHLTPhysics_data_run357688_part0-8.csv',
+        type=str)
+argparser.add_argument('--y',
+        help='Specify the scenario under test',
+        default='2022',
+        type=str)
+args = argparser.parse_args()
+year = args.y
 # ----------------------
 # Configuration settings
 # ----------------------
@@ -31,12 +43,20 @@ PRT_EVT  = 1000     ## Print every Nth event
 # ----------------
 # List on ntuples:
 # ----------------
-# ZB2022 run357688 (4819637 events):
-f_ZB2022 = "EphemeralZBHLTPhysics_data_run357688_part0-8.csv"
-# ZB2018 run325097 (672287 events):
-f_ZB2018 = "EphemeralZBHLTPhysics_data_run325097.csv"
+if (year == '2022'):
+    f_ZB2022 = args.ntuples 
+    list_ZB2022 = []
+    with open(f_ZB2022) as file:
+        while (line := file.readline().rstrip()):
+            list_ZB2022.append(line)
+if (year == '2018'):
+    f_ZB2018 = args.ntuples 
+    list_ZB2018 = []
+    with open(f_ZB2018) as file:
+        while (line := file.readline().rstrip()):
+            list_ZB2018.append(line)
 
-# -----------------
+# -----------------# 
 # L1Ntuple branches
 # -----------------
 evt_tree  = TChain('l1EventTree/L1EventTree')
@@ -45,24 +65,16 @@ if not USE_EMUL:
 else:
     L1_tree = TChain('l1UpgradeEmuTree/L1UpgradeTree')
 
-list_ZB2022 = []
-list_ZB2018 = []
-
-with open(f_ZB2022) as file:
-    while (line := file.readline().rstrip()):
-        list_ZB2022.append(line)
-
-with open(f_ZB2018) as file:
-    while (line := file.readline().rstrip()):
-        list_ZB2018.append(line)
-
-  
-for f in range(len(list_ZB2022)):
-    evt_tree.Add(list_ZB2022[f])
-    #print("INTERMEDIATE Nentries evt_tree: ", evt_tree.GetEntries())
-    L1_tree.Add(list_ZB2022[f])
-
-    if f == MAX_FILE: break    
+if (year == '2022'):  
+    for f in range(len(list_ZB2022)):
+        evt_tree.Add(list_ZB2022[f])
+        L1_tree.Add(list_ZB2022[f])
+        if f == MAX_FILE: break    
+if (year == '2018'):  
+    for f in range(len(list_ZB2018)):
+        evt_tree.Add(list_ZB2018[f])
+        L1_tree.Add(list_ZB2018[f])
+        if f == MAX_FILE: break    
 
 nEvt_outLSrange = 0
 
@@ -102,7 +114,7 @@ n_ETMHF_thresholds = [70, 72, 75, 78, 80, 85, 90, 95, 100]
 # -------------------------
 for iEvt in range(evt_tree.GetEntries()):
     if MAX_EVT > 0 and iEvt > MAX_EVT: break
-    if iEvt % PRT_EVT is 0: print("Event #", iEvt)
+    if iEvt % PRT_EVT == 0: print("Event #", iEvt)
     
     evt_tree.GetEntry(iEvt)
     if not ((evt_tree.Event.run == 357688 and (evt_tree.Event.lumi >= 35 and evt_tree.Event.lumi < 85)) or (evt_tree.Event.run == 325097 and (evt_tree.Event.lumi >= 58 and evt_tree.Event.lumi < 94))):

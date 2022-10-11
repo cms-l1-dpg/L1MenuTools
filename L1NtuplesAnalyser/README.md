@@ -9,7 +9,9 @@ In fact, this collection of data requires a specific rate calculation. Moreover,
 The main script starts from the uGMT and Calo Layer 2 objects (`l1UpgradeTree/L1UpgradeTree`) and applies by hand the cuts to reproduce the design of the main algorithms for each type of object:
 ```L1NtupleAnalyzer_functionOfPt_etaSplitting.py```.
 It returns the number of countings for each seed type and each threshold.
-The two lists of files used to compare the Run 2 and Run 3 rates per bunch-crossing are also provided:
+
+The list of L1Ntuples for the comparison can be specified as argument from the command line (`--ntuples`) together with the year of the scenario under consideration (`--y`).
+The two lists of files used to compare the Run 2 and Run 3 rates per bunch-crossing are also provided as default files:
 ```
   * EphemeralZBHLTPhysics_data_run325097.csv
   * EphemeralZBHLTPhysics_data_run357688_part0-8.csv
