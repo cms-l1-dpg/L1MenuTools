@@ -34,7 +34,7 @@ class PreColumn
   public:
 
     // ====================  LIFECYCLE     ===============================
-    PreColumn (int ColIdx, std::map<std::string, L1Seed> mL1Seed, nlohmann::json* customPUweights); // constructor
+    PreColumn (int ColIdx, std::map<std::string, L1Seed> mL1Seed, int prescale_precision, nlohmann::json* customPUweights); // constructor
     ~PreColumn ();
     bool PassRelation( std::vector<std::string> vL1Seed_, 
         std::map<int, std::string> BitMap_, 
@@ -84,6 +84,7 @@ class PreColumn
     bool bybit;
     std::map<std::string, L1Seed> mL1Seed;
     double nFireevents;
+    int prescale_precision;
      
     std::set<std::string> FireSeed;
     std::set<std::string> FiredPhy;

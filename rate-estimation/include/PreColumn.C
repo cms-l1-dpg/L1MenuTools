@@ -23,8 +23,8 @@
 //      Method:  PreColumn
 // Description:  constructor
 //----------------------------------------------------------------------------
-PreColumn::PreColumn (int ColIdx_, std::map<std::string, L1Seed> mL1Seed_, nlohmann::json* customPUweights_):
-  ColIdx(ColIdx_), mL1Seed(mL1Seed_), customPUweights(customPUweights_)
+PreColumn::PreColumn (int ColIdx_, std::map<std::string, L1Seed> mL1Seed_, int prescale_precision_, nlohmann::json* customPUweights_):
+  ColIdx(ColIdx_), mL1Seed(mL1Seed_), prescale_precision(prescale_precision_), customPUweights(customPUweights_)
 {
   bybit = false;
   nFireevents = 0;  
@@ -67,13 +67,16 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value)
 
   mL1Seed[L1name].eventfire = false;
   if (value)
-    mL1Seed[L1name].ncounts++;
+    mL1Seed[L1name].ncounts += prescale_precision;
 
   if (mL1Seed[L1name].prescale == 0)
     return false;
 
-  if ( int(mL1Seed[L1name].ncounts) % mL1Seed[L1name].prescale == 0) 
+  if (mL1Seed[L1name].ncounts >= mL1Seed[L1name].prescale_discret)
+  {
     post_prescale = value; 
+    mL1Seed[L1name].ncounts -= mL1Seed[L1name].prescale_discret;
+  }
 
   mL1Seed[L1name].eventfire = post_prescale;
   if (post_prescale)
@@ -100,13 +103,16 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu, bool rewe
 
   mL1Seed[L1name].eventfire = false;
   if (value)
-    mL1Seed[L1name].ncounts+=ev_puweight;
+    mL1Seed[L1name].ncounts += ev_puweight * prescale_precision;
 
   if (mL1Seed[L1name].prescale == 0)
     return false;
 
-  if ( int(mL1Seed[L1name].ncounts) % mL1Seed[L1name].prescale == 0) 
+  if ( mL1Seed[L1name].ncounts >= mL1Seed[L1name].prescale_discret)
+  {
     post_prescale = value; 
+    mL1Seed[L1name].ncounts -= mL1Seed[L1name].prescale_discret;
+  }
 
   mL1Seed[L1name].eventfire = post_prescale;
   if (post_prescale)
