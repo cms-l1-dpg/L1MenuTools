@@ -177,3 +177,5 @@ Use PFMET no Muon in SingleMu sample
 ### --UseuGTDecision
 Trigger seeds fired by uGT
 
+### --PrescalePrecision
+Select the prescale precision factor e.g. for 100 (=10^2) the prescales are represented with 2 decimal places. The prescales are multiplied by the prescale precision factor and rounded to integer numbers afterwards.
