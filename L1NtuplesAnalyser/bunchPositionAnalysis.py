@@ -4,7 +4,7 @@
 #bunch crossing schemes
 
 #Should take as input a csv file that lists a series of files that contain L1 ntuple information
-#Strictly, it should just be formatted as a text file with a list fof these files, but whatever...
+#Strictly, it could just be formatted as a text file with a list fof these files?
 #The other piece of input necessary, is a JSON provided by the LPC filling scheme tool that describes the filling scheme
 #used in the data: https://lpc.web.cern.ch/cgi-bin/filling_schemes.py
 #this can be used to figure out where the trains exist by looking at the LHC collision clock
