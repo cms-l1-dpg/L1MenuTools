@@ -91,14 +91,7 @@ def main(args):
 
     #parse the bx json to figure out where the trains are.
     trains, emptyBunches, segmentedTrains, segmentedEmptyBunches, trainLength, emptyBunchLengths = parseBXJSON(args.bunchFillingJSON)
-    #print(trains)
-    #print(emptyBunches)
-    #print(segmentedTrains)
-    #print(segmentedEmptyBunches)
-    #print(trainLength)
-    #print(emptyBunchLengths)
     finalBXinOrbit = max(trains[len(trains)-1], emptyBunches[len(emptyBunches)-1])
-    #print(finalBXinOrbit)
 
     maxTrainLength = 0
     for length in trainLength:
@@ -114,17 +107,6 @@ def main(args):
             theFile = row[0]
             evtTree.Add(theFile)
             ugtTree.Add(theFile)
-    #Figure out the L1 trigger bits that we have available to us.
-    #print(list(branch.GetName() for branch in list(ugtTree.L1uGT.GetListOfBranches())))
-    #L1uGT = ugtTree.GetBranch("L1uGT")
-    #print(L1uGT)
-    #print(type(L1uGT))
-    #print(list(branch.GetName()) for branch in list(L1uGT.GetListOfBranches()))
-    #print(list(branch.GetName() for branch in list(L1uGT.GetListOfBranches())))
-
-    #print(L1uGT.m_algoDecisionFinal)
-    #print(L1uGT.FindBranch('m_algoDecisionFinal'))
-    #m_algoDecisionFinal = L1uGT.FindBranch('m_algoDecisionFinal')
     
     histograms = []
     overallEventsPerBX = ROOT.TH1D('overallEventsPerBX', 'overallEventsPerBX', maxTrainLength, -4, maxTrainLength+3) #give 4 bunches on either end of the train
@@ -139,7 +121,6 @@ def main(args):
         theBX = evtTree.Event.bx
         #Now we need to figure out this bunch crossing's position with respect to or trains 
         trainPositions = positionInTrain(theBX, segmentedTrains, finalBXinOrbit)
-        #print(trainPositions)
         for position in trainPositions:
             overallEventsPerBX.Fill(position)
             for j in range(len(ugtTree.L1uGT.getAlgoDecisionFinal())):
