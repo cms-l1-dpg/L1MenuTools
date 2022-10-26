@@ -108,7 +108,7 @@ bool PreColumn::InsertInMenu(std::string L1name, bool value, float pu, bool rewe
   if (mL1Seed[L1name].prescale == 0)
     return false;
 
-  if ( mL1Seed[L1name].ncounts >= mL1Seed[L1name].prescale_discret)
+  if ((mL1Seed[L1name].ncounts >= mL1Seed[L1name].prescale_discret) && value)
   {
     post_prescale = value; 
     mL1Seed[L1name].ncounts -= mL1Seed[L1name].prescale_discret;
