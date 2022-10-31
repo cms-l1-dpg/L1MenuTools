@@ -61,10 +61,10 @@ def parseToContiguousBunches(theList):
     currentList.append(theList[0])
     for i in range(1, len(theList)):
         if theList[i] == theList[i-1]+1:
-            currentList.append(i)
+            currentList.append(theList[i])
         else:
             completeList.append(currentList)
-            currentList = [i]
+            currentList = [theList[i]]
     #Whatever the current list is, append it to the complete list,
     #and then return tghe complete list
     completeList.append(currentList)
@@ -91,8 +91,21 @@ def main(args):
 
     #parse the bx json to figure out where the trains are.
     trains, emptyBunches, segmentedTrains, segmentedEmptyBunches, trainLength, emptyBunchLengths = parseBXJSON(args.bunchFillingJSON)
+    #print('trains: ', trains)
+    #print('empty bunches: ', emptyBunches)
+    #print('segmentedTrains: ', segmentedTrains)
+    #print('segmented Empty Bunches: ', segmentedEmptyBunches)
+    #print('train length:  ', trainLength)
+    #print('empty bunch lengths: ', emptyBunchLengths)
     finalBXinOrbit = max(trains[len(trains)-1], emptyBunches[len(emptyBunches)-1])
+    #print('final BX in orbit: ', finalBXinOrbit)
 
+    trainTypes = []
+    for length in trainLength:
+        if length not in trainTypes:
+            trainTypes.append(length)
+
+    #print("train types: ", trainTypes)
     maxTrainLength = 0
     for length in trainLength:
         maxTrainLength = max(maxTrainLength, length)
@@ -109,28 +122,66 @@ def main(args):
             ugtTree.Add(theFile)
     
     histograms = []
-    overallEventsPerBX = ROOT.TH1D('overallEventsPerBX', 'overallEventsPerBX', maxTrainLength, -4, maxTrainLength+3) #give 4 bunches on either end of the train
-    for i in trange(ugtTree.GetEntries()):
+    #overallEventsPerBX = ROOT.TH1D('overallEventsPerBX', 'overallEventsPerBX', maxTrainLength, -4, maxTrainLength+3) #give 4 bunches on either end of the train
+    overallHistograms = []
+    for lengthIndex in range(len(trainTypes)):
+        overallHistograms.append(
+            ROOT.TH1D(f'overallEventsPerBX_TrainLength{trainTypes[lengthIndex]}',
+                      f'overallEventsPerBX_TrainLength{trainTypes[lengthIndex]}',
+                      trainTypes[lengthIndex]+8,
+                      -4,
+                      trainTypes[lengthIndex]+4
+                  )
+        )
+    entries = ugtTree.GetEntries()
+    #entries = 5
+    for i in trange(entries):
         ugtTree.GetEntry(i)
         evtTree.GetEntry(i)
         if i == 0:
             #Do some histogram setup
             #This is dependent on the chain actually loading some information, which is why it is done in the loop in this weird way
             numAlgoBits = len(ugtTree.L1uGT.getAlgoDecisionFinal())
-            histograms = [ROOT.TH1D(f'eventsPerBXBit{x}', f'eventsPerBXBit{x}', maxTrainLength, -4, maxTrainLength+3) for x in range(numAlgoBits)]
+            for length in trainTypes:
+                histogramsOfLength = [ROOT.TH1D(f'eventsPerBXBit{x}_TrainLength{length}', f'eventsPerBXBit{x}_TrainLength{length}', length+8, -4, length+4) for x in range(numAlgoBits)]
+                #histograms = [ROOT.TH1D(f'eventsPerBXBit{x}', f'eventsPerBXBit{x}', maxTrainLength, -4, maxTrainLength+3) for x in range(numAlgoBits)]
+                histograms.append(histogramsOfLength)
         theBX = evtTree.Event.bx
-        #Now we need to figure out this bunch crossing's position with respect to or trains 
+        #print("our BX: ", theBX)
+        #if theBX in trains:
+        #    print("Train resident!")
+        #else:
+        #    print("Empty!")
+        #Now we need to figure out this bunch crossing's position with respect to our trains 
         trainPositions = positionInTrain(theBX, segmentedTrains, finalBXinOrbit)
+        #print("train positions: ",trainPositions)
+        for positionIndex in range(len(trainPositions)):
+            lengthOfTrain = len(segmentedTrains[positionIndex])
+            histogramType = trainTypes.index(lengthOfTrain)
+            if trainPositions[positionIndex] < -4 or trainPositions[positionIndex] > lengthOfTrain+4: #If the positions are too far in under or overflow, ignore them (order of magnitude optimization)
+                continue
+            #overallEventsPerBX.Fill(trainPositions[positionIndex])
+            overallHistograms[histogramType].Fill(trainPositions[positionIndex])
+            for j in range(len(ugtTree.L1uGT.getAlgoDecisionFinal())):
+                if not ugtTree.L1uGT.getAlgoDecisionFinal(j):
+                    continue
+                histograms[histogramType][j].Fill(trainPositions[positionIndex])
+                
+        """
         for position in trainPositions:
             overallEventsPerBX.Fill(position)
             for j in range(len(ugtTree.L1uGT.getAlgoDecisionFinal())):
                 if not ugtTree.L1uGT.getAlgoDecisionFinal(j):
                     continue
                 histograms[j].Fill(position)
+        """
     theFile = ROOT.TFile(args.outputFile, 'RECREATE')
-    overallEventsPerBX.Write()
-    for histogram in histograms:
+    #overallEventsPerBX.Write()
+    for histogram in overallHistograms:
         histogram.Write()
+    for histogramsOfLength in histograms:
+        for histogram in histogramsOfLength:
+            histogram.Write()
     theFile.Close()
 
 if __name__=='__main__':
