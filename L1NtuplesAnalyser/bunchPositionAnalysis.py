@@ -66,7 +66,7 @@ def parseToContiguousBunches(theList):
             completeList.append(currentList)
             currentList = [theList[i]]
     #Whatever the current list is, append it to the complete list,
-    #and then return tghe complete list
+    #and then return the complete list
     completeList.append(currentList)
     return completeList
 
@@ -130,7 +130,7 @@ def main(args):
         evtTree.GetEntry(i)
         if i == 0:
             #Do some histogram setup
-            #This is dependent on the chain actually loading some information, which is why it is done in the loop in this weird way
+            #This is dependent on the chain actually loading some information, which is why it is done in the loop in this way
             numAlgoBits = len(ugtTree.L1uGT.getAlgoDecisionFinal())
             for length in trainTypes:
                 histogramsOfLength = [ROOT.TH1D(f'eventsPerBXBit{x}_TrainLength{length}', f'eventsPerBXBit{x}_TrainLength{length}', length+8, -4, length+4) for x in range(numAlgoBits)]
