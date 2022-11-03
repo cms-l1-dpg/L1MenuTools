@@ -149,14 +149,6 @@ def main(args):
                     continue
                 histograms[histogramType][j].Fill(trainPositions[positionIndex])
                 
-        """
-        for position in trainPositions:
-            overallEventsPerBX.Fill(position)
-            for j in range(len(ugtTree.L1uGT.getAlgoDecisionFinal())):
-                if not ugtTree.L1uGT.getAlgoDecisionFinal(j):
-                    continue
-                histograms[j].Fill(position)
-        """
     theFile = ROOT.TFile(args.outputFile, 'RECREATE')
     for histogram in overallHistograms:
         histogram.Write()
