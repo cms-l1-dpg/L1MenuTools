@@ -39,7 +39,8 @@ struct L1Seed
 {
   std::string name;
   int bit;
-  int prescale;
+  double prescale;
+  int prescale_discret;
   std::vector<std::string> POG;
   std::vector<std::string> PAG;
   //unsigned int ncounts;
@@ -62,6 +63,7 @@ struct L1Seed
     name          = "";
     bit           = -1;
     prescale      = 0;
+    prescale_discret = 0;
     //ncounts       = 0;
     ncounts       = 0.0;
     eventfire     = false;

@@ -136,6 +136,7 @@ bool L1Menu2016::InitConfig()
   L1Config["doBXReweight34567"]         = 0;
   L1Config["doBXReweight_1_to_6_11_12"] = 0;
   L1Config["doBXReweight_5_to_10"]      = 0;
+  L1Config["PrescalePrecision"]         = 100;
   
   L1ConfigStr["SelectLS"] = "";
   L1ConfigStr["SelectBX"] = "";
@@ -597,6 +598,7 @@ bool L1Menu2016::ReadMenuTXT(std::ifstream &menufile)
     temp.bit = bit;
     temp.comment = comline;
     temp.prescale = prescale;
+    temp.prescale_discret = int(std::round(prescale * L1Config["PrescalePrecision"]));
 
     if (L1Config["doCompuGT"] || L1Config["SetNoPrescale"])
       temp.prescale = 1;
@@ -757,7 +759,8 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
         ss << std::setw(5) << it <<" "; 
         try
         {
-          temp.prescale = boost::lexical_cast<int>(it);
+          temp.prescale = boost::lexical_cast<double>(it);
+          temp.prescale_discret = int(std::round(temp.prescale * L1Config["PrescalePrecision"]));
         }
         catch (const boost::bad_lexical_cast &)
         {
@@ -822,7 +825,7 @@ bool L1Menu2016::FormPrescaleColumns()
     {
       tempL1Seed.at(VarSeeds.at(j)).prescale = (i & 1 << j) > 0 ; 
     }
-    ColumnMap[i] = new PreColumn(i, tempL1Seed, &customPUweights);
+    ColumnMap[i] = new PreColumn(i, tempL1Seed, L1Config["PrescalePrecision"], &customPUweights);
     ColumnMap[i]->PassRelation( vL1Seed, BitMap, POGMap, PAGMap);
   }
 

@@ -90,6 +90,7 @@ int main ( int argc, char *argv[] )
     ("SelectLS",       po::value<std::string>()->default_value(""),        "Select specific LS ranges")
     ("SelectBX",       po::value<std::string>()->default_value(""),        "Select specific BX ranges")
     ("SelectCol",      po::value<std::string>()->default_value(""),        "Select prescale column from input csv menu")
+    ("PrescalePrecision", po::value<int>()->default_value(100),            "Select the prescale precision factor e.g. for 100 (=10^2) the prescales are represented with 2 decimal places")
     ;
 
   po::variables_map vm;

@@ -32,6 +32,7 @@
 #include <functional>
 #include <ctype.h>
 #include <stdlib.h>
+#include <math.h>
 #include <nlohmann/json.hpp>
 #include "TGraphErrors.h"
 

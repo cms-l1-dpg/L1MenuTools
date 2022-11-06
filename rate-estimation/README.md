@@ -122,6 +122,7 @@ The arguments that you can use are as follows:
 |`--UseUnpackTree` | Switch to using UnpackTree; default is EmuTree. |
 |`--maxEvent` | Run on a subset of the available events. |
 |`--doPrintPU` | Evaluate and save the rates for different pileup values |
+|`--PrescalePrecision` | Select the prescale precision factor e.g. for 100 (=10^2) the prescales are represented with 2 decimal places |
 
 Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
 
