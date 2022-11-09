@@ -37,7 +37,7 @@ The output lists the L1 bit index, L1 seed name, and the triggered counts.
 ## Usage
 
 ```
-python3 getuGTdecision.py --ntuples <ntuples.list> --selections <additional selections>
+python3 getuGTdecision.py --ntuples <ntuples.list> --selections <additional selections> --tree <uGTTree,uGTEmuTree>
 ```
 >NOTE : This runs over the list of ntuples given in, for example, ntuples.list. Therefore, the path to the ntuples must be listed in this file. A default list has been provided for reference, but in principle any list may be used. The recommended way is to do :
 ```
