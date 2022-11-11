@@ -8,6 +8,7 @@ import os
 argparser = argparse.ArgumentParser(description='Parser used for non default arguments', formatter_class=argparse.ArgumentDefaultsHelpFormatter, add_help=True)
 argparser.add_argument('--ntuples'      , dest='ntuple_list'     , default='ntuples.list'   , help='List of ntuples')
 argparser.add_argument('--selections'   , dest='selections'      , default=''               , help='Additional selections')
+argparser.add_argument('--tree'         , dest='tree'            , default='uGTTree'        , help='L1Tree', choices=['uGTTree','uGTEmuTree'])
 
 args = argparser.parse_args()
  
@@ -27,21 +28,23 @@ for line in lines:
 
 chain = {}
 
-#chain['uGTEmuTree'] =  TChain('l1uGTEmuTree/L1uGTTree')                # Emulated trigger decision
+tree=args.tree
+
+chain['uGTEmuTree'] =  TChain('l1uGTEmuTree/L1uGTTree')                # Emulated trigger decision
 #chain['UpgradeTree'] =  TChain('l1UpgradeTree/L1UpgradeTree')
 chain['uGTTree'] =  TChain('l1uGTTree/L1uGTTree')                       # Actual trigger decision saved in L1Ntuple
 chain['EventTree'] =  TChain('l1EventTree/L1EventTree')                 # Event information saved in this tree, allows to add selections on Run, event and lumi
 
 for ntuple_path in ntuple_list :
-#	chain['uGTEmuTree'].Add(ntuple_path)
+	chain['uGTEmuTree'].Add(ntuple_path)
 #	chain['UpgradeTree'].Add(ntuple_path)
 	chain['uGTTree'].Add(ntuple_path)
 	chain['EventTree'].Add(ntuple_path)
 
-chain['uGTTree'].AddFriend(chain['EventTree'])
+chain[tree].AddFriend(chain['EventTree'])
 
-tot_str = "Total Events : "+ str(chain['uGTTree'].GetEntries())
-tot_sel_str = "Total Events ({}) : {}".format("No selection" if not selection_str else selection_str, chain['uGTTree'].GetEntries(selection_str))
+tot_str = "Total Events : "+ str(chain[tree].GetEntries())
+tot_sel_str = "Total Events ({}) : {}".format("No selection" if not selection_str else selection_str, chain[tree].GetEntries(selection_str))
 
 print(tot_str)
 print(tot_sel_str)
@@ -54,6 +57,6 @@ for bit, algo_name in algo_map:
         s_algoSelection = "m_algoDecisionInitial[" + str(bit) + "]"
         if selection_str : s_algoSelection+= "&&"+selection_str
 
-        nentriesPerBit = chain['uGTTree'].GetEntries(s_algoSelection)
+        nentriesPerBit = chain[tree].GetEntries(s_algoSelection)
         print("{}  {}  {}".format(bit, algo_name, nentriesPerBit))
         outfile.write("{}  {}  {}\n".format(bit, algo_name, nentriesPerBit))
