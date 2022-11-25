@@ -639,18 +639,19 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
   tokenizer tokens(line, sep);
   std::map<int, std::string> premap;
   std::map<int, std::string> infomap;
+  std::set<std::string> potential_info_columns = {"Index", "Name", "Comment", "POG", "PAG"};  // a list of column names that would belong to the infomap in case they are present in the PS table
   int j = 0;
   for(auto i : tokens)
   {
     i.erase(std::remove_if(i.begin(), i.end(), ::isspace), i.end());
-    try
+    if (potential_info_columns.count(i))
     {
-      boost::lexical_cast<double>(i);
-      premap[j] = i;
+      infomap[j] = i;  // assign this item to the infomap
     }
-    catch (const boost::bad_lexical_cast &) {
-      infomap[j] = i;
-    };
+    else
+    {
+      premap[j] = i;  // assign this item to the premap
+    }
     j++;
   }
 
