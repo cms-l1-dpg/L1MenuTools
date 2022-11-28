@@ -63,7 +63,7 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
-- The Global Tag includes the menu [L1Menu_Collisions2022_v1_4_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2022_v1_4_0)
+- The Global Tag includes the menu [L1Menu_Collisions2022_v1_2_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2022_v1_2_0)
 - The [PFA1' Filter](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter) is currently configured from the GT
 - Input datasets (120X): 
    - [`/SingleNeutrino_E-10-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2%2FGEN-SIM-DIGI-RAW)
