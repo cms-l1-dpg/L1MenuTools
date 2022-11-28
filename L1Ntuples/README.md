@@ -14,13 +14,13 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
 
 ```
-cmsrel CMSSW_12_4_0
-cd CMSSW_12_4_0/src
+cmsrel CMSSW_12_6_0_pre1
+cd CMSSW_12_6_0_pre1/src
 cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
-git fetch cms-l1t-offline l1t-integration-CMSSW_12_4_0
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v132.0
+git fetch cms-l1t-offline l1t-integration-CMSSW_12_6_0_pre1
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v140
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
@@ -63,7 +63,7 @@ python condor_sub.py
 ```
 
 ## Additional notes about the current recipe
-- The Global Tag includes the menu [L1Menu_Collisions2022_v1_2_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2022_v1_2_0)
+- The Global Tag includes the menu [L1Menu_Collisions2022_v1_4_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2022_v1_4_0)
 - The [PFA1' Filter](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter) is currently configured from the GT
 - Input datasets (120X): 
    - [`/SingleNeutrino_E-10-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2%2FGEN-SIM-DIGI-RAW)
