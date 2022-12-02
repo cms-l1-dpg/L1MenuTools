@@ -7,8 +7,8 @@ Evaluation of the total, pure and proportional acceptance of L1T seeds wrt HLT p
 ```
 ssh -Y <USERNAME>@lxplus.cern.ch
 voms-proxy-init -voms cms
-cmsrel CMSSW_12_0_0_pre3
-cd CMSSW_12_0_0_pre3/src
+cmsrel CMSSW_12_4_11_patch2
+cd CMSSW_12_4_11_patch2/src
 cmsenv
 git cms-init
 git clone https://github.com/cms-l1-dpg/L1MenuTools.git
@@ -31,8 +31,8 @@ e.g. to write the locations of all .root files stored at 'T2_IT_Legnaro' use:
 The scripts 'TriggerAcceptance.py' and 'seeds.py' can be used to perform acceptance studies in a two-stage process.
 Execution commands:
 
-* `python seeds.py`
-* `python TriggerAcceptance.py`
+* `python3 seeds.py`
+* `python3 TriggerAcceptance.py`
 
 #### 3bi. seeds.py
 
