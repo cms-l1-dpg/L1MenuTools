@@ -27,6 +27,10 @@ git cms-checkdeps -A -a
 
 scram b -j 8
 ```
+To include the latest GMT cross cleaning deployed online during 2022, the configuration file =mc.py= has been updated (look at L133-142). An update of =L1Trigger/Configuration/python/SimL1Emulator_cff.py= is also needed by adding at L60 (see instructions by Efe [here](https://github.com/eyigitba/uGMTCrossCleaning)):
+```
+from L1Trigger.L1TMuon.fakeGmtParams_cff import *
+```
 
 ## 2. Download the L1MenuTools/L1Ntuples code
 Clone this repository into your `$CMSSW_BASE/src/` folder. 
