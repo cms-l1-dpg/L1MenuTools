@@ -1,7 +1,6 @@
 # L1Ntuples production recipe
 
-The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples for L1 menu studies. 
-====> **PLEASE NOTE** that the recipe is the latest one but is still under development!!
+The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples based on the latest conditions deployed online at the end of the 2022 data-taking.
 
 The targeted environment is Lxplus and assumes a standard session:
 ```
@@ -27,10 +26,11 @@ git cms-checkdeps -A -a
 
 scram b -j 8
 ```
-To include the latest GMT cross cleaning deployed online during 2022, the configuration file =mc.py= has been updated (look at L133-142). An update of =L1Trigger/Configuration/python/SimL1Emulator_cff.py= is also needed by adding at L60 (see instructions by Efe [here](https://github.com/eyigitba/uGMTCrossCleaning)):
+To include the latest GMT cross cleaning deployed online during 2022, the configuration file `mc.py` has been updated (look at L133-142). An update of `L1Trigger/Configuration/python/SimL1Emulator_cff.py` is also needed by adding at L60:
 ```
 from L1Trigger.L1TMuon.fakeGmtParams_cff import *
 ```
+(See instructions by Efe [here](https://github.com/eyigitba/uGMTCrossCleaning).)
 
 ## 2. Download the L1MenuTools/L1Ntuples code
 Clone this repository into your `$CMSSW_BASE/src/` folder. 
