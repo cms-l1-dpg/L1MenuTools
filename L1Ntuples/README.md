@@ -14,13 +14,13 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
 
 ```
-cmsrel CMSSW_12_4_0
-cd CMSSW_12_4_0/src
+cmsrel CMSSW_12_6_0_pre1
+cd CMSSW_12_6_0_pre1/src
 cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
-git fetch cms-l1t-offline l1t-integration-CMSSW_12_4_0
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v132.0
+git fetch cms-l1t-offline l1t-integration-CMSSW_12_6_0_pre1
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v141
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a

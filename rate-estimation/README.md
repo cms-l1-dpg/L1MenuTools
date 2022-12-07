@@ -83,7 +83,7 @@ The latest 2018 official prescale tables can be found
 [here](https://github.com/cms-l1-dpg/L1Menu2018/tree/master/official/PrescaleTables).
 
 ### Rate estimation
-Ensure you are in a CMSSW_120X environment.
+Ensure you are in a CMSSW_126X environment.
 If the directories objs/ and objs/include/ do not exist, create them.
 Then run `make -j 4`.
 
