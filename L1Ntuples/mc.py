@@ -2,12 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc.py -n -1 --no_output --era=Run3 --mc --conditions=124X_mcRun3_2022_realistic_v10 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2022_v0_4 --filein=/store/mc/Run3Winter22DR/SingleNeutrino_E-10-gun/GEN-SIM-DIGI-RAW/L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/2520004/23eb7d6b-ffbd-4368-9d99-92c5f153f570.root
-import FWCore.ParameterSet.Config as cms
+# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc_126X.py -n -1 --no_output --era=Run3 --mc --conditions=125X_mcRun3_2022_realistic_v3 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2022_v0_6 --filein=/store/mc/Run3Winter22DR/SingleNeutrino_E-10-gun/GEN-SIM-DIGI-RAW/L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/70007/231dda73-3ef0-44ae-86b4-f6088c6a6018.root
 
+import FWCore.ParameterSet.Config as cms
 from Configuration.Eras.Era_Run3_cff import Run3
-import FWCore.ParameterSet.VarParsing as VarParsing # ADDED
-import FWCore.Utilities.FileUtils as FileUtils # ADDED
+import FWCore.ParameterSet.VarParsing as VarParsing # ADDED                                                                                                          
+import FWCore.Utilities.FileUtils as FileUtils # ADDED  
 
 process = cms.Process('RAW2DIGI',Run3)
 
@@ -23,9 +23,9 @@ process.load('Configuration.StandardSequences.RawToDigi_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-# ADDED 
+# ADDED                                                                                                                                           
 options = VarParsing.VarParsing ('analysis')
-# get and parse the command line arguments
+# get and parse the command line arguments                                                                                                                  
 
 options.register('skipEvents',
                  0,
@@ -45,36 +45,38 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.MessageLogger.suppressWarning = cms.untracked.vstring(
-    'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree', 
+    'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree',
     'l1UpgradeTfMuonTree','l1UpgradeTree','l1HOTree', 'l1Phase2CaloTree')
 
-# Input source
+# Input source                                                                                                                                  
 process.source = cms.Source("PoolSource",
-    skipEvents = cms.untracked.uint32(options.skipEvents), #added
+    skipEvents = cms.untracked.uint32(options.skipEvents), #added                                                          
     fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
-
-# end ADDED
+# end ADDED  
 
 process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring(),
     IgnoreCompletely = cms.untracked.vstring(),
     Rethrow = cms.untracked.vstring(),
     SkipEvent = cms.untracked.vstring(),
+    accelerators = cms.untracked.vstring('*'),
     allowUnscheduled = cms.obsolete.untracked.bool,
     canDeleteEarly = cms.untracked.vstring(),
+    deleteNonConsumedUnscheduledModules = cms.untracked.bool(True),
+    dumpOptions = cms.untracked.bool(False),
     emptyRunLumiMode = cms.obsolete.untracked.string,
     eventSetup = cms.untracked.PSet(
         forceNumberOfConcurrentIOVs = cms.untracked.PSet(
             allowAnyLabel_=cms.required.untracked.uint32
         ),
-        numberOfConcurrentIOVs = cms.untracked.uint32(1)
+        numberOfConcurrentIOVs = cms.untracked.uint32(0)
     ),
     fileMode = cms.untracked.string('FULLMERGE'),
     forceEventSetupCacheClearOnNewRun = cms.untracked.bool(False),
     makeTriggerResults = cms.obsolete.untracked.bool,
-    numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
+    numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(0),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
     numberOfStreams = cms.untracked.uint32(0),
     numberOfThreads = cms.untracked.uint32(1),
@@ -97,7 +99,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '124X_mcRun3_2022_realistic_v10', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '125X_mcRun3_2022_realistic_v3', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -123,12 +125,24 @@ from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
 process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2022_v0_4
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2022_v0_6 
 
-#call to customisation function L1TSettingsToCaloParams_2022_v0_2 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2022_v0_4(process)
+#call to customisation function L1TSettingsToCaloParams_2022_v0_6 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2022_v0_6(process)
+
+# OMTF/EMTF Cross-cleaning parameters. This is "conservative"                                                  
+process.gmtParams.FOPosMatchQualLUTMaxDR        = cms.double(0.2)
+process.gmtParams.FOPosMatchQualLUTfEta         = cms.double(1)
+process.gmtParams.FOPosMatchQualLUTfEtaCoarse   = cms.double(1)
+process.gmtParams.FOPosMatchQualLUTfPhi         = cms.double(2)
+process.gmtParams.FONegMatchQualLUTMaxDR        = cms.double(0.2)
+process.gmtParams.FONegMatchQualLUTfEta         = cms.double(1)
+process.gmtParams.FONegMatchQualLUTfEtaCoarse   = cms.double(1)
+process.gmtParams.FONegMatchQualLUTfPhi         = cms.double(2)
+process.gmtParams.fwVersion = cms.uint32(0x7000000)
 
 # End of customisation functions
+
 
 # Customisation from command line
 
