@@ -2,11 +2,12 @@
 # encoding: utf-8
 
 # File        : GetLumi.py
-# Author      : Ben Wu
-# Contact     : benwu@fnal.gov
-# Date        : 2016 Aug 10
+# Author      : Ben Wu (adapted by Elisa Fontanesi)
+# Contact     : benwu@fnal.gov (elisa.fontanesi@cern.ch)
+# Date        : 2016 Aug 10 (2022 December 09)
 #
-# Description :
+# Description : Script that exploits brilcalc to retrieve the pileup information for each run in the list (Fill-Run-LS-PU)
+# Usage: python3 GetLumi.py
 
 import subprocess
 import pandas as pd
