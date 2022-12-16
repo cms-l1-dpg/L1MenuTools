@@ -316,6 +316,17 @@
     // {{ cut.getMinimum().value | toMass }} <= mass <= {{ cut.getMaximum().value | toMass}}
     {{ setMass3(prefix, prefix, prefix, idx0, idx1, idx2, LUTS, iPi, False) }}
     {{ applyFunctionCut('mass3', cut, LUTS.PREC_MASS) }}
+  {% elif cut.getCutType() == tmEventSetup.ChargeCorrelation %}
+    if (data->{{prefix}}Chg.at({{idx0}}) == 0) continue;  // charge valid bit not set
+    if (data->{{prefix}}Chg.at({{idx1}}) == 0) continue;  // charge valid bit not set
+    if (data->{{prefix}}Chg.at({{idx2}}) == 0) continue;  // charge valid bit not set
+{% if cut.getData() == 'os' %}
+    // opposite-sign (os)
+    if (not(fabs(data->{{prefix}}Chg.at({{idx0}})+data->{{prefix}}Chg.at({{idx1}})+data->{{prefix}}Chg.at({{idx2}})) == fabs(data->{{prefix}}Chg.at({{idx0}})))) continue;
+{% elif cut.getData() == 'ls' %}
+    // like-sign (ls)
+    if ((fabs(data->{{prefix}}Chg.at({{idx0}})+data->{{prefix}}Chg.at({{idx1}})+data->{{prefix}}Chg.at({{idx2}})) == fabs(data->{{prefix}}Chg.at({{idx0}})))) continue;
+{% endif %}
   {% endif %}
   {% endfor %}
 {% endmacro %}
