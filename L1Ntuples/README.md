@@ -66,6 +66,14 @@ Finally, launch the production with
 python condor_sub.py
 ```
 
+
+## 5. Check the output directory
+When all jobs finished to run, check the output directory, identify files corresponding to failed jobs looking at the size of the file, and delete them:
+```
+. -name "*.root" -size -10k
+. -name "*.root" -size -10k -delete
+```
+
 ## Additional notes about the current recipe
 - The Global Tag includes the menu [L1Menu_Collisions2022_v1_2_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2022_v1_2_0)
 - The [PFA1' Filter](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter) is currently configured from the GT
