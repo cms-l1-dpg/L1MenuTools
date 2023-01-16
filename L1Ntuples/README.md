@@ -70,8 +70,8 @@ python condor_sub.py
 ## 5. Check the output directory
 When all jobs finished to run, check the output directory, identify files corresponding to failed jobs looking at the size of the file, and delete them:
 ```
-. -name "*.root" -size -10k
-. -name "*.root" -size -10k -delete
+find . -name "*.root" -size -10k
+find . -name "*.root" -size -10k -delete
 ```
 
 ## Additional notes about the current recipe
