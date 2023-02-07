@@ -17,7 +17,7 @@ cmsrel CMSSW_13_0_0_pre2
 cd CMSSW_13_0_0_pre2/src
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline l1t-integration-CMSSW_13_0_0_pre2
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v141-CMSSW_13_0_0_pre2
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v142
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
