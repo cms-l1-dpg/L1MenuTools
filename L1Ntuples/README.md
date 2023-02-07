@@ -13,18 +13,17 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
 
 ```
-cmsrel CMSSW_12_6_0_pre1
-cd CMSSW_12_6_0_pre1/src
-cmsenv
-git cms-init
+cmsrel CMSSW_13_0_0_pre2
+cd CMSSW_13_0_0_pre2/src
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
-git fetch cms-l1t-offline l1t-integration-CMSSW_12_6_0_pre1
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v141
+git fetch cms-l1t-offline l1t-integration-CMSSW_13_0_0_pre2
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v141-CMSSW_13_0_0_pre2
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
 
 scram b -j 8
+
 ```
 To include the latest GMT cross cleaning deployed online during 2022, the configuration file `mc.py` has been updated (look at L133-142). An update of `L1Trigger/Configuration/python/SimL1Emulator_cff.py` is also needed by adding at L60:
 ```
