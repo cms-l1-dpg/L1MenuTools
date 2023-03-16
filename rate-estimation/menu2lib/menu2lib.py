@@ -12,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import tmGrammar
 import tmEventSetup
 
-UTM_VERSION = '0.10.0'
+UTM_VERSION = '0.11.1'
 assert tmGrammar.__version__ == UTM_VERSION, f"invalid utm version {tmGrammar.__version__}, should be {UTM_VERSION}"
 assert tmEventSetup.__version__ == UTM_VERSION, f"invalid utm version {tmEventSetup.__version__}, should be {UTM_VERSION}"
 
@@ -51,8 +51,9 @@ PREFIX = {
   tmEventSetup.CENT7: 'sum',
   tmEventSetup.MUS0: 'muonShower',
   tmEventSetup.MUS1: 'muonShower',
+  tmEventSetup.MUS2: 'muonShower',
   tmEventSetup.MUSOOT0: 'muonShower',
-  tmEventSetup.MUSOOT1: 'muonShower'
+  tmEventSetup.MUSOOT1: 'muonShower',
 }
 
 CentralityBitmasks = {
@@ -80,8 +81,9 @@ def getObjectName(key):
     tmEventSetup.ETMHF: tmGrammar.ETMHF,
     tmEventSetup.MUS0: tmGrammar.MUS0,
     tmEventSetup.MUS1: tmGrammar.MUS1,
+    tmEventSetup.MUS2: tmGrammar.MUS2,
     tmEventSetup.MUSOOT0: tmGrammar.MUSOOT0,
-    tmEventSetup.MUSOOT1: tmGrammar.MUSOOT1
+    tmEventSetup.MUSOOT1: tmGrammar.MUSOOT1,
   }[key.getType()]
 
 
@@ -119,7 +121,7 @@ def toCharge(charge):
 # Add filter function to get the bit masking for centrality triggers
 def getCentralityBitmask(conditionType):
   return CentralityBitmasks[conditionType]
-  
+
 def chkChgCor(cuts, prefix, nobjects):
   data = {}
   data['prefix'] = prefix;
@@ -209,7 +211,7 @@ def sortObjects(obj1, obj2):
     return obj2, obj1
 
   # Muon showers
-  elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
+  elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUS2, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
     if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
                               tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
       return obj2, obj1
