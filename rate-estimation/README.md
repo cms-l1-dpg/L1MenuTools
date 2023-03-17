@@ -78,7 +78,7 @@ While the official PS tables are in .xlsx format for better presentation, ensure
 that the prescale table you use has been converted to
 either a tab-separated .txt file or comma-separated .csv file.
 An example table has been provided for column 2p0E34 in
-`menu/L1Menu_Collisions2023_v1_0_0.csv`.
+`menu/L1Prescales2023.csv`.
 The latest 2018 official prescale tables can be found 
 [here](https://github.com/cms-l1-dpg/L1Menu2018/tree/master/official/PrescaleTables).
 
@@ -91,7 +91,7 @@ Then run `make -j 4`.
 Components have been provided to run a short test.
 ```bash
 ./testMenu2016 \
--m menu/L1Menu_Collisions2023_v1_0_0.csv -l ntuple/Run3_NuGun_MC_ntuples.list \
+-m menu/L1Prescales2023.csv -l ntuple/Run3_NuGun_MC_ntuples.list \
 -o test -b 2748 --doPlotRate --doPlotEff --SelectCol 2p0E34 \    
 --doPrintPU --maxEvent 200000
 ```
