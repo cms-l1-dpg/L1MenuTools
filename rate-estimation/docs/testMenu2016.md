@@ -17,8 +17,9 @@ Finally, run `make -j 4`.
 
 ## Test run
 Components (apart from menulib.hh and menulib.cc) are provided to run a short test.
-`./testMenu2016 -u menu/run_lumi.csv -m menu/Prescale_2018_v2_1_0_Col_2.0.txt -l ntuple/fill_7118_nanoDST_shifter_lxplus_test.list -o test -b 2748 --doPlotRate --doPlotEff --UseUnpackTree`
-This will take only a few minutes and output test.csv, test.root, and test.txt into the results/ directory.
+`./testMenu2016 -u menu/2022_highPUFills.csv -m menu/L1Prescales2023.csv -l ntuple/2022EphZB_run362439_126X.list -o testoutput -b 2400 --doPlotRate --doPlotEff --maxEvent 20000 --SelectCol 2pE34 --doPrintPU --UseUnpackTree`
+This will take only a few minutes and output test.csv, test.root, and test.
+into the results/ directory.
 Make sure you have set up the virtual environment as specified in the rate-estimation README, are in a CMSSW environment (ie- you have run `cmsenv`), and have run `make -j 4` since acquiring menulib.hh and menulib.cc.
 
 ## Arguments
@@ -28,13 +29,13 @@ Produces the help message, listing all arguments.
 
 ### -u: LS information table
 See menu/GetLumi.py.
-An example table (run\_lumi.csv) is provided.
+An example table (`menu/2022_highPUFills.csv`) is provided.
 
 ### -m: PS table
-An example table (menu/Prescale\_2018\_v2\_1\_0\_Col\_2.0.txt) is provided.
+An example table (`menu\L1Prescales2023.csv`) is provided.
 
 ### -l: ntuple file list
-An example list (fill\_7118\_nanoDST\_shifter\_lxplus.list) is provided.
+An example list (`ntuple/2022EphZB_run362439_126X.list`) is provided.
 
 ### -b: Number of bunches.
 
