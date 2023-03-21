@@ -1,5 +1,5 @@
 {#
-    # @author: Sven Dildick (Rice University)
+ # @author: Sven Dildick (Rice University)
  #}
 {# Template for muon showers #}
 {# See in: L1Trigger/L1TNtuples/interface/L1AnalysisL1UpgradeDataFormat.h #}
@@ -28,6 +28,11 @@ bool
           }
         {% elif cond.getType() == tmEventSetup.MuonShower1 -%}
         if (data->{{ prefix }}OneTight.at(0))
+          {
+            pass = true;
+          }
+        {% elif cond.getType() == tmEventSetup.MuonShower2 -%}
+        if (data->{{ prefix }}TwoLoose.at(0))
           {
             pass = true;
           }

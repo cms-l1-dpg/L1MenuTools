@@ -157,6 +157,7 @@
 {% set cuts = object.getCuts() %}
 {% set etaWindows = [] %}
 {% set phiWindows = [] %}
+{% set idxWindows = [] %}
 {# loop over cuts #}
 {% for cut in cuts %}
 {#   set threshold #}
@@ -185,6 +186,15 @@
         // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
         const bool phiWindow{{phiWindows | count}} = (({{ cut.getMinimumIndex() }} <= phi) and (phi <= {{ cut.getMaximumIndex() }}));
 {% if phiWindows.append(phiWindows | count) %}{% endif %}
+
+{# set index ranges #}
+{% elif cut.getCutType() == tmEventSetup.Index %}
+{% if not idxWindows %}
+        const auto idx = data->{{prefix}}TfMuonIdx.at({{idx}});
+{% endif %}
+        // {{ cut.getMinimumValue() }} <= idx <= {{ cut.getMaximumValue()}}
+        const bool idxWindow{{idxWindows | count}} = (({{ cut.getMinimumIndex() }} <= idx) and (idx <= {{ cut.getMaximumIndex() }}));
+{% if idxWindows.append(idxWindows | count) %}{% endif %}
 
 {# set quality #}
 {% elif cut.getCutType() == tmEventSetup.Quality %}
@@ -507,4 +517,3 @@
 {% endmacro %}
 
 {# eof #}
-

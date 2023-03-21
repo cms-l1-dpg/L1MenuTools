@@ -12,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import tmGrammar
 import tmEventSetup
 
-UTM_VERSION = '0.11.1'
+UTM_VERSION = '0.11.2'
 assert tmGrammar.__version__ == UTM_VERSION, f"invalid utm version {tmGrammar.__version__}, should be {UTM_VERSION}"
 assert tmEventSetup.__version__ == UTM_VERSION, f"invalid utm version {tmEventSetup.__version__}, should be {UTM_VERSION}"
 
@@ -66,6 +66,14 @@ CentralityBitmasks = {
   tmEventSetup.Centrality6: 0x1 << 6,
   tmEventSetup.Centrality7: 0x1 << 7
 }
+
+MuonShowerTypes = [
+  tmEventSetup.MUS0,
+  tmEventSetup.MUS1,
+  tmEventSetup.MUS2,
+  tmEventSetup.MUSOOT0,
+  tmEventSetup.MUSOOT1,
+]
 
 ###########
 # Helpers #
@@ -211,7 +219,7 @@ def sortObjects(obj1, obj2):
     return obj2, obj1
 
   # Muon showers
-  elif obj1.getType() in (tmEventSetup.MUS0, tmEventSetup.MUS1, tmEventSetup.MUS2, tmEventSetup.MUSOOT0, tmEventSetup.MUSOOT1):
+  elif obj1.getType() in MuonShowerTypes:
     if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
                               tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
       return obj2, obj1

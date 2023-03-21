@@ -240,6 +240,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 {% set ShowerSignalTypes = (
   tmEventSetup.MuonShower0,
   tmEventSetup.MuonShower1,
+  tmEventSetup.MuonShower2,
   tmEventSetup.MuonShowerOutOfTime0,
   tmEventSetup.MuonShowerOutOfTime1
 ) %}
@@ -305,9 +306,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       {% include 'CaloMuonCorrelationTemplate.cc' %}
     {% elif combination == tmEventSetup.CaloCaloCombination %}
       {% if cond.getType() == tmEventSetup.InvariantMass %}
-        {% include 'CaloCaloCorrelationTemplate.cc' %}	
+        {% include 'CaloCaloCorrelationTemplate.cc' %}
       {% elif cond.getType() == tmEventSetup.InvariantMassOvRm %}
-        {% include 'CaloThreeObjectCorrelationTemplate.cc' %}	
+        {% include 'CaloThreeObjectCorrelationTemplate.cc' %}
       {% endif %}
     {% endif %}
 
