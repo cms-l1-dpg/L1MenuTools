@@ -15,6 +15,8 @@ Setup the environment according to the [official instructions](https://twiki.cer
 ```
 cmsrel CMSSW_13_0_0_pre4
 cd CMSSW_13_0_0_pre4/src
+cmsenv
+git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline l1t-integration-CMSSW_13_0_0_pre4
 git cms-merge-topic -u cms-l1t-offline:l1t-integration-v147
