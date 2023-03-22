@@ -396,7 +396,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() in CentralityConditionTypes %}
     {% include 'CentralityTemplate.cc' %}
 
-  {% elif cond.getType() in ZDCConditonTypes %}
+  {% elif cond.getType() in ZDCConditionTypes %}
     {% include 'ZDCTemplate.cc' %}
 
   {% elif cond.getType() in AnomalyDetectionTriggerConditionTypes %}
