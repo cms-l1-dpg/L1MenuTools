@@ -232,7 +232,7 @@
 
 {% endif %}
 {% if tfMuonIdxWindows %}
-        if (not ({% for i in tfMuonIdxWindows %}{% if loop.index0 %} or {% endif %}tfMuonIdxWindows{{i}}{% endfor %})) continue;
+        if (not ({% for i in tfMuonIdxWindows %}{% if loop.index0 %} or {% endif %}tfMuonIdxWindow{{i}}{% endfor %})) continue;
 
 {% endif %}
       }
