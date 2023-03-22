@@ -132,7 +132,7 @@ get_transverse_mass(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
 
 const CombinationFactory::data_t& CombinationFactory::get(const size_t n, const size_t k)
 {
-  const auto& rc = cache_.find(std::make_pair(n, k));
+  const auto rc = cache_.find(std::make_pair(n, k));
   if (rc != cache_.end())
     return rc->second;
   return insert(n, k);
@@ -178,7 +178,7 @@ CombinationFactory::cache_t CombinationFactory::cache_ = {};
 
 const PermutationFactory::data_t& PermutationFactory::get(const size_t n)
 {
-  const auto& rc = cache_.find(n);
+  const auto rc = cache_.find(n);
   if (rc != cache_.end())
     return rc->second;
   return insert(n);
@@ -450,7 +450,7 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
 {% endfor %}
   };
 
-  for (const auto pair : name2func)
+  for (const auto& pair : name2func)
   {
     L1SeedFun[pair.first] = std::bind(pair.second, upgrade, calo_tower);
   }
