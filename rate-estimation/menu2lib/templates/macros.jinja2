@@ -231,6 +231,10 @@
         if (not ({% for i in phiWindows %}{% if loop.index0 %} or {% endif %}phiWindow{{i}}{% endfor %})) continue;
 
 {% endif %}
+{% if idxWindows %}
+        if (not ({% for i in idxWindows %}{% if loop.index0 %} or {% endif %}idxWindow{{i}}{% endfor %})) continue;
+
+{% endif %}
       }
 {% endmacro %}
 
