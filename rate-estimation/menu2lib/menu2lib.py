@@ -119,7 +119,7 @@ def toCharge(charge):
 # Add filter function to get the bit masking for centrality triggers
 def getCentralityBitmask(conditionType):
   return CentralityBitmasks[conditionType]
-  
+
 def chkChgCor(cuts, prefix, nobjects):
   data = {}
   data['prefix'] = prefix;
@@ -423,6 +423,15 @@ def warning(message):
   print(message)
   return ''
 
+
+def toVersion(s):
+  """Retrun generator of version numbers for comparision.
+  >>> toVersion("0.11") >= toVersion("0.3")
+  True
+  """
+  return [int(v) for v in s.split(".")]
+
+
 def render(menu, template):
   module_dir = os.path.dirname(os.path.abspath(__file__))
   templates_dir = os.path.join(module_dir, 'templates')
@@ -455,7 +464,8 @@ def render(menu, template):
   data = {
     "tmGrammar": tmGrammar,
     "tmEventSetup": tmEventSetup,
-    "menu": menu
+    "menu": menu,
+    "toVersion": toVersion,
   }
 
   return j2_env.get_template(template).render(data)
