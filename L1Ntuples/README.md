@@ -11,6 +11,7 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 
 ## 1. Environment setup
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
+Note that currently the recipe is causing very high HMT rates with respect to the standard rates previously obtained with the 126X recipe (under investigation, see [issue/1080](https://github.com/cms-l1t-offline/cmssw/issues/1080)).
 
 ```
 cmsrel CMSSW_13_0_0_pre4
