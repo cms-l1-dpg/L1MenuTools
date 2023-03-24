@@ -52,4 +52,49 @@ const int LUT_MU_UPT[] = {
   {{x}}{% if not loop.last %},{% endif %}
 {%- endfor -%}
 };
+
+{# inverse deltaR #}
+const int prec_mu_mu_invdeltar = {{ scaleMap | getPrecisionByName('MU', 'MU', 'InverseDeltaRMath') }};
+const int prec_mu_mu_massdr = prec_mu_mu_mass + prec_mu_mu_invdeltar;
+
+{# const int iRSq = 0; #}
+{# const int jRSq = 0; #}
+{# const int iRSqmax = 227; #}
+{# const int jRSqmax = 145; #}
+{# const double tempRsq = 0.0; #}
+{# const double tempdiffeta = 0.02175; #}
+{# const double tempdiffphi = 0.02181661564992912; #}
+{# const double resolution = 0.5; #}
+{# const unsigned int precInvRsq = 0x5; #}
+
+
+{# const long long InvDeltaRSqLUT[iRSqmax][jRSqmax]; #}
+{# const double temp_InvDeltaRSq[iRSqmax][jRSqmax]; #}
+{# if (corrPar.corrCutType & 0x80) {  //Only build the 1/dR2 LUT if necessary #}
+{#   for (iRSq = 0; iRSq < iRSqmax; iRSq = iRSq + 1) { #}
+{#     for (jRSq = 0; jRSq < jRSqmax; jRSq = jRSq + 1) { #}
+{#       tempRsq = (tempdiffeta * iRSq) * (tempdiffeta * iRSq) + (tempdiffphi * jRSq) * (tempdiffphi * jRSq); #}
+{#       if (tempRsq > 0.0) { #}
+{#         temp_InvDeltaRSq[iRSq][jRSq] = 1.0 / tempRsq; #}
+{#         InvDeltaRSqLUT[iRSq][jRSq] = (long long)round(pow(10, precInvRsq) * temp_InvDeltaRSq[iRSq][jRSq]); #}
+{#       } else { #}
+{#         temp_InvDeltaRSq[iRSq][jRSq] = 0.0; #}
+{#         InvDeltaRSqLUT[iRSq][jRSq] = (long long)0; #}
+{#       } #}
+{#     } #}
+{#   } #}
+{# } #}
+
+
+
+{# const int LUT_INVDR_MU_MU[] = { #}
+{# {% for x in range -%} #}
+{# { #}
+{#   {% for y in mu_mu_invdelta[tmGrammar.INVERSE_DR] -%} #}
+{#     {{tempRsq}}{% if not loop.last %},{% endif %} #}
+{#   {%- endfor -%} #}
+{#   }{% if not loop.last %},{% endif %} #}
+{# {%- endfor -%} #}
+{# }; #}
+
 {# eof #}
