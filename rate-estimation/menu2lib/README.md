@@ -17,7 +17,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-If this virtual environment has been already set up in the past, it is
+*Note:* if this virtual environment has been already set up in the past, it is
 sufficient to simply activate it with `source utm-env/bin/activate`.
 
 ## Running menu2lib.py

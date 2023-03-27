@@ -157,6 +157,7 @@
 {% set cuts = object.getCuts() %}
 {% set etaWindows = [] %}
 {% set phiWindows = [] %}
+{% set tfMuonIdxWindows = [] %}
 {# loop over cuts #}
 {% for cut in cuts %}
 {#   set threshold #}
@@ -185,6 +186,15 @@
         // {{ cut.getMinimumValue() }} <= phi <= {{ cut.getMaximumValue()}}
         const bool phiWindow{{phiWindows | count}} = (({{ cut.getMinimumIndex() }} <= phi) and (phi <= {{ cut.getMaximumIndex() }}));
 {% if phiWindows.append(phiWindows | count) %}{% endif %}
+
+{# set index ranges #}
+{% elif cut.getCutType() == tmEventSetup.Index %}
+{% if not tfMuonIdxWindows %}
+        const auto tfMuonIdx = data->{{prefix}}TfMuonIdx.at({{idx}});
+{% endif %}
+        // {{ cut.getMinimumValue() }} <= tfMuonIdx <= {{ cut.getMaximumValue()}}
+        const bool tfMuonIdxWindow{{tfMuonIdxWindows | count}} = (({{ cut.getMinimumIndex() }} <= tfMuonIdx) and (tfMuonIdx <= {{ cut.getMaximumIndex() }}));
+{% if tfMuonIdxWindows.append(tfMuonIdxWindows | count) %}{% endif %}
 
 {# set quality #}
 {% elif cut.getCutType() == tmEventSetup.Quality %}
@@ -219,6 +229,10 @@
 {% endif %}
 {% if phiWindows %}
         if (not ({% for i in phiWindows %}{% if loop.index0 %} or {% endif %}phiWindow{{i}}{% endfor %})) continue;
+
+{% endif %}
+{% if tfMuonIdxWindows %}
+        if (not ({% for i in tfMuonIdxWindows %}{% if loop.index0 %} or {% endif %}tfMuonIdxWindow{{i}}{% endfor %})) continue;
 
 {% endif %}
       }
@@ -507,4 +521,3 @@
 {% endmacro %}
 
 {# eof #}
-

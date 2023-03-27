@@ -69,7 +69,7 @@ const scales_t {{key | replace("-", "_")}}_MAX = {
 {% endfor %}
 
 {# MU #}
-{% for key in ('MU-ET', 'MU-UPT', 'MU-ETA', 'MU-PHI') -%}
+{% for key in ('MU-ET', 'MU-UPT', 'MU-ETA', 'MU-PHI', 'MU-INDEX') -%}
 {% if key in scaleMap.keys() -%}
   {% set es_scale = scaleMap[key] %}
   {% if key == 'MU-PHI' %}

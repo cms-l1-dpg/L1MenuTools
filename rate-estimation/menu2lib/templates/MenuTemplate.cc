@@ -132,7 +132,7 @@ get_transverse_mass(L1Analysis::L1AnalysisL1UpgradeDataFormat* upgrade,
 
 const CombinationFactory::data_t& CombinationFactory::get(const size_t n, const size_t k)
 {
-  const auto& rc = cache_.find(std::make_pair(n, k));
+  const auto rc = cache_.find(std::make_pair(n, k));
   if (rc != cache_.end())
     return rc->second;
   return insert(n, k);
@@ -178,7 +178,7 @@ CombinationFactory::cache_t CombinationFactory::cache_ = {};
 
 const PermutationFactory::data_t& PermutationFactory::get(const size_t n)
 {
-  const auto& rc = cache_.find(n);
+  const auto rc = cache_.find(n);
   if (rc != cache_.end())
     return rc->second;
   return insert(n);
@@ -233,18 +233,76 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 /////////////////////////
 // Generate conditions //
 /////////////////////////
-{#
-// Muon showers: definition of ShowerSignal types;
-// it can be done for Centrality signals, as well
-#}
-{% set ShowerSignalTypes = (
-  tmEventSetup.MuonShower0,
-  tmEventSetup.MuonShower1,
-  tmEventSetup.MuonShowerOutOfTime0,
-  tmEventSetup.MuonShowerOutOfTime1
+
+{% set OverlapRemovalConditionTypes = (
+  tmEventSetup.CaloCaloCorrelationOvRm,
+  tmEventSetup.DoubleJetOvRm,
+  tmEventSetup.DoubleTauOvRm,
+  tmEventSetup.InvariantMassOvRm,
 ) %}
 
-{% set CentralitySignalTypes = (
+{% set ObjectConditionTypes = (
+  tmEventSetup.SingleMuon,
+  tmEventSetup.DoubleMuon,
+  tmEventSetup.TripleMuon,
+  tmEventSetup.QuadMuon,
+  tmEventSetup.SingleEgamma,
+  tmEventSetup.DoubleEgamma,
+  tmEventSetup.TripleEgamma,
+  tmEventSetup.QuadEgamma,
+  tmEventSetup.SingleTau,
+  tmEventSetup.DoubleTau,
+  tmEventSetup.TripleTau,
+  tmEventSetup.QuadTau,
+  tmEventSetup.SingleJet,
+  tmEventSetup.DoubleJet,
+  tmEventSetup.TripleJet,
+  tmEventSetup.QuadJet,
+) %}
+
+{% set EsumConditionTypes = (
+  tmEventSetup.TotalEt,
+  tmEventSetup.TotalHt,
+  tmEventSetup.MissingEt,
+  tmEventSetup.MissingHt,
+  tmEventSetup.TotalEtEM,
+  tmEventSetup.MissingEtHF,
+  tmEventSetup.MinBiasHFP0,
+  tmEventSetup.MinBiasHFP1,
+  tmEventSetup.MinBiasHFM0,
+  tmEventSetup.MinBiasHFM1,
+  tmEventSetup.TowerCount,
+) %}
+
+{% set AsymConditionTypes = (
+  tmEventSetup.AsymmetryEt,
+  tmEventSetup.AsymmetryHt,
+  tmEventSetup.AsymmetryEtHF,
+  tmEventSetup.AsymmetryHtHF,
+) %}
+
+{% set ExternalConditionTypes = (
+  tmEventSetup.Externals,
+) %}
+
+{% set EsumMtConditionTypes = (
+  tmEventSetup.TransverseMass,
+  tmEventSetup.TransverseMassOvRm,
+) %}
+
+{% set Muon3CorrelationConditionTypes = (
+  tmEventSetup.InvariantMass3,
+) %}
+
+{% set MuonShowerConditionTypes = (
+  tmEventSetup.MuonShower0,
+  tmEventSetup.MuonShower1,
+  tmEventSetup.MuonShower2,
+  tmEventSetup.MuonShowerOutOfTime0,
+  tmEventSetup.MuonShowerOutOfTime1,
+) %}
+
+{% set CentralityConditionTypes = (
   tmEventSetup.Centrality0,
   tmEventSetup.Centrality1,
   tmEventSetup.Centrality2,
@@ -252,33 +310,35 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   tmEventSetup.Centrality4,
   tmEventSetup.Centrality5,
   tmEventSetup.Centrality6,
-  tmEventSetup.Centrality7
+  tmEventSetup.Centrality7,
+) %}
+
+{% set ZDCConditionTypes = (
+  tmEventSetup.ZDCPlus,
+  tmEventSetup.ZDCMinus,
+) %}
+
+{% set AnomalyDetectionTriggerConditionTypes = (
+  tmEventSetup.AnomalyDetectionTrigger,
 ) %}
 
 {% for name, cond in menu.getConditionMapPtr().items() %}
-  {%- set overlap_removal = 0 -%}
-  {%- if cond.getType() in (tmEventSetup.CaloCaloCorrelationOvRm, tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm,
-                            tmEventSetup.InvariantMassOvRm) %}
+  {%- if cond.getType() in OverlapRemovalConditionTypes %}
     {% set overlap_removal = 1 %}
+  {% else -%}
+    {% set overlap_removal = 0 %}
   {% endif -%}
 
-  {%- if cond.getType() in (tmEventSetup.SingleMuon, tmEventSetup.DoubleMuon, tmEventSetup.TripleMuon, tmEventSetup.QuadMuon,
-			    tmEventSetup.SingleEgamma, tmEventSetup.DoubleEgamma, tmEventSetup.TripleEgamma, tmEventSetup.QuadEgamma,
-			    tmEventSetup.SingleTau, tmEventSetup.DoubleTau, tmEventSetup.TripleTau, tmEventSetup.QuadTau,
-			    tmEventSetup.SingleJet, tmEventSetup.DoubleJet, tmEventSetup.TripleJet, tmEventSetup.QuadJet) %}
+  {%- if cond.getType() in ObjectConditionTypes %}
     {% include 'ObjectTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.TotalEt, tmEventSetup.TotalHt, tmEventSetup.MissingEt, tmEventSetup.MissingHt,
-                             tmEventSetup.TotalEtEM, tmEventSetup.MissingEtHF,
-                             tmEventSetup.MinBiasHFP0, tmEventSetup.MinBiasHFP1,
-                             tmEventSetup.MinBiasHFM0, tmEventSetup.MinBiasHFM1,
-                             tmEventSetup.TowerCount) %}
+  {% elif cond.getType() in EsumConditionTypes %}
     {% include 'EsumTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.AsymmetryEt, tmEventSetup.AsymmetryHt, tmEventSetup.AsymmetryEtHF, tmEventSetup.AsymmetryHtHF)  %}
+  {% elif cond.getType() in AsymConditionTypes  %}
     {% include 'AsymTemplate.cc' %}
 
-  {% elif cond.getType() == tmEventSetup.Externals %}
+  {% elif cond.getType() in ExternalConditionTypes %}
     {% include 'Externals.cc' %}
 
   {% elif cond.getType() in (tmEventSetup.MuonMuonCorrelation, ) %}
@@ -296,7 +356,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   {% elif cond.getType() in (tmEventSetup.DoubleJetOvRm, tmEventSetup.DoubleTauOvRm) %}
     {% include 'CaloThreeObjectCorrelationTemplate.cc' %}
 
-  {% elif cond.getType() in (tmEventSetup.InvariantMass, tmEventSetup.InvariantMassOvRm) %}
+  {% elif cond.getType() in (tmEventSetup.InvariantMass, tmEventSetup.InvariantMassOvRm, tmEventSetup.InvariantMassUpt) %}
     {% set objects = cond.getObjects() %}
     {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
     {% if combination == tmEventSetup.MuonMuonCombination %}
@@ -305,20 +365,15 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       {% include 'CaloMuonCorrelationTemplate.cc' %}
     {% elif combination == tmEventSetup.CaloCaloCombination %}
       {% if cond.getType() == tmEventSetup.InvariantMass %}
-        {% include 'CaloCaloCorrelationTemplate.cc' %}	
+        {% include 'CaloCaloCorrelationTemplate.cc' %}
       {% elif cond.getType() == tmEventSetup.InvariantMassOvRm %}
-        {% include 'CaloThreeObjectCorrelationTemplate.cc' %}	
+        {% include 'CaloThreeObjectCorrelationTemplate.cc' %}
       {% endif %}
+    {% else %}
+      err> unsupported object combination for correlation
     {% endif %}
 
-  {% elif cond.getType() in (tmEventSetup.InvariantMassUpt, ) %}
-    {% set objects = cond.getObjects() %}
-    {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
-    {% if combination == tmEventSetup.MuonMuonCombination %}
-      {% include 'MuonMuonCorrelationTemplate.cc' %}
-    {% endif %}
-
-  {% elif cond.getType() in (tmEventSetup.TransverseMass, tmEventSetup.TransverseMassOvRm) %}
+  {% elif cond.getType() in EsumMtConditionTypes %}
     {% set objects = cond.getObjects() %}
     {% set combination = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
     {% if combination == tmEventSetup.CaloEsumCombination %}
@@ -327,22 +382,25 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
       err> unsupported object combination for mT
     {% endif %}
 
-  {% elif cond.getType() == tmEventSetup.InvariantMass3 %}
+  {% elif cond.getType() in Muon3CorrelationConditionTypes %}
     {% set objects = cond.getObjects() %}
     {% set combination01 = tmEventSetup.getObjectCombination(objects[0].getType(), objects[1].getType()) %}
     {% set combination02 = tmEventSetup.getObjectCombination(objects[0].getType(), objects[2].getType()) %}
     {% if combination01 == tmEventSetup.MuonMuonCombination and combination02 == tmEventSetup.MuonMuonCombination %}
       {% include 'Muon3CorrelationTemplate.cc' %}
     {% endif %}
-{#
-  // Muon showers: associate the condition type and a given template;
-  // it can be done for Centrality signals, as well
-#}
-  {% elif cond.getType() in ShowerSignalTypes %}
+
+  {% elif cond.getType() in MuonShowerConditionTypes %}
     {% include 'MuonShowerTemplate.cc' %}
 
-  {% elif cond.getType() in CentralitySignalTypes %}
+  {% elif cond.getType() in CentralityConditionTypes %}
     {% include 'CentralityTemplate.cc' %}
+
+  {% elif cond.getType() in ZDCConditionTypes %}
+    {% include 'ZDCTemplate.cc' %}
+
+  {% elif cond.getType() in AnomalyDetectionTriggerConditionTypes %}
+    {% include 'AnomalyDetectionTriggerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}
@@ -449,7 +507,7 @@ bool addFuncFromName(std::map<std::string, std::function<bool()>> &L1SeedFun,
 {% endfor %}
   };
 
-  for (const auto pair : name2func)
+  for (const auto& pair : name2func)
   {
     L1SeedFun[pair.first] = std::bind(pair.second, upgrade, calo_tower);
   }
