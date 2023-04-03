@@ -32,7 +32,7 @@ bool
             pass = true;
           }
         {% elif cond.getType() == tmEventSetup.MuonShower2 -%}
-        if (data->{{ prefix }}TwoLoose.at(0))
+        if (data->{{ prefix }}TwoLooseDiffSectors.at(0))
           {
             pass = true;
           }
