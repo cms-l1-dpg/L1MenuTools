@@ -19,6 +19,16 @@ Requires:
 * Prescale table
 See [docs/testMenu2016.md]() for more information.
 
+#### testMenu2016.py
+Parallel version of `testMenu2016`.
+It allocates several CPU cores and starts the default rate estimation with with a subset of data.
+In the end the outputs of the different jobs are combined and a joined output is presented.
+
+*Important* this is a preliminary version that does only support Prescales of 0 or 1.
+Make sure that the selected prescale column only contains those values otherwise it will fail.
+This code is only to get a fast but rough estimate of the L1 rate, because prescaled seeds need to be excluded.
+For further details on the parameters, see below.
+
 #### menu2lib/menu2lib.py
 Converts the XML menu to C++ to be used in testMenu2016 for rate estimation.
 Do not run cmsenv before running this.
@@ -125,6 +135,17 @@ The arguments that you can use are as follows:
 |`--PrescalePrecision` | Select the prescale precision factor e.g. for 100 (=10^2) the prescales are represented with 2 decimal places |
 
 Running `./testMenu2016 --help` will show all arguments with a brief description. Also see [docs/testMenu2016.md]().
+
+#### Arguments for parallel version
+Most of the arguments of the rate estimation code (above) can be used exactly as in the single threaded version, because they are just passed to the parallel version.
+The following arguments are specific for the parallel version:
+
+|Option | Description |
+|-------|-------------|
+|`--njobs` | number of parallel jobs to run |
+|`--just_analyze` | just analyze logs without processing ntuples |
+|`--name` | unique name of the test, replaces the option `-o` of the original code |
+|`--tmp` | path to an existing direcrtory where to store temporary files |
 
 #### Important note:
 Please remember that when you use the --SelectCol option, you just select a specific PS column from the table which contains the information about which seeds are prescaled or unprescaled and about the prescale values. It does not allow to select a certain luminosity. In order to look at rates using a specific luminosity scenario, you would need to use lumi-range-skimmed datasets or to select a specific pileup window when running the rates. 
