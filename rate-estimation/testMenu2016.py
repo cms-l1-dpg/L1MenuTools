@@ -56,6 +56,8 @@ def prepare_input():
     files = []
     with open(args.filelist) as f:
         for file in f.readlines():
+            if file[0] == '#' or file.strip() == '': #comment line or empty line
+                continue
             files.append(file.strip())
     nfiles = len(files)
     print("Number of files: %u" % nfiles)
@@ -63,17 +65,18 @@ def prepare_input():
     filelists = []
 
     nfiles_per_job = int(nfiles / args.njobs)
-    if nfiles_per_job * args.njobs < nfiles:
-        nfiles_per_job += 1
+    nfiles_rest = nfiles % args.njobs
+    step_files = [0, nfiles_rest * (nfiles_per_job + 1), nfiles]
 
     index = 0
-    for i in range(0, nfiles, nfiles_per_job):
-        filename = "%s-%02u.list" % (args.name, index)
-        index += 1
-        with open("%s/%s" % (args.tmp, filename), "w") as f:
-            for file in files[i:i+nfiles_per_job]:
-                f.write("%s\n" % file)
-        filelists.append(filename)
+    for j in range(2):
+        for i in range(step_files[j], step_files[j + 1], nfiles_per_job + 1 -j):
+            filename = "%s-%02u.list" % (args.name, index)
+            index += 1
+            with open("%s/%s" % (args.tmp, filename), "w") as f:
+                for file in files[i:i+nfiles_per_job + 1 - j]:
+                    f.write("%s\n" % file)
+            filelists.append(filename)
     
     return filelists
 
