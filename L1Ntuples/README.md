@@ -1,6 +1,6 @@
 # L1Ntuples production recipe
 
-The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples based on the latest conditions deployed online at the end of the 2022 data-taking.
+The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples based on the ongoing condition updates at the beginning of the 2023 data-taking.
 
 The targeted environment is Lxplus and assumes a standard session:
 ```
@@ -11,16 +11,16 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 
 ## 1. Environment setup
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati).
-Note that currently the recipe is causing very high HMT rates with respect to the standard rates previously obtained with the 126X recipe (under investigation, see [issue/1080](https://github.com/cms-l1t-offline/cmssw/issues/1080)).
+Note that currently the recipe is causing very high HMT rates with respect to the standard rates previously obtained with the 126X recipe and expected rates from last year data (see [issue/1080](https://github.com/cms-l1t-offline/cmssw/issues/1080) for details. Expected fix ar EMTF.).
 
 ```
-cmsrel CMSSW_13_0_0_pre4
-cd CMSSW_13_0_0_pre4/src
+cmsrel CMSSW_13_1_0_pre4
+cd CMSSW_13_1_0_pre4/src
 cmsenv
 git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
-git fetch cms-l1t-offline l1t-integration-CMSSW_13_0_0_pre4
-git cms-merge-topic -u cms-l1t-offline:l1t-integration-v147
+git fetch cms-l1t-offline l1t-integration-CMSSW_13_1_0_pre4
+git cms-merge-topic -u cms-l1t-offline:l1t-integration-v155
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 
 git cms-checkdeps -A -a
@@ -28,7 +28,7 @@ git cms-checkdeps -A -a
 scram b -j 8
 
 ```
-To include the latest GMT cross cleaning deployed online during 2022, the configuration file `mc.py` has been updated (look at L133-142). An update of `L1Trigger/Configuration/python/SimL1Emulator_cff.py` is also needed by adding at L60:
+To include the latest GMT cross cleaning deployed online during 2022 when running on MC, the configuration file `mc.py` has been updated (look at L133-142). An update of `L1Trigger/Configuration/python/SimL1Emulator_cff.py` is also needed by adding at L60:
 ```
 from L1Trigger.L1TMuon.fakeGmtParams_cff import *
 ```
@@ -77,13 +77,15 @@ find . -name "*.root" -size -10k -delete
 ```
 
 ## Additional notes about the current recipe
-- The Global Tag includes the firt new menu for 2023 [L1Menu_Collisions2023_v1_0_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2023_v1_0_0)
-- Input datasets (120X): 
+- The Global Tag includes the new version of the 2023 menu for the start of the stable beams:: [L1Menu_Collisions2023_v1_1_0](https://github.com/cms-l1-dpg/L1MenuRun3/tree/master/development/L1Menu_Collisions2023_v1_1_0)
+
+- Input datasets (122X - Realistic PU distribution with an average PU of 52): 
+   - [`/SingleNeutrino_E-10-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 14262400; Number of files: 35656) 
+   - [`/SingleNeutrino_Pt-2To20-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_Pt-2To20-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 12764800; Number of files: 31912) 
+
+- Older input datasets (120X): 
    - [`/SingleNeutrino_E-10-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2%2FGEN-SIM-DIGI-RAW)
    - [`/SingleNeutrino_Pt-2To20-gun/Run3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_Pt-2To20-gun%2FRun3Summer21DRPremix-SNB_120X_mcRun3_2021_realistic_v6-v2%2FGEN-SIM-DIGI-RAW)
    
    Note that the [PFA1' Filter](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalPileupMitigation#PFA1_Filter) has to be configured from the GT when using 120X samples.
   
-- Input datasets (122X - Realistic PU distribution with an average PU of 52): 
-   - [`/SingleNeutrino_E-10-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_E-10-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 14262400; Number of files: 35656) 
-   - [`/SingleNeutrino_Pt-2To20-gun/Run3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2/GEN-SIM-DIGI-RAW`](https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FSingleNeutrino_Pt-2To20-gun%2FRun3Winter22DR-L1TPU0to99FEVT_SNB_122X_mcRun3_2021_realistic_v9-v2%2FGEN-SIM-DIGI-RAW) (Number of events: 12764800; Number of files: 31912) 

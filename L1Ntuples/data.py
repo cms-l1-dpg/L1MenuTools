@@ -2,12 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc_126X.py -n -1 --no_output --era=Run3 --mc --conditions=131X_mcRun3_2023_realistic_v5 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2023_v0_2 --filein=/store/mc/Run3Winter23Digi/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/126X_mcRun3_2023_forPU65_v1_ext1-v2/40002/cbcb2b23-174a-4e7f-a385-152d9c5c5b87.root
-
+# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=data_def.py -n -1 --no_output --era=Run3 --data --conditions=130X_dataRun3_Prompt_v3 --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2023_v0_1 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulFromRAW --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --filein=/store/data/Run2023B/EphemeralZeroBias0/RAW/v1/000/366/820/00000/a6ddf6d0-9356-4e63-a9b4-5809ccfd83d7.root --fileout=L1Ntuple.root
 import FWCore.ParameterSet.Config as cms
+
 from Configuration.Eras.Era_Run3_cff import Run3
-import FWCore.ParameterSet.VarParsing as VarParsing # ADDED                                                                                                          
-import FWCore.Utilities.FileUtils as FileUtils # ADDED  
+import FWCore.ParameterSet.VarParsing as VarParsing # ADDED                                                                                        
+import FWCore.Utilities.FileUtils as FileUtils # ADDED 
 
 process = cms.Process('RAW2DIGI',Run3)
 
@@ -16,16 +16,15 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
-process.load('Configuration.StandardSequences.RawToDigi_cff')
+process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-# ADDED                                                                                                                                           
+# ADDED                                                                                                                                            
 options = VarParsing.VarParsing ('analysis')
-# get and parse the command line arguments                                                                                                                  
+# get and parse the command line arguments                                                                                                     
 
 options.register('skipEvents',
                  0,
@@ -48,13 +47,13 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring(
     'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree',
     'l1UpgradeTfMuonTree','l1UpgradeTree','l1HOTree', 'l1Phase2CaloTree')
 
-# Input source                                                                                                                                  
+# Input source                                                                                                                                           
 process.source = cms.Source("PoolSource",
-    skipEvents = cms.untracked.uint32(options.skipEvents), #added                                                          
+    skipEvents = cms.untracked.uint32(options.skipEvents), #added                                                                                    
     fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
-# end ADDED  
+# end ADDED    
 
 process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring(),
@@ -99,7 +98,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '131X_mcRun3_2023_realistic_v5', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '130X_dataRun3_Prompt_v3', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -112,34 +111,23 @@ associatePatAlgosToolsTask(process)
 
 # customisation of the process.
 
-# Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
-from L1Trigger.Configuration.customiseReEmul import L1TReEmulMCFromRAWSimHcalTP 
+# Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2023_v0_1 
 
-#call to customisation function L1TReEmulMCFromRAWSimHcalTP imported from L1Trigger.Configuration.customiseReEmul
-process = L1TReEmulMCFromRAWSimHcalTP(process)
+#call to customisation function L1TSettingsToCaloParams_2023_v0_1 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2023_v0_1(process)
+
+# Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
+from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW 
+
+#call to customisation function L1TReEmulFromRAW imported from L1Trigger.Configuration.customiseReEmul
+process = L1TReEmulFromRAW(process)
 
 # Automatic addition of the customisation function from L1Trigger.L1TNtuples.customiseL1Ntuple
 from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
 
 #call to customisation function L1NtupleRAWEMU imported from L1Trigger.L1TNtuples.customiseL1Ntuple
 process = L1NtupleRAWEMU(process)
-
-# Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2023_v0_2 
-
-#call to customisation function L1TSettingsToCaloParams_2023_v0_2 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2023_v0_2(process)
-
-# OMTF/EMTF Cross-cleaning parameters. This is "conservative"                                                  
-process.gmtParams.FOPosMatchQualLUTMaxDR        = cms.double(0.2)
-process.gmtParams.FOPosMatchQualLUTfEta         = cms.double(1)
-process.gmtParams.FOPosMatchQualLUTfEtaCoarse   = cms.double(1)
-process.gmtParams.FOPosMatchQualLUTfPhi         = cms.double(2)
-process.gmtParams.FONegMatchQualLUTMaxDR        = cms.double(0.2)
-process.gmtParams.FONegMatchQualLUTfEta         = cms.double(1)
-process.gmtParams.FONegMatchQualLUTfEtaCoarse   = cms.double(1)
-process.gmtParams.FONegMatchQualLUTfPhi         = cms.double(2)
-process.gmtParams.fwVersion = cms.uint32(0x7000000)
 
 # End of customisation functions
 
