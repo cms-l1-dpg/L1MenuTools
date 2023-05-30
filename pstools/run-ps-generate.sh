@@ -23,7 +23,7 @@ if [ ! -d "$ENV_DIR" ]; then
 fi
 
 . $ENV_DIR/bin/activate
-python $SCRIPT $@
+python3 $SCRIPT $@
 EXITCODE=$?
 deactivate
 

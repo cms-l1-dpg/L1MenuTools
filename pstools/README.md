@@ -21,7 +21,7 @@ Prescale table generation tool: create a new prescale table according to a L1 Me
 Example command:
 ```
 cmsenv
-bash run-ps-generate.py PStable.xlsx L1Menu.xml
+bash run-ps-generate.sh PStable.xlsx L1Menu.xml
 ```
 
 #### [`ps-diff`](./docs/ps-diff.md): prescale table comparison tool
@@ -32,7 +32,7 @@ Prescale table comparison tool: create diffs between two PS table in various out
 Example command:
 ```
 cmsenv
-bash run-ps-diff.py PStable_left.xslx PStable_right.xslx
+bash run-ps-diff.sh PStable_left.xslx PStable_right.xslx
 ```
 
 ### Presentations of PS-tools

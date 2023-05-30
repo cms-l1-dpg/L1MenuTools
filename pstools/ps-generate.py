@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 newData[col] = find_table_value(PStable_in, seed, col, args.newSeedPS, args.includeBptx)
 
         line = pd.DataFrame(newData, index=[index])
-        PStable_out = PStable_out.append(line, ignore_index=False, sort=True)
+        PStable_out = pd.concat([PStable_out, line], ignore_index=False, sort=True)
     
     PStable_out = PStable_out.sort_index().reset_index(drop=True)
 

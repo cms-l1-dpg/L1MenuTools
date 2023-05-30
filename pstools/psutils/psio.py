@@ -59,7 +59,8 @@ def read_prescale_table(filepath: Any) -> pd.DataFrame:
         else:
             print('\nFile downloaded: {}'.format(filepath))
 
-    data = pd.read_excel(filepath, convert_float=True, engine="openpyxl")
+    data = pd.read_excel(filepath,  engine="openpyxl")
+    #data = pd.read_excel(filepath, convert_float=True, engine="openpyxl")
 
  
     #Make sure the prescale column naming is correct
