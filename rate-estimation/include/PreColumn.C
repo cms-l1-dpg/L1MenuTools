@@ -768,6 +768,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
       << std::setw(10)             << "L1Bit"
       << std::setw(L1NameLength+2) << "L1SeedName"
       << std::setw(10)             << "pre-scale"
+      << std::setw(10)             << "firecounts"
       << std::setw(10)             << "rate@13TeV"       << " +/- "
       << std::setw(20)             << "error_rate@13TeV"
       << std::setw(15)             << "pure@13TeV"       
@@ -785,6 +786,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
           << std::setw(10)             << seed.bit
           << std::setw(L1NameLength+2) << seed.name
           << std::setw(10)             << seed.prescale
+          << std::setw(10)             << seed.firecounts
           << std::setw(10)             << seed.firerate      << " +/- "
           << std::setw(20)             << seed.firerateerror
           << std::setw(15)             << seed.purerate      
@@ -805,6 +807,7 @@ bool PreColumn::PrintRates(std::ostream &out, double scale)
           << std::setw(10)             << seed.bit
           << std::setw(L1NameLength+2) << seed.name
           << std::setw(10)             << seed.prescale
+          << std::setw(10)             << seed.firecounts
           << std::setw(10)             << seed.firerate      << " +/- "
           << std::setw(20)             << seed.firerateerror
           << std::setw(15)             << seed.purerate      
