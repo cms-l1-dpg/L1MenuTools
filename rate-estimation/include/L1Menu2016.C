@@ -598,13 +598,14 @@ bool L1Menu2016::ReadMenuTXT(std::ifstream &menufile)
     temp.bit = bit;
     temp.comment = comline;
     temp.prescale = prescale;
-    temp.prescale_discret = int(std::round(prescale * L1Config["PrescalePrecision"]));
 
     if (L1Config["doCompuGT"] || L1Config["SetNoPrescale"])
       temp.prescale = 1;
 
     if (L1Config["IgnorePrescale"] && temp.prescale > 1 )
       temp.prescale = 0;
+
+    temp.prescale_discret = int(std::round(temp.prescale * L1Config["PrescalePrecision"]));
 
     if (pog.length() != 0)
       temp.POG = TokenGroups(pog);
@@ -761,7 +762,6 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
         try
         {
           temp.prescale = boost::lexical_cast<double>(it);
-          temp.prescale_discret = int(std::round(temp.prescale * L1Config["PrescalePrecision"]));
         }
         catch (const boost::bad_lexical_cast &)
         {
@@ -791,6 +791,8 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
 
       if (L1Config["IgnorePrescale"] && temp.prescale > 1 )
         temp.prescale = 0;
+      
+      temp.prescale_discret = int(std::round(temp.prescale * L1Config["PrescalePrecision"]));
     }
 
     if (writefiles)
