@@ -35,6 +35,15 @@ cmsenv
 bash run-ps-diff.sh PStable_left.xslx PStable_right.xslx
 ```
 
+#### [`prescale_xml_converter`](./docs/prescale_xml_converter.md): prescale table csv to xml converter
+Prescale table conversion tool: Takes the `csv` version of a prescale table and converts it to the `xml` version.
+
+Example command:
+```
+cmsenv
+python3 prescale_xml_converter.py -c PStable.csv -o PStable.xml
+```
+
 ### Presentations of PS-tools
 
 See [this table](./docs/talks.md) for a collection of talks/slides about this software.
