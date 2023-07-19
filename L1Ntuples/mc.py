@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc_126X.py -n -1 --no_output --era=Run3 --mc --conditions=131X_mcRun3_2023_realistic_v5 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2023_v0_2 --filein=/store/mc/Run3Winter23Digi/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/126X_mcRun3_2023_forPU65_v1_ext1-v2/40002/cbcb2b23-174a-4e7f-a385-152d9c5c5b87.root
+# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=mc_126X.py -n -1 --no_output --era=Run3 --mc --conditions=131X_mcRun3_2023_realistic_v5 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulMCFromRAWSimHcalTP --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2023_v0_3 --filein=/store/mc/Run3Winter23Digi/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/126X_mcRun3_2023_forPU65_v1_ext1-v2/40002/cbcb2b23-174a-4e7f-a385-152d9c5c5b87.root
 
 import FWCore.ParameterSet.Config as cms
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -125,10 +125,10 @@ from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
 process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2023_v0_2 
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2023_v0_3 
 
-#call to customisation function L1TSettingsToCaloParams_2023_v0_2 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2023_v0_2(process)
+#call to customisation function L1TSettingsToCaloParams_2023_v0_3 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2023_v0_3(process)
 
 # OMTF/EMTF Cross-cleaning parameters. This is "conservative"                                                  
 process.gmtParams.FOPosMatchQualLUTMaxDR        = cms.double(0.2)
