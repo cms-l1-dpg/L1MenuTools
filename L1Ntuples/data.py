@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=data_def.py -n -1 --no_output --era=Run3 --data --conditions=130X_dataRun3_Prompt_v3 --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2023_v0_2 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulFromRAW --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --filein=/store/data/Run2023B/EphemeralZeroBias0/RAW/v1/000/366/820/00000/a6ddf6d0-9356-4e63-a9b4-5809ccfd83d7.root --fileout=L1Ntuple.root
+# with command line options: cmsDriver.py l1Ntuple -s RAW2DIGI --python_filename=data_def.py -n -1 --no_output --era=Run3 --data --conditions=130X_dataRun3_Prompt_v4 --customise=L1Trigger/Configuration/customiseSettings.L1TSettingsToCaloParams_2023_v0_3 --customise=L1Trigger/Configuration/customiseReEmul.L1TReEmulFromRAW --customise=L1Trigger/L1TNtuples/customiseL1Ntuple.L1NtupleRAWEMU --filein=/store/data/Run2023B/EphemeralZeroBias0/RAW/v1/000/366/820/00000/a6ddf6d0-9356-4e63-a9b4-5809ccfd83d7.root --fileout=L1Ntuple.root
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -98,7 +98,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '130X_dataRun3_Prompt_v3', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '130X_dataRun3_Prompt_v4', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -112,10 +112,10 @@ associatePatAlgosToolsTask(process)
 # customisation of the process.
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2023_v0_2 
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2023_v0_3 
 
-#call to customisation function L1TSettingsToCaloParams_2023_v0_2 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2023_v0_2(process)
+#call to customisation function L1TSettingsToCaloParams_2023_v0_3 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2023_v0_3(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
 from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW 
