@@ -26,6 +26,7 @@ CXXFLAGS += $(subst -I, -isystem , $(shell root-config --cflags))
 LD       = g++
 LDFLAGS  =
 LIBS     = $(shell root-config --libs)
+#LIBS     += -stdlib=libc++
 
 # Commands
 MD       = mkdir -p
@@ -37,10 +38,14 @@ ifneq ($(shell echo $$CMSSW_BASE), )
   CXXFLAGS  += -isystem $(CMSSW_RELEASE_BASE)/src
   CXXFLAGS  += -isystem $(shell scram tool info boost | awk -F"=" '/BOOST_BASE=(.*)/{print $$NF}')/include
   CXXFLAGS  += -isystem $(shell scram tool info json | awk -F"=" '/JSON_BASE=(.*)/{print $$NF}')/include
+  CXXFLAGS  += -isystem $(shell scram tool info fmt | awk -F"=" '/FMT_BASE=(.*)/{print $$NF}')/include
   LIBS += -L$(CMSSW_BASE)/lib/$(SCRAM_ARCH)/ -L$(CMSSW_RELEASE_BASE)/lib/$(SCRAM_ARCH)/ \
-		  -lFWCoreFWLite -lDataFormatsL1TGlobal
+		  -lFWCoreFWLite -lDataFormatsL1TGlobal 
   LIBS += -L$(shell scram tool info boost | awk -F"=" '/LIBDIR=(.*)/{print $$NF}') \
 		  -lboost_program_options -lboost_system -lboost_filesystem
+  LIBS += -L$(shell scram tool info fmt | awk -F"=" '/LIBDIR=(.*)/{print $$NF}') \
+                  -lfmt
+
 endif
 
 # Detect plugin
