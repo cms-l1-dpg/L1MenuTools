@@ -8,7 +8,7 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh  ## if a bash script, use .sh instea
 cp ${1}${2}.tgz .
 tar -xf ${2}.tgz
 rm ${2}.tgz
-export $SCRAM_ARCH=slc7_amd64_gcc700
+export SCRAM_ARCH=el9_amd64_gcc12
 cd ${3}/src/
 scramv1 b ProjectRename
 eval `scramv1 runtime -sh` # cmsenv is an alias not on the workers

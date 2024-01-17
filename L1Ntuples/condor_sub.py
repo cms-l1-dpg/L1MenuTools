@@ -1,35 +1,24 @@
 #!/usr/bin/env python
-import os, re, sys, commands, math, time, calendar
+import os, re, sys, math, time, calendar
 
-print '\nSTART\n'
+print('\nSTART\n')
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-jobName = "menu_NuGun_13_0_X"
+jobName = "EphZB_2023D_run370293_13_3_0"
 jobScript = "cmsRun.sh"
-#jobScript = "NuGun_122X_cmsRun.sh" # New NuGun_E10 samples in 122X
-jobCfg = "mc.py"
-rel = "CMSSW_13_0_0_pre2"
+#jobCfg = "mc.py"
+jobCfg = "data.py"
+rel = "CMSSW_13_3_0"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
 rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-## NOTE for the 122X NuGun_E10 samples: For this submission, use NuGun_122X_cmsRun.sh as job script
-fileList = rootDir + "122X_NuGun_E10_mcRun3_realisticPU.list" 
-nEvents = 14262400 # New NuGun_E10 samples in 122X                                                                   
-nJobs = 8914       # New NuGun_E10 samples in 122X - Tot files: nJobs*4=35656 (grouped in set of four for the submission) 
-## NOTE for the 122X NuGun_Pt2-20 samples: For this submission, use NuGun_122X_cmsRun.sh as job script
-#fileList = rootDir + "122X_NuGun_Pt2-20_mcRun3_realisticPU.list" 
-#nEvents = 12764800 # New NuGun_Pt2-20 samples in 122X                                                                   
-#nJobs = 7978       # New NuGun_Pt2-20 samples in 122X - Tot files: nJobs*4=31912 (grouped in set of four for the submission) 
-
-#fileList = rootDir + "nugun_Pt2-20.list" 
-#nEvents = 1000000  #NuGun_Pt_2-20                                                                         
-#nJobs = 1250      #NuGun_Pt_2-20                                                                                                                             
-#fileList = rootDir + "nugun_E10.list"
-#nEvents = 1000000  #NuGun_E10                                                                                                                                                
-#nJobs = 1250      #NuGun_E10  
+### Settings to run on EphZB2023D (run 370293)
+fileList = rootDir + "EphZB_run370293_all.list"
+nEvents = 3148150
+nJobs = 375
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
@@ -62,11 +51,10 @@ while ret == 0:
       jdl.write("Queue " + str(nJobs) + "\n")      
 
    os.system("condor_submit " + jobDir + jobName + ".jdl")
-   print str(nJobs) + " jobs submitted."
-   print "\nYour jobs:"
+   print(str(nJobs) + " jobs submitted.")
+   print("\nYour jobs:")
    os.system("condor_q")
-   print
-   sys.exit(0)
+   print(sys.exit(0))
 
 print("Submission failed.")
 sys.exit(1)
