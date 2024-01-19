@@ -15,15 +15,17 @@ import sys
 import io
 
 runlist = [
-    # High PU fill                                                                                                                                                                         
-    362433, 362434, 362435, 362436, 362437, 362438, 362439
+
+    370293 #2023D                                                                                                                                                                  
+    #362433, 362434, 362435, 362436, 362437, 362438, 362439 # High PU fill 2022 
 ]
 
 def Runcmd(run):
     cmd = "brilcalc lumi --byls -u '1e30/cm2s' "
     cmd += " --output-style csv -b 'STABLE BEAMS' "
     cmd += " -r %d " % run
-    testcmd = cmd + " -i Cert_Collisions2022_355100_362760_eraBCDEFG_13p6TeV_DCSOnly_TkPx.json "
+    #testcmd = cmd + " -i Cert_Collisions2022_355100_362760_eraBCDEFG_13p6TeV_DCSOnly_TkPx.json " #2022
+    testcmd = cmd + " -i Cert_Collisions2023_366442_370790_Golden.json" 
     pipe = subprocess.Popen(testcmd, shell=True, stdout=subprocess.PIPE)
     out, err = pipe.communicate()
     if len(out) == 221: # Empty output
