@@ -130,17 +130,6 @@ from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_20
 #call to customisation function L1TSettingsToCaloParams_2023_v0_4 imported from L1Trigger.Configuration.customiseSettings
 process = L1TSettingsToCaloParams_2023_v0_4(process)
 
-# OMTF/EMTF Cross-cleaning parameters. This is "conservative"                                                  
-process.gmtParams.FOPosMatchQualLUTMaxDR        = cms.double(0.2)
-process.gmtParams.FOPosMatchQualLUTfEta         = cms.double(1)
-process.gmtParams.FOPosMatchQualLUTfEtaCoarse   = cms.double(1)
-process.gmtParams.FOPosMatchQualLUTfPhi         = cms.double(2)
-process.gmtParams.FONegMatchQualLUTMaxDR        = cms.double(0.2)
-process.gmtParams.FONegMatchQualLUTfEta         = cms.double(1)
-process.gmtParams.FONegMatchQualLUTfEtaCoarse   = cms.double(1)
-process.gmtParams.FONegMatchQualLUTfPhi         = cms.double(2)
-process.gmtParams.fwVersion = cms.uint32(0x7000000)
-
 # End of customisation functions
 
 
