@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys,string,math,os,subprocess,socket
 import socket
@@ -33,7 +33,7 @@ def runPopen(command,subcommand,inDir):
     p1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     (stdout, stderr)=p1.communicate()
     if stderr is not None:
-        print "Trouble executing the srmls command"
+        print("Trouble executing the srmls command")
         sys.exit(1)
 
     ## if Debug:
@@ -41,7 +41,10 @@ def runPopen(command,subcommand,inDir):
     ##     print stdout
     ##     print "Done\n"
 
-    return (stdout,stderr)
+    # Decode bytes to string
+    stdout_str = stdout.decode('utf-8')
+
+    return (stdout_str,stderr)
 
 def getFiles(eos,command,inDir):
 
@@ -54,8 +57,8 @@ def getFiles(eos,command,inDir):
             files.append(tfile)
 
     if Debug:
-        print "\n Number of files in Directory: ",len(files),"\n"
-        print files
+        print("\n Number of files in Directory: ",len(files),"\n")
+        print(files)
 
     return files
 
@@ -70,7 +73,7 @@ def getFileType(eos,command,inDir):
     # if Debug: print len(output),output
 
     if output[3].find(".root")>-1:
-        if Debug: print len(output),output
+        if Debug: print(len(output),output)
         isRootFile=True
 
     return isRootFile
@@ -79,7 +82,7 @@ if __name__ == '__main__':
 
     narg=len(sys.argv)
     if narg != 2:
-        print "Please specify EOS directory"
+        print("Please specify EOS directory")
         sys.exit(1)
 
     inDir=sys.argv[1]
@@ -91,5 +94,5 @@ if __name__ == '__main__':
             theFile="root://eoscms.cern.ch/" + rootfile
         if "fnal.gov" in hostname:
             theFile="root://cmseos.fnal.gov/" + rootfile
-        print theFile
+        print(theFile)
 
