@@ -1180,6 +1180,7 @@ bool L1Menu2016::Loop()
   int i = -1;
   nLumi.clear();
   bool skipLS = false;
+  std::string zero_bias_key = "L1_ZeroBias_copy";
 
   while(true)
   {
@@ -1243,10 +1244,15 @@ bool L1Menu2016::Loop()
       std::cout << "Processed " << i << " events." << std::endl;
     }
 
+    if(event_->run < 355872)
+    {
+      // Starting from run 355872, the seed used in EphZB paths was changed from L1_ZeroBias to L1_ZeroBias_Copy
+      zero_bias_key = "L1_ZeroBias";
+    }
     //Use Final decision by default, unless for PlotLS
     //if (l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"]))
     //In case using L1Accept, don't count the Zerobias Event
-    if (L1Config["SetL1AcceptPS"] == 0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision("L1_ZeroBias", L1Config["doPlotLS"])) 
+    if (L1Config["SetL1AcceptPS"] == 0 && l1unpackuGT != NULL && !l1unpackuGT->GetuGTDecision(zero_bias_key, L1Config["doPlotLS"])) 
       continue;
 
     // Reweighting procedure: info about the reweighting needed in the code (2018 or Run 3?)
