@@ -12,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import tmGrammar
 import tmEventSetup
 
-UTM_VERSION = '0.11.2'
+UTM_VERSION = '0.12.0'
 assert tmGrammar.__version__ == UTM_VERSION, f"invalid utm version {tmGrammar.__version__}, should be {UTM_VERSION}"
 assert tmEventSetup.__version__ == UTM_VERSION, f"invalid utm version {tmEventSetup.__version__}, should be {UTM_VERSION}"
 
@@ -436,7 +436,7 @@ def warning(message):
 
 def toVersion(s):
   """Retrun generator of version numbers for comparision.
-  >>> toVersion("0.11") >= toVersion("0.3")
+  >>> toVersion("0.12") >= toVersion("0.3")
   True
   """
   return [int(v) for v in s.split(".")]

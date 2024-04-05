@@ -322,6 +322,10 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   tmEventSetup.AnomalyDetectionTrigger,
 ) %}
 
+{% set Axol1tlTriggerConditionTypes = (
+  tmEventSetup.Axol1tlTrigger,
+) %}
+
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- if cond.getType() in OverlapRemovalConditionTypes %}
     {% set overlap_removal = 1 %}
@@ -401,6 +405,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
   {% elif cond.getType() in AnomalyDetectionTriggerConditionTypes %}
     {% include 'AnomalyDetectionTriggerTemplate.cc' %}
+
+  {% elif cond.getType() in Axol1tlTriggerConditionTypes %}
+    {% include 'Axol1tlTriggerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}
