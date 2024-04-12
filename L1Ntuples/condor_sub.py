@@ -18,7 +18,7 @@ ret = 0
 ### Settings to run on EphZB2023D (run 370293)
 fileList = rootDir + "EphZB_run370293_all.list"
 nEvents = 3148150
-nJobs = 375
+nJobs = 735
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
