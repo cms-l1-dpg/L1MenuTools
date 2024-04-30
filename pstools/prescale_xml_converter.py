@@ -75,7 +75,7 @@ def main(csv_file, output):
     xml_output = ET.tostring(root, encoding='UTF-8', xml_declaration=True)
 
     out_dir = os.path.dirname(output)  # get the path to the directory of the output
-    os.makedirs(out_dir, exist_ok=True)  # create the output directory in case it doesn't exist
+    #os.makedirs(out_dir, exist_ok=True)  # create the output directory in case it doesn't exist
     # write the XML to a file
     with open(output, 'wb') as xml_file:
         xml_file.write(xml_output)
