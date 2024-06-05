@@ -109,6 +109,7 @@ bool L1Menu2016::InitConfig()
   L1Config["doTnPMuon"]         = 0;
   L1Config["doPlotLS"]          = 0;
   L1Config["doPrintPU"]         = 0;
+  L1Config["doNano"]            = 0;
   L1Config["lowerPUbound"]      = -1;
   L1Config["upperPUbound"]      = -1;
   L1Config["doReweighting2018"] = 0;
@@ -842,7 +843,7 @@ bool L1Menu2016::FormPrescaleColumns()
 // ===========================================================================
 bool L1Menu2016::OpenWithList(std::string filelist)
 {
-  L1Ntuple::SelectTree(L1Config["UseUnpackTree"]);
+  L1Ntuple::SelectTree(L1Config["UseUnpackTree"], L1Config["doNano"]);
   if (filelist.find(".root") != std::string::npos)
   {
     L1Ntuple::Open(filelist);

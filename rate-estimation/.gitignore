@@ -19,3 +19,8 @@ results/
 *.o
 *.d
 /objs
+
+
+# rob custom
+quickrun.sh
+*.log

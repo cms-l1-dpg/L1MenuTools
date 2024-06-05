@@ -637,11 +637,18 @@ std::map<std::string, std::string> L1Ntuple::GetuGTAlias(TChain* fl1uGT)
 //         Name:  L1Ntuple::SelectTree
 //  Description:  
 // ===========================================================================
-bool L1Ntuple::SelectTree(bool UseUnpack)
+bool L1Ntuple::SelectTree(bool UseUnpack, bool doNano)
 {
-  if (!UseUnpack) return false;
-  MainTreePath = "l1UpgradeTree/L1UpgradeTree";
-  CaloTreePath = "l1CaloTowerTree/L1CaloTowerTree";
-  uGTTreePath  = "l1uGTTree/L1uGTTree";
-  return true;
+  if(!doNano){
+    if (!UseUnpack) return false;
+    MainTreePath = "l1UpgradeTree/L1UpgradeTree";
+    CaloTreePath = "l1CaloTowerTree/L1CaloTowerTree";
+    uGTTreePath  = "l1uGTTree/L1uGTTree";
+    return true;
+  }
+  else {
+    printf("Using nano!");
+    MainTreePath = "Events";
+    return true;
+  }
 }       // -----  end of function L1Ntuple::SelectTree  -----

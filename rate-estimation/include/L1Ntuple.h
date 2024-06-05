@@ -110,7 +110,7 @@ public:
 protected:
   bool CheckFirstFile();
   bool OpenWithoutInit();
-  bool SelectTree(bool UseUnpack);
+  bool SelectTree(bool UseUnpack, bool doNano);
   bool OpenNtupleList(const std::string & fname);
 
   std::vector<std::string> listNtuples;
