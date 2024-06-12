@@ -1009,7 +1009,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
   PrintConfig();
   BookHistogram();
   
-  if (writeplots)
+  if (writeplots && !L1Config["doNano"])
   {
     GlobalAlgBlk *l1uGTsel_ = l1uGT_;
     TChain       *fl1uGTsel = fl1uGT;

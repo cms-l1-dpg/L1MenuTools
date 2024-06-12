@@ -119,6 +119,7 @@ private :
   TFile* rf;
   std::string MainTreePath;
   std::string CaloTreePath;
+  std::string EventTreePath;
   std::string uGTTreePath;
 };
 

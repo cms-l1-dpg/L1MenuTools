@@ -59,6 +59,7 @@ L1Ntuple::L1Ntuple()
   MainTreePath = "l1UpgradeEmuTree/L1UpgradeTree";
   CaloTreePath = "l1CaloTowerEmuTree/L1CaloTowerTree";
   uGTTreePath  = "l1uGTEmuTree/L1uGTTree";
+  EventTreePath = "l1EventTree/L1EventTree";
 }
 
 L1Ntuple::L1Ntuple(const std::string & fname)
@@ -127,7 +128,7 @@ bool L1Ntuple::CheckFirstFile()
   TTree * mytreel1CaloTower = (TTree*) rf->Get(CaloTreePath.c_str());
   TTree * mytreel1uGT       = (TTree*) rf->Get(uGTTreePath.c_str());
   TTree * mytreel1unpackuGT = (TTree*) rf->Get("l1uGTTree/L1uGTTree");
-  TTree * mytreeEvent    = (TTree*) rf->Get("l1EventTree/L1EventTree");
+  TTree * mytreeEvent    = (TTree*) rf->Get(EventTreePath.c_str());
   TTree * mytreemuon     = (TTree*) rf->Get("l1MuonRecoTreeProducer/MuonRecoTree");
   TTree * mytreeExtra    = (TTree*) rf->Get("l1ExtraTreeProducer/L1ExtraTree");
   TTree * mytreeEmuExtra = (TTree*) rf->Get("l1EmulatorExtraTree/L1ExtraTree");
@@ -279,7 +280,7 @@ bool L1Ntuple::CheckFirstFile()
 bool L1Ntuple::OpenWithoutInit()
 {
   fChain             = new TChain(MainTreePath.c_str());
-  ftreeEvent         = new TChain("l1EventTree/L1EventTree");
+  ftreeEvent         = new TChain(EventTreePath.c_str());
   ftreemuon          = new TChain("l1MuonRecoTreeProducer/MuonRecoTree");
   ftreeExtra         = new TChain("l1ExtraTreeProducer/L1ExtraTree");
   ftreeEmuExtra      = new TChain("l1EmulatorExtraTree/L1ExtraTree");
@@ -413,6 +414,13 @@ void L1Ntuple::Init()
      event_        = new L1Analysis::L1AnalysisEventDataFormat();
      
      ftreeEvent->SetBranchAddress("Event", &event_ );
+     bool doNano = true;
+     if(doNano){
+       ftreeEvent->SetBranchAddress("event", &event_->event );
+       ftreeEvent->SetBranchAddress("run", &event_->run );
+       ftreeEvent->SetBranchAddress("luminosityBlock", &event_->lumi );
+       ftreeEvent->SetBranchAddress("bunchCrossing", &event_->bx );
+     }
      fChain-> AddFriend(ftreeEvent);     
    }
 
@@ -644,11 +652,15 @@ bool L1Ntuple::SelectTree(bool UseUnpack, bool doNano)
     MainTreePath = "l1UpgradeTree/L1UpgradeTree";
     CaloTreePath = "l1CaloTowerTree/L1CaloTowerTree";
     uGTTreePath  = "l1uGTTree/L1uGTTree";
+    EventTreePath = "l1EventTree/L1EventTree";
     return true;
   }
   else {
     printf("Using nano!");
     MainTreePath = "Events";
+    EventTreePath = "Events";
+    CaloTreePath = "Events";
+    uGTTreePath  = "Events";
     return true;
   }
 }       // -----  end of function L1Ntuple::SelectTree  -----
