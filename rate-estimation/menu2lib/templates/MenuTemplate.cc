@@ -267,6 +267,7 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   tmEventSetup.MissingHt,
   tmEventSetup.TotalEtEM,
   tmEventSetup.MissingEtHF,
+  tmEventSetup.MissingHtHF,
   tmEventSetup.MinBiasHFP0,
   tmEventSetup.MinBiasHFP1,
   tmEventSetup.MinBiasHFM0,
