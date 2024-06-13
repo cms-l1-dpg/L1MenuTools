@@ -12,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import tmGrammar
 import tmEventSetup
 
-UTM_VERSION = '0.12.0'
+UTM_VERSION = '0.13.0'
 assert tmGrammar.__version__ == UTM_VERSION, f"invalid utm version {tmGrammar.__version__}, should be {UTM_VERSION}"
 assert tmEventSetup.__version__ == UTM_VERSION, f"invalid utm version {tmEventSetup.__version__}, should be {UTM_VERSION}"
 
@@ -31,6 +31,7 @@ PREFIX = {
   tmEventSetup.ETTEM: 'sum',
   tmEventSetup.ETM: 'sum',
   tmEventSetup.HTM: 'sum',
+  tmEventSetup.HTMHF: 'sum',
   tmEventSetup.ETMHF: 'sum',
   tmEventSetup.MBT0HFM: 'sum',
   tmEventSetup.MBT0HFP: 'sum',
@@ -86,6 +87,7 @@ def getObjectName(key):
     tmEventSetup.Tau: tmGrammar.TAU,
     tmEventSetup.ETM: tmGrammar.ETM,
     tmEventSetup.HTM: tmGrammar.HTM,
+    tmEventSetup.HTMHF: tmGrammar.HTMHF,
     tmEventSetup.ETMHF: tmGrammar.ETMHF,
     tmEventSetup.MUS0: tmGrammar.MUS0,
     tmEventSetup.MUS1: tmGrammar.MUS1,
@@ -96,7 +98,7 @@ def getObjectName(key):
 
 
 def isVectorSum(key):
-  return key.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF)
+  return key.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.HTMHF, tmEventSetup.ETMHF)
 
 
 def getPrecision(scaleMap, obj1, obj2, kind):
@@ -203,24 +205,24 @@ def sortObjects(obj1, obj2):
   if obj1.getType() == obj2.getType(): return obj1, obj2
 
   if obj1.getType() == tmEventSetup.Muon:
-    if obj2.getType() not in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF):
+    if obj2.getType() not in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.HTMHF, tmEventSetup.ETMHF):
       return obj2, obj1
 
   elif obj1.getType() == tmEventSetup.Jet:
-    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
+    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,tmEventSetup.HTMHF,
                               tmEventSetup.ETMHF, tmEventSetup.Muon):
       return obj2, obj1
 
   elif obj1.getType() == tmEventSetup.Tau:
-    if obj2.getType() not in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF,
+    if obj2.getType() not in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.HTMHF, tmEventSetup.ETMHF,
                               tmEventSetup.Muon):
       return obj2, obj1
-  elif obj1.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.ETMHF):
+  elif obj1.getType() in (tmEventSetup.ETM, tmEventSetup.HTM, tmEventSetup.HTMHF, tmEventSetup.ETMHF):
     return obj2, obj1
 
   # Muon showers
   elif obj1.getType() in MuonShowerTypes:
-    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,
+    if obj2.getType() not in (tmEventSetup.Tau, tmEventSetup.ETM, tmEventSetup.HTM,tmEventSetup.HTMHF,
                               tmEventSetup.ETMHF, tmEventSetup.Muon, tmEventSetup.Jet):
       return obj2, obj1
   return obj1, obj2
@@ -436,7 +438,7 @@ def warning(message):
 
 def toVersion(s):
   """Retrun generator of version numbers for comparision.
-  >>> toVersion("0.12") >= toVersion("0.3")
+  >>> toVersion("0.13") >= toVersion("0.3")
   True
   """
   return [int(v) for v in s.split(".")]
