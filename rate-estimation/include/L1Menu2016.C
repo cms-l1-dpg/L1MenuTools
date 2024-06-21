@@ -1011,6 +1011,14 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
 
   PrintConfig();
   BookHistogram();
+
+  if (L1Config["doNano"]){
+    for(auto& seed: mL1Seed) // fill decision map
+    {
+      nanoDecisions_.insert(std::pair<std::string,bool>(seed.first,0));
+      fChain->SetBranchAddress(seed.first.c_str(), &nanoDecisions_.at(seed.first));
+    }
+  }
   
   if (writeplots && !L1Config["doNano"])
   {
@@ -1509,8 +1517,13 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
     bool IsFired = false;
     if (L1Config["UseuGTDecision"])
     {
-      assert(l1uGT != NULL);
-      IsFired = l1uGT->GetuGTDecision(seed.first);
+      if(L1Config["doNano"]){
+	IsFired = nanoDecisions_.at(seed.first);
+      }
+      else{
+	assert(l1uGT != NULL);
+	IsFired = l1uGT->GetuGTDecision(seed.first);
+      }
     }
     else
       IsFired = CheckL1Seed(seed.first);

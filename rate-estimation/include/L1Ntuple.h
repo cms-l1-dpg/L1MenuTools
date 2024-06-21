@@ -89,7 +89,7 @@ public:
   L1Analysis::L1AnalysisL1CaloTowerDataFormat   *l1CaloTower_;
   GlobalAlgBlk                                  *l1uGT_;
   GlobalAlgBlk                                  *l1unpackuGT_;
-  
+  std::map<std::string, bool>                    nanoDecisions_;
 
   L1Ntuple();
   L1Ntuple(const std::string & fname);
