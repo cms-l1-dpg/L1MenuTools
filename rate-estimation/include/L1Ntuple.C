@@ -413,13 +413,15 @@ void L1Ntuple::Init()
      std::cout<<"Setting branch addresses for Event tree..."<<std::endl;
      event_        = new L1Analysis::L1AnalysisEventDataFormat();
      
-     ftreeEvent->SetBranchAddress("Event", &event_ );
-     bool doNano = true;
      if(doNano){
+       printf("Setting up nano event!\n");
        ftreeEvent->SetBranchAddress("event", &event_->event );
        ftreeEvent->SetBranchAddress("run", &event_->run );
        ftreeEvent->SetBranchAddress("luminosityBlock", &event_->lumi );
        ftreeEvent->SetBranchAddress("bunchCrossing", &event_->bx );
+     }
+     else{
+       ftreeEvent->SetBranchAddress("Event", &event_ );
      }
      fChain-> AddFriend(ftreeEvent);     
    }
@@ -645,7 +647,7 @@ std::map<std::string, std::string> L1Ntuple::GetuGTAlias(TChain* fl1uGT)
 //         Name:  L1Ntuple::SelectTree
 //  Description:  
 // ===========================================================================
-bool L1Ntuple::SelectTree(bool UseUnpack, bool doNano)
+bool L1Ntuple::SelectTree(bool UseUnpack)
 {
   if(!doNano){
     if (!UseUnpack) return false;
@@ -656,7 +658,7 @@ bool L1Ntuple::SelectTree(bool UseUnpack, bool doNano)
     return true;
   }
   else {
-    printf("Using nano!");
+    printf("Using nano!\n");
     MainTreePath = "Events";
     EventTreePath = "Events";
     CaloTreePath = "Events";

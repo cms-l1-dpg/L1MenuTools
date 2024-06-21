@@ -74,6 +74,7 @@ public:
   bool dol1CaloTower;
   bool dol1uGT;
   bool dol1unpackuGT;
+  bool doNano;
 
   L1Analysis::L1AnalysisEventDataFormat         *event_;
   L1Analysis::L1AnalysisL1UpgradeDataFormat     *upgrade_;
@@ -110,7 +111,7 @@ public:
 protected:
   bool CheckFirstFile();
   bool OpenWithoutInit();
-  bool SelectTree(bool UseUnpack, bool doNano);
+  bool SelectTree(bool UseUnpack);
   bool OpenNtupleList(const std::string & fname);
 
   std::vector<std::string> listNtuples;

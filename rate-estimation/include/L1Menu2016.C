@@ -843,7 +843,7 @@ bool L1Menu2016::FormPrescaleColumns()
 // ===========================================================================
 bool L1Menu2016::OpenWithList(std::string filelist)
 {
-  L1Ntuple::SelectTree(L1Config["UseUnpackTree"], L1Config["doNano"]);
+  L1Ntuple::SelectTree(L1Config["UseUnpackTree"]);
   if (filelist.find(".root") != std::string::npos)
   {
     L1Ntuple::Open(filelist);
@@ -991,6 +991,9 @@ bool L1Menu2016::PrintConfig() const
 bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::string, std::string> &configstr)
 {
   GetRunConfig(config, configstr);
+  if (L1Config["doNano"]){
+    doNano = true;
+  }
   OpenWithList(tuplefilename);
 
   //Prepare Menu
