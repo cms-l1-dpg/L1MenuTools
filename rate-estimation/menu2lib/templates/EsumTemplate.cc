@@ -24,6 +24,8 @@
   {% set type = 'L1Analysis::kMinBiasHFP1' %}
 {% elif object.getType() == tmEventSetup.ETMHF -%}
   {% set type = 'L1Analysis::kMissingEtHF' %}
+{% elif object.getType() == tmEventSetup.HTMHF -%}
+  {% set type = 'L1Analysis::kMissingHtHF' %}
 {% elif object.getType() == tmEventSetup.ETTEM -%}
   {% set type = 'L1Analysis::kTotalEtEm' %}
 {% elif object.getType() == tmEventSetup.TOWERCOUNT -%}
