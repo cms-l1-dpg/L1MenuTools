@@ -1078,7 +1078,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
       l1TnP->DoMuonTnP();
     }
   
-  if (l1unpackuGT_ != NULL)
+  if (l1unpackuGT_ != NULL  && !L1Config["doNano"])
     {
       l1unpackuGT = new L1uGT( outrootfile, event_, l1unpackuGT_, &L1Event, &mL1Seed);
       //std::cout << "line 1025 start" << std::endl;
@@ -1086,7 +1086,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
       //std::cout << "line 1025 end" << std::endl;
     }
   
-  if (L1Config["doCompuGT"] || L1Config["UseuGTDecision"] || L1Config["doPlotuGt"])
+  if ((L1Config["doCompuGT"] || L1Config["UseuGTDecision"] || L1Config["doPlotuGt"])  && !L1Config["doNano"])
     {
       assert(l1uGT_ != NULL);
       l1uGT = new L1uGT( outrootfile, event_, l1uGT_, &L1Event, &mL1Seed);
