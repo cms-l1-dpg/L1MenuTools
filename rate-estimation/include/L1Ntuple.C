@@ -4,7 +4,7 @@ Long64_t L1Ntuple::GetEntries()
 {
   return nentries_;
 }
-
+ 
 L1Ntuple::L1Ntuple()
 {
   doEvent         = true;
@@ -400,7 +400,51 @@ void L1Ntuple::Init()
 
    upgrade_      = new L1Analysis::L1AnalysisL1UpgradeDataFormat();
    std::cout<<"Setting branch addresses for L1Upgrade tree...  "<<std::endl;
-   fChain->SetBranchAddress("L1Upgrade", &upgrade_ );
+   if(doNano){
+     printf("Setting up nano main tree!\n");
+
+     int bufferSize = 128;
+
+     // EG objects
+     upgrade_->egEt.resize(bufferSize);
+     upgrade_->egEta.resize(bufferSize);
+     upgrade_->egPhi.resize(bufferSize);
+     upgrade_->egIEt.resize(bufferSize);
+     upgrade_->egIEta.resize(bufferSize);
+     upgrade_->egIPhi.resize(bufferSize);
+     upgrade_->egIso.resize(bufferSize);
+     upgrade_->egBx.resize(bufferSize);
+     upgrade_->egTowerIPhi.resize(bufferSize);
+     upgrade_->egTowerIEta.resize(bufferSize);
+     upgrade_->egRawEt.resize(bufferSize);
+     upgrade_->egIsoEt.resize(bufferSize);
+     upgrade_->egFootprintEt.resize(bufferSize);
+     upgrade_->egNTT.resize(bufferSize);
+     upgrade_->egShape.resize(bufferSize);
+     upgrade_->egTowerHoE.resize(bufferSize);
+     upgrade_->egHwQual.resize(bufferSize);
+     fChain->SetBranchAddress("nL1EG", &upgrade_->nEGs);
+     fChain->SetBranchAddress("L1EG_pt", upgrade_->egEt.data());// pt == et?
+     fChain->SetBranchAddress("L1EG_eta", upgrade_->egEta.data());
+     fChain->SetBranchAddress("L1EG_phi", upgrade_->egPhi.data());
+     fChain->SetBranchAddress("L1EG_hwPt", upgrade_->egIEt.data());// IEt = hwPt (etc)?
+     fChain->SetBranchAddress("L1EG_hwEta", upgrade_->egIEta.data());
+     fChain->SetBranchAddress("L1EG_hwPhi", upgrade_->egIPhi.data());
+     fChain->SetBranchAddress("L1EG_hwIso", upgrade_->egIso.data());// Iso = hwIso?
+     fChain->SetBranchAddress("L1EG_bx", upgrade_->egBx.data());
+     fChain->SetBranchAddress("L1EG_towerIPhi", upgrade_->egTowerIPhi.data());
+     fChain->SetBranchAddress("L1EG_towerIEta", upgrade_->egTowerIEta.data());
+     fChain->SetBranchAddress("L1EG_rawEt", upgrade_->egRawEt.data());
+     fChain->SetBranchAddress("L1EG_isoEt", upgrade_->egIsoEt.data());
+     fChain->SetBranchAddress("L1EG_footprintEt", upgrade_->egFootprintEt.data());
+     fChain->SetBranchAddress("L1EG_nTT", upgrade_->egNTT.data());
+     fChain->SetBranchAddress("L1EG_shape", upgrade_->egShape.data());
+     fChain->SetBranchAddress("L1EG_towerHoE", upgrade_->egTowerHoE.data());
+     fChain->SetBranchAddress("L1EG_hwQual", upgrade_->egHwQual.data());
+   }
+   else{
+     fChain->SetBranchAddress("L1Upgrade", &upgrade_ );
+   }
 
    if (doBitWiseLayer1){
      std::cout<<"Setting branch addresses for L1 Upgrade tree w/ Bitwise Emul...  "<<std::endl;
