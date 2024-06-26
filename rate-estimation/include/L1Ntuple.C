@@ -441,6 +441,111 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1EG_shape", upgrade_->egShape.data());
      fChain->SetBranchAddress("L1EG_towerHoE", upgrade_->egTowerHoE.data());
      fChain->SetBranchAddress("L1EG_hwQual", upgrade_->egHwQual.data());
+
+     // Tau objects
+     upgrade_->tauEt.resize(bufferSize);
+     upgrade_->tauEta.resize(bufferSize);
+     upgrade_->tauPhi.resize(bufferSize);
+     upgrade_->tauIEt.resize(bufferSize);
+     upgrade_->tauIEta.resize(bufferSize);
+     upgrade_->tauIPhi.resize(bufferSize);
+     upgrade_->tauIso.resize(bufferSize);
+     upgrade_->tauBx.resize(bufferSize);
+     upgrade_->tauTowerIPhi.resize(bufferSize);
+     upgrade_->tauTowerIEta.resize(bufferSize);
+     upgrade_->tauRawEt.resize(bufferSize);
+     upgrade_->tauIsoEt.resize(bufferSize);
+     upgrade_->tauNTT.resize(bufferSize);
+     upgrade_->tauHasEM.resize(bufferSize);
+     upgrade_->tauIsMerged.resize(bufferSize);
+     upgrade_->tauHwQual.resize(bufferSize);
+
+     fChain->SetBranchAddress("nL1Tau", &upgrade_->nTaus);
+     fChain->SetBranchAddress("L1Tau_pt", upgrade_->tauEt.data());
+     fChain->SetBranchAddress("L1Tau_eta", upgrade_->tauEta.data());
+     fChain->SetBranchAddress("L1Tau_phi", upgrade_->tauPhi.data());
+     fChain->SetBranchAddress("L1Tau_hwPt", upgrade_->tauIEt.data());
+     fChain->SetBranchAddress("L1Tau_hwEta", upgrade_->tauIEta.data());
+     fChain->SetBranchAddress("L1Tau_hwPhi", upgrade_->tauIPhi.data());
+     fChain->SetBranchAddress("L1Tau_hwIso", upgrade_->tauIso.data());
+     fChain->SetBranchAddress("L1Tau_bx", upgrade_->tauBx.data());
+     fChain->SetBranchAddress("L1Tau_towerIPhi", upgrade_->tauTowerIPhi.data());
+     fChain->SetBranchAddress("L1Tau_towerIEta", upgrade_->tauTowerIEta.data());
+     fChain->SetBranchAddress("L1Tau_rawEt", upgrade_->tauRawEt.data());
+     fChain->SetBranchAddress("L1Tau_isoEt", upgrade_->tauIsoEt.data());
+     fChain->SetBranchAddress("L1Tau_nTT", upgrade_->tauNTT.data());
+     fChain->SetBranchAddress("L1Tau_hasEM", upgrade_->tauHasEM.data());
+     fChain->SetBranchAddress("L1Tau_isMerged", upgrade_->tauIsMerged.data());
+     fChain->SetBranchAddress("L1Tau_hwQual", upgrade_->tauHwQual.data());
+
+     // Jet objects
+     // unsigned short int nJets;
+     // std::vector<float> jetEt;
+     // std::vector<float> jetEta;
+     // std::vector<float> jetPhi;
+     // std::vector<short int> jetIEt;
+     // std::vector<short int> jetIEta;
+     // std::vector<short int> jetIPhi;
+     // std::vector<short int> jetHwQual;
+     // std::vector<short int> jetBx;
+     // std::vector<short int> jetTowerIPhi;
+     // std::vector<short int> jetTowerIEta;
+     // std::vector<short int> jetRawEt;
+     // std::vector<short int> jetSeedEt;
+     // std::vector<short int> jetPUEt;
+     // std::vector<short int> jetPUDonutEt0;
+     // std::vector<short int> jetPUDonutEt1;
+     // std::vector<short int> jetPUDonutEt2;
+     // std::vector<short int> jetPUDonutEt3;
+
+     // Muon objects
+     // unsigned short int nMuons;
+     // std::vector<float> muonEt;
+     // std::vector<float> muonEtUnconstrained;
+     // std::vector<float> muonEta;
+     // std::vector<float> muonPhi;
+     // std::vector<float> muonEtaAtVtx;
+     // std::vector<float> muonPhiAtVtx;
+     // std::vector<short int> muonIEt;
+     // std::vector<short int> muonIEtUnconstrained;
+     // std::vector<short int> muonIEta;
+     // std::vector<short int> muonIPhi;
+     // std::vector<short int> muonIEtaAtVtx;
+     // std::vector<short int> muonIPhiAtVtx;
+     // std::vector<short int> muonIDEta;
+     // std::vector<short int> muonIDPhi;
+     // std::vector<short int> muonChg;
+     // std::vector<unsigned short int> muonIso;
+     // std::vector<unsigned short int> muonQual;
+     // std::vector<unsigned short int> muonDxy;
+     // std::vector<unsigned short int> muonTfMuonIdx;
+     // std::vector<short int> muonBx;
+
+     // Everything else
+     // unsigned short int nMuonShowers;
+     // std::vector<short int> muonShowerBx;
+     // std::vector<short int> muonShowerOneNominal;
+     // std::vector<short int> muonShowerOneTight;
+     // std::vector<short int> muonShowerTwoLoose;
+     // std::vector<short int> muonShowerTwoLooseDiffSectors;
+
+     // unsigned short int nSums;
+     // std::vector<short int> sumType;
+     // std::vector<float> sumEt;
+     // std::vector<float> sumPhi;
+     // std::vector<short int> sumIEt;
+     // std::vector<short int> sumIPhi;
+     // std::vector<float> sumBx;
+
+     // unsigned short int nSumsZDC;
+     // std::vector<short int> sumZDCType;
+     // std::vector<float> sumZDCEt;
+     // std::vector<float> sumZDCPhi;
+     // std::vector<short int> sumZDCIEt;
+     // std::vector<short int> sumZDCIPhi;
+     // std::vector<float> sumZDCBx;
+
+
    }
    else{
      fChain->SetBranchAddress("L1Upgrade", &upgrade_ );
