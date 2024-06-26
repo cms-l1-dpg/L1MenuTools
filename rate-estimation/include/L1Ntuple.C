@@ -403,26 +403,29 @@ void L1Ntuple::Init()
    if(doNano){
      printf("Setting up nano main tree!\n");
 
-     int bufferSize = 64;
-
+     int bufferEG = 64;
+     int bufferTau = 64;
+     int bufferSize = 32;
+     // int bufferSums = 128;
+     
      // EG objects
-     upgrade_->egEt.resize(bufferSize);
-     upgrade_->egEta.resize(bufferSize);
-     upgrade_->egPhi.resize(bufferSize);
-     upgrade_->egIEt.resize(bufferSize);
-     upgrade_->egIEta.resize(bufferSize);
-     upgrade_->egIPhi.resize(bufferSize);
-     upgrade_->egIso.resize(bufferSize);
-     upgrade_->egBx.resize(bufferSize);
-     upgrade_->egTowerIPhi.resize(bufferSize);
-     upgrade_->egTowerIEta.resize(bufferSize);
-     upgrade_->egRawEt.resize(bufferSize);
-     upgrade_->egIsoEt.resize(bufferSize);
-     upgrade_->egFootprintEt.resize(bufferSize);
-     upgrade_->egNTT.resize(bufferSize);
-     upgrade_->egShape.resize(bufferSize);
-     upgrade_->egTowerHoE.resize(bufferSize);
-     upgrade_->egHwQual.resize(bufferSize);
+     upgrade_->egEt.resize(bufferEG);
+     upgrade_->egEta.resize(bufferEG);
+     upgrade_->egPhi.resize(bufferEG);
+     upgrade_->egIEt.resize(bufferEG);
+     upgrade_->egIEta.resize(bufferEG);
+     upgrade_->egIPhi.resize(bufferEG);
+     upgrade_->egIso.resize(bufferEG);
+     upgrade_->egBx.resize(bufferEG);
+     upgrade_->egTowerIPhi.resize(bufferEG);
+     upgrade_->egTowerIEta.resize(bufferEG);
+     upgrade_->egRawEt.resize(bufferEG);
+     upgrade_->egIsoEt.resize(bufferEG);
+     upgrade_->egFootprintEt.resize(bufferEG);
+     upgrade_->egNTT.resize(bufferEG);
+     upgrade_->egShape.resize(bufferEG);
+     upgrade_->egTowerHoE.resize(bufferEG);
+     upgrade_->egHwQual.resize(bufferEG);
      fChain->SetBranchAddress("nL1EG", &upgrade_->nEGs);
      fChain->SetBranchAddress("L1EG_pt", upgrade_->egEt.data());// pt == et?
      fChain->SetBranchAddress("L1EG_eta", upgrade_->egEta.data());
@@ -443,22 +446,22 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1EG_hwQual", upgrade_->egHwQual.data());
 
      // Tau objects
-     upgrade_->tauEt.resize(bufferSize);
-     upgrade_->tauEta.resize(bufferSize);
-     upgrade_->tauPhi.resize(bufferSize);
-     upgrade_->tauIEt.resize(bufferSize);
-     upgrade_->tauIEta.resize(bufferSize);
-     upgrade_->tauIPhi.resize(bufferSize);
-     upgrade_->tauIso.resize(bufferSize);
-     upgrade_->tauBx.resize(bufferSize);
-     upgrade_->tauTowerIPhi.resize(bufferSize);
-     upgrade_->tauTowerIEta.resize(bufferSize);
-     upgrade_->tauRawEt.resize(bufferSize);
-     upgrade_->tauIsoEt.resize(bufferSize);
-     upgrade_->tauNTT.resize(bufferSize);
-     upgrade_->tauHasEM.resize(bufferSize);
-     upgrade_->tauIsMerged.resize(bufferSize);
-     upgrade_->tauHwQual.resize(bufferSize);
+     upgrade_->tauEt.resize(bufferTau);
+     upgrade_->tauEta.resize(bufferTau);
+     upgrade_->tauPhi.resize(bufferTau);
+     upgrade_->tauIEt.resize(bufferTau);
+     upgrade_->tauIEta.resize(bufferTau);
+     upgrade_->tauIPhi.resize(bufferTau);
+     upgrade_->tauIso.resize(bufferTau);
+     upgrade_->tauBx.resize(bufferTau);
+     upgrade_->tauTowerIPhi.resize(bufferTau);
+     upgrade_->tauTowerIEta.resize(bufferTau);
+     upgrade_->tauRawEt.resize(bufferTau);
+     upgrade_->tauIsoEt.resize(bufferTau);
+     upgrade_->tauNTT.resize(bufferTau);
+     upgrade_->tauHasEM.resize(bufferTau);
+     upgrade_->tauIsMerged.resize(bufferTau);
+     upgrade_->tauHwQual.resize(bufferTau);
 
      fChain->SetBranchAddress("nL1Tau", &upgrade_->nTaus);
      fChain->SetBranchAddress("L1Tau_pt", upgrade_->tauEt.data());
@@ -560,7 +563,23 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1Mu_tfMuonIndex", upgrade_->muonTfMuonIdx.data());
      fChain->SetBranchAddress("L1Mu_bx", upgrade_->muonBx.data());
 
-     // Everything else
+     // Sums
+     // upgrade_->sumType.resize(bufferSums);
+     // upgrade_->sumEt.resize(bufferSums);
+     // upgrade_->sumPhi.resize(bufferSums);
+     // upgrade_->sumIEt.resize(bufferSums);
+     // upgrade_->sumIPhi.resize(bufferSums);
+     // upgrade_->sumBx.resize(bufferSums);
+
+     // fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums);
+     // fChain->SetBranchAddress("L1EtSum_etSumType", upgrade_->sumType.data());
+     // fChain->SetBranchAddress("L1EtSum_pt", upgrade_->sumEt.data());
+     // fChain->SetBranchAddress("L1EtSum_phi", upgrade_->sumPhi.data());
+     // fChain->SetBranchAddress("L1EtSum_hwPt", upgrade_->sumIEt.data());
+     // fChain->SetBranchAddress("L1EtSum_hwPhi", upgrade_->sumIPhi.data());
+     // fChain->SetBranchAddress("L1EtSum_bx", upgrade_->sumBx.data());
+
+     // Showers - not in nano?
      // unsigned short int nMuonShowers;
      // std::vector<short int> muonShowerBx;
      // std::vector<short int> muonShowerOneNominal;
@@ -568,14 +587,7 @@ void L1Ntuple::Init()
      // std::vector<short int> muonShowerTwoLoose;
      // std::vector<short int> muonShowerTwoLooseDiffSectors;
 
-     // unsigned short int nSums;
-     // std::vector<short int> sumType;
-     // std::vector<float> sumEt;
-     // std::vector<float> sumPhi;
-     // std::vector<short int> sumIEt;
-     // std::vector<short int> sumIPhi;
-     // std::vector<float> sumBx;
-
+     // Sums ZDC - not in nano?
      // unsigned short int nSumsZDC;
      // std::vector<short int> sumZDCType;
      // std::vector<float> sumZDCEt;
