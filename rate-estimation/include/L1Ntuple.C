@@ -403,7 +403,7 @@ void L1Ntuple::Init()
    if(doNano){
      printf("Setting up nano main tree!\n");
 
-     int bufferSize = 128;
+     int bufferSize = 64;
 
      // EG objects
      upgrade_->egEt.resize(bufferSize);
@@ -479,24 +479,42 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1Tau_hwQual", upgrade_->tauHwQual.data());
 
      // Jet objects
-     // unsigned short int nJets;
-     // std::vector<float> jetEt;
-     // std::vector<float> jetEta;
-     // std::vector<float> jetPhi;
-     // std::vector<short int> jetIEt;
-     // std::vector<short int> jetIEta;
-     // std::vector<short int> jetIPhi;
-     // std::vector<short int> jetHwQual;
-     // std::vector<short int> jetBx;
-     // std::vector<short int> jetTowerIPhi;
-     // std::vector<short int> jetTowerIEta;
-     // std::vector<short int> jetRawEt;
-     // std::vector<short int> jetSeedEt;
-     // std::vector<short int> jetPUEt;
-     // std::vector<short int> jetPUDonutEt0;
-     // std::vector<short int> jetPUDonutEt1;
-     // std::vector<short int> jetPUDonutEt2;
-     // std::vector<short int> jetPUDonutEt3;
+     upgrade_->jetEt.resize(bufferSize);
+     upgrade_->jetEta.resize(bufferSize);
+     upgrade_->jetPhi.resize(bufferSize);
+     upgrade_->jetIEt.resize(bufferSize);
+     upgrade_->jetIEta.resize(bufferSize);
+     upgrade_->jetIPhi.resize(bufferSize);
+     upgrade_->jetHwQual.resize(bufferSize);
+     upgrade_->jetBx.resize(bufferSize);
+     upgrade_->jetTowerIPhi.resize(bufferSize);
+     upgrade_->jetTowerIEta.resize(bufferSize);
+     upgrade_->jetRawEt.resize(bufferSize);
+     upgrade_->jetSeedEt.resize(bufferSize);
+     upgrade_->jetPUEt.resize(bufferSize);
+     upgrade_->jetPUDonutEt0.resize(bufferSize);
+     upgrade_->jetPUDonutEt1.resize(bufferSize);
+     upgrade_->jetPUDonutEt2.resize(bufferSize);
+     upgrade_->jetPUDonutEt3.resize(bufferSize);
+
+     fChain->SetBranchAddress("nL1Jet", &upgrade_->nJets);
+     fChain->SetBranchAddress("L1Jet_pt", upgrade_->jetEt.data());
+     fChain->SetBranchAddress("L1Jet_eta", upgrade_->jetEta.data());
+     fChain->SetBranchAddress("L1Jet_phi", upgrade_->jetPhi.data());
+     fChain->SetBranchAddress("L1Jet_hwPt", upgrade_->jetIEt.data());
+     fChain->SetBranchAddress("L1Jet_hwEta", upgrade_->jetIEta.data());
+     fChain->SetBranchAddress("L1Jet_hwPhi", upgrade_->jetIPhi.data());
+     fChain->SetBranchAddress("L1Jet_hwQual", upgrade_->jetHwQual.data());
+     fChain->SetBranchAddress("L1Jet_bx", upgrade_->jetBx.data());
+     fChain->SetBranchAddress("L1Jet_towerIPhi", upgrade_->jetTowerIPhi.data());
+     fChain->SetBranchAddress("L1Jet_towerIEta", upgrade_->jetTowerIEta.data());
+     fChain->SetBranchAddress("L1Jet_rawEt", upgrade_->jetRawEt.data());
+     fChain->SetBranchAddress("L1Jet_seedEt", upgrade_->jetSeedEt.data());
+     fChain->SetBranchAddress("L1Jet_puEt", upgrade_->jetPUEt.data());
+     fChain->SetBranchAddress("L1Jet_puDonutEt0", upgrade_->jetPUDonutEt0.data());
+     fChain->SetBranchAddress("L1Jet_puDonutEt1", upgrade_->jetPUDonutEt1.data());
+     fChain->SetBranchAddress("L1Jet_puDonutEt2", upgrade_->jetPUDonutEt2.data());
+     fChain->SetBranchAddress("L1Jet_puDonutEt3", upgrade_->jetPUDonutEt3.data());
 
      // Muon objects
      // unsigned short int nMuons;
