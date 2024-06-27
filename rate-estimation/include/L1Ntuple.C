@@ -400,7 +400,7 @@ void L1Ntuple::Init()
 
    upgrade_      = new L1Analysis::L1AnalysisL1UpgradeDataFormat();
    std::cout<<"Setting branch addresses for L1Upgrade tree...  "<<std::endl;
-   if(doNano){
+   if(doNano && !UseuGTDecision){ // since it's a lot of i/o, only use if necessary
      printf("Setting up nano main tree!\n");
 
      int bufferEG = 64;

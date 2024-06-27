@@ -991,9 +991,8 @@ bool L1Menu2016::PrintConfig() const
 bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::string, std::string> &configstr)
 {
   GetRunConfig(config, configstr);
-  if (L1Config["doNano"]){
-    doNano = true;
-  }
+  doNano = L1Config["doNano"];                 //flags for internal usage in L1Ntuple class
+  UseuGTDecision = L1Config["UseuGTDecision"];
   OpenWithList(tuplefilename);
 
   //Prepare Menu

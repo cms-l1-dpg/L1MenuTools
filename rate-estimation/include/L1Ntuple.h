@@ -75,6 +75,7 @@ public:
   bool dol1uGT;
   bool dol1unpackuGT;
   bool doNano;
+  bool UseuGTDecision;
 
   L1Analysis::L1AnalysisEventDataFormat         *event_;
   L1Analysis::L1AnalysisL1UpgradeDataFormat     *upgrade_;
