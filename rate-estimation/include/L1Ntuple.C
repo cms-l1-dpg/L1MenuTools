@@ -406,7 +406,7 @@ void L1Ntuple::Init()
      int bufferEG = 64;
      int bufferTau = 64;
      int bufferSize = 32;
-     // int bufferSums = 128;
+     int bufferSums = 256;
      
      // EG objects
      upgrade_->egEt.resize(bufferEG);
@@ -564,20 +564,20 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1Mu_bx", upgrade_->muonBx.data());
 
      // Sums
-     // upgrade_->sumType.resize(bufferSums);
-     // upgrade_->sumEt.resize(bufferSums);
-     // upgrade_->sumPhi.resize(bufferSums);
-     // upgrade_->sumIEt.resize(bufferSums);
-     // upgrade_->sumIPhi.resize(bufferSums);
-     // upgrade_->sumBx.resize(bufferSums);
+     upgrade_->sumType.resize(bufferSums);
+     upgrade_->sumEt.resize(bufferSums);
+     upgrade_->sumPhi.resize(bufferSums);
+     upgrade_->sumIEt.resize(bufferSums);
+     upgrade_->sumIPhi.resize(bufferSums);
+     upgrade_->sumBx.resize(bufferSums);
 
-     // fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums);
-     // fChain->SetBranchAddress("L1EtSum_etSumType", upgrade_->sumType.data());
-     // fChain->SetBranchAddress("L1EtSum_pt", upgrade_->sumEt.data());
-     // fChain->SetBranchAddress("L1EtSum_phi", upgrade_->sumPhi.data());
-     // fChain->SetBranchAddress("L1EtSum_hwPt", upgrade_->sumIEt.data());
-     // fChain->SetBranchAddress("L1EtSum_hwPhi", upgrade_->sumIPhi.data());
-     // fChain->SetBranchAddress("L1EtSum_bx", upgrade_->sumBx.data());
+     fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums);
+     fChain->SetBranchAddress("L1EtSum_etSumType", upgrade_->sumType.data());
+     fChain->SetBranchAddress("L1EtSum_pt", upgrade_->sumEt.data());
+     fChain->SetBranchAddress("L1EtSum_phi", upgrade_->sumPhi.data());
+     fChain->SetBranchAddress("L1EtSum_hwPt", upgrade_->sumIEt.data());
+     fChain->SetBranchAddress("L1EtSum_hwPhi", upgrade_->sumIPhi.data());
+     fChain->SetBranchAddress("L1EtSum_bx", upgrade_->sumBx.data());
 
      // Showers - not in nano?
      // unsigned short int nMuonShowers;
