@@ -91,7 +91,8 @@ public:
   GlobalAlgBlk                                  *l1uGT_;
   GlobalAlgBlk                                  *l1unpackuGT_;
   std::map<std::string, bool>                    nanoDecisions_;
-
+  TBranch        *b_eventLumi;
+  
   L1Ntuple();
   L1Ntuple(const std::string & fname);
 

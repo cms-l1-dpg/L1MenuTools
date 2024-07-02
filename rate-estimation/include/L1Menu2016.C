@@ -1197,6 +1197,15 @@ bool L1Menu2016::Loop()
     i++;
     Long64_t ientry = LoadTree(i); 
     if (ientry < 0) break;
+
+    if (i % 1000 == 0)
+      {
+	std::cout << "Processing event " << i << std::endl;
+      }
+
+    b_eventLumi->GetEntry(ientry);
+    int lumiSel = 191;
+    if (event_->lumi != lumiSel) continue;
     GetEntry(i);
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
     // std::cout << "Run: " << event_->run << "; Event: " << event_->event << "; Lumi: " << event_->lumi << "; BX: " << event_->bx << "; nPV: " << event_->nPV << std::endl;

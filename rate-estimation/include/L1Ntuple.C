@@ -617,11 +617,11 @@ void L1Ntuple::Init()
        printf("Setting up nano event!\n");
        ftreeEvent->SetBranchAddress("event", &event_->event );
        ftreeEvent->SetBranchAddress("run", &event_->run );
-       ftreeEvent->SetBranchAddress("luminosityBlock", &event_->lumi );
+       ftreeEvent->SetBranchAddress("luminosityBlock", &event_->lumi, &b_eventLumi);
        ftreeEvent->SetBranchAddress("bunchCrossing", &event_->bx );
      }
      else{
-       ftreeEvent->SetBranchAddress("Event", &event_ );
+       ftreeEvent->SetBranchAddress("Event", &event_, &b_eventLumi);
      }
      fChain-> AddFriend(ftreeEvent);     
    }
