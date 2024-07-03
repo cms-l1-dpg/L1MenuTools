@@ -571,14 +571,22 @@ void L1Ntuple::Init()
      upgrade_->sumIEt.resize(bufferSums);
      upgrade_->sumIPhi.resize(bufferSums);
      upgrade_->sumBx.resize(bufferSums);
+     sumBxTmp.resize(bufferSums);
+     sumTypeTmp.resize(bufferSums);
+     sumIEtTmp.resize(bufferSums);
+     sumIPhiTmp.resize(bufferSums);
 
-     fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums, &b_nSums);
-     fChain->SetBranchAddress("L1EtSum_etSumType", upgrade_->sumType.data());
+     fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums, &b_nSums); 
+     // fChain->SetBranchAddress("L1EtSum_etSumType", upgrade_->sumType.data()); // sumType expects a short int whilst nanoAOD stores the variable as an int
+     fChain->SetBranchAddress("L1EtSum_etSumType", sumTypeTmp.data()); // use temp int vector for initial loading
      fChain->SetBranchAddress("L1EtSum_pt", upgrade_->sumEt.data());
      fChain->SetBranchAddress("L1EtSum_phi", upgrade_->sumPhi.data());
-     fChain->SetBranchAddress("L1EtSum_hwPt", upgrade_->sumIEt.data());
-     fChain->SetBranchAddress("L1EtSum_hwPhi", upgrade_->sumIPhi.data());
-     fChain->SetBranchAddress("L1EtSum_bx", upgrade_->sumBx.data());
+     // fChain->SetBranchAddress("L1EtSum_hwPt", upgrade_->sumIEt.data()); // sumIEt expects a short int whilst nanoAOD stores the variable as an int
+     // fChain->SetBranchAddress("L1EtSum_hwPhi", upgrade_->sumIPhi.data()); // sumIPhi expects a short int whilst nanoAOD stores the variable as an int
+     fChain->SetBranchAddress("L1EtSum_hwPt", sumIEtTmp.data()); // use temp int vector for initial loading
+     fChain->SetBranchAddress("L1EtSum_hwPhi", sumIPhiTmp.data()); // use temp int vector for initial loading
+     // fChain->SetBranchAddress("L1EtSum_bx", upgrade_->sumBx.data()); // sumBx expects a float whilst nanoAOD stores the variable as a short int
+     fChain->SetBranchAddress("L1EtSum_bx", sumBxTmp.data()); // use temp short int vector for initial loading
 
      // Showers - not in nano?
      // unsigned short int nMuonShowers;

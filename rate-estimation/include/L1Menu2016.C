@@ -1219,6 +1219,7 @@ bool L1Menu2016::Loop()
       upgrade_->jetBx.resize(upgrade_->nJets);
       upgrade_->muonBx.resize(upgrade_->nMuons);
       upgrade_->sumBx.resize(upgrade_->nSums);
+      upgrade_->sumType.resize(upgrade_->nSums);
     }
     
     GetEntry(i);
@@ -1226,6 +1227,12 @@ bool L1Menu2016::Loop()
       for(int imu=0; imu < upgrade_->nMuons; imu++) { // assumes chargeValid is always true
 	if(upgrade_->muonChg.at(imu) == 1){upgrade_->muonChg.at(imu) = -1;}
 	else if(upgrade_->muonChg.at(imu) == 0){upgrade_->muonChg.at(imu) = 1;}
+      }
+      for(int isum=0; isum < upgrade_->nSums; isum++) { // load in values into temp vectors with type matching nanoAOD format and convert into type L1Ntuple format expects
+	upgrade_->sumBx.at(isum) = static_cast<float>(sumBxTmp.at(isum));
+	upgrade_->sumType.at(isum) = static_cast<short int>(sumTypeTmp.at(isum));
+	upgrade_->sumIEt.at(isum) = static_cast<short int>(sumIEtTmp.at(isum));
+	upgrade_->sumIPhi.at(isum) = static_cast<short int>(sumIPhiTmp.at(isum));
       }
     }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;

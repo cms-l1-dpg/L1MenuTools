@@ -91,6 +91,10 @@ public:
   GlobalAlgBlk                                  *l1uGT_;
   GlobalAlgBlk                                  *l1unpackuGT_;
   std::map<std::string, bool>                    nanoDecisions_;
+  std::vector<short int> sumBxTmp;
+  std::vector<int>       sumTypeTmp;
+  std::vector<int>       sumIEtTmp;
+  std::vector<int>       sumIPhiTmp;
   TBranch        *b_eventLumi;
   TBranch        *b_nEGs;
   TBranch        *b_nTaus;
