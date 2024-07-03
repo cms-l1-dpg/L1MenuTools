@@ -406,7 +406,8 @@ void L1Ntuple::Init()
      int bufferEG = 64;
      int bufferTau = 64;
      int bufferSize = 32;
-     int bufferSums = 256;
+     int bufferSums = 256; // Always 85 for nanoAOD: 17 sum types across 5 bx [-2, -1, 0, 1, 2] -> 17*5 = 85 - however if I set this to 85 the program seg faults at the end
+                           // NOTE: for L1Ntuple this is 60 as bx = 2 sums are missing and only 9 sums are done for bx = 1 -> 17*3 + 9 = 60
      
      // EG objects
      upgrade_->egEt.resize(bufferEG);
