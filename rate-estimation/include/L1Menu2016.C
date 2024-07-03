@@ -1222,6 +1222,12 @@ bool L1Menu2016::Loop()
     }
     
     GetEntry(i);
+    if(L1Config["doNano"]){ // map muon charges in nanoAOD to equivalent L1Ntuple values: 1 -> -1 and 0 -> 1
+      for(int imu=0; imu < upgrade_->nMuons; imu++) { // assumes chargeValid is always true
+	if(upgrade_->muonChg.at(imu) == 1){upgrade_->muonChg.at(imu) = -1;}
+	else if(upgrade_->muonChg.at(imu) == 0){upgrade_->muonChg.at(imu) = 1;}
+      }
+    }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
     // std::cout << "Run: " << event_->run << "; Event: " << event_->event << "; Lumi: " << event_->lumi << "; BX: " << event_->bx << "; nPV: " << event_->nPV << std::endl;
     
