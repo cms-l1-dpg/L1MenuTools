@@ -426,7 +426,7 @@ void L1Ntuple::Init()
      upgrade_->egShape.resize(bufferEG);
      upgrade_->egTowerHoE.resize(bufferEG);
      upgrade_->egHwQual.resize(bufferEG);
-     fChain->SetBranchAddress("nL1EG", &upgrade_->nEGs);
+     fChain->SetBranchAddress("nL1EG", &upgrade_->nEGs, &b_nEGs);
      fChain->SetBranchAddress("L1EG_pt", upgrade_->egEt.data());// pt == et?
      fChain->SetBranchAddress("L1EG_eta", upgrade_->egEta.data());
      fChain->SetBranchAddress("L1EG_phi", upgrade_->egPhi.data());
@@ -463,7 +463,7 @@ void L1Ntuple::Init()
      upgrade_->tauIsMerged.resize(bufferTau);
      upgrade_->tauHwQual.resize(bufferTau);
 
-     fChain->SetBranchAddress("nL1Tau", &upgrade_->nTaus);
+     fChain->SetBranchAddress("nL1Tau", &upgrade_->nTaus, &b_nTaus);
      fChain->SetBranchAddress("L1Tau_pt", upgrade_->tauEt.data());
      fChain->SetBranchAddress("L1Tau_eta", upgrade_->tauEta.data());
      fChain->SetBranchAddress("L1Tau_phi", upgrade_->tauPhi.data());
@@ -500,7 +500,7 @@ void L1Ntuple::Init()
      upgrade_->jetPUDonutEt2.resize(bufferSize);
      upgrade_->jetPUDonutEt3.resize(bufferSize);
 
-     fChain->SetBranchAddress("nL1Jet", &upgrade_->nJets);
+     fChain->SetBranchAddress("nL1Jet", &upgrade_->nJets, &b_nJets);
      fChain->SetBranchAddress("L1Jet_pt", upgrade_->jetEt.data());
      fChain->SetBranchAddress("L1Jet_eta", upgrade_->jetEta.data());
      fChain->SetBranchAddress("L1Jet_phi", upgrade_->jetPhi.data());
@@ -541,7 +541,7 @@ void L1Ntuple::Init()
      upgrade_->muonTfMuonIdx.resize(bufferSize);
      upgrade_->muonBx.resize(bufferSize);
 
-     fChain->SetBranchAddress("nL1Mu", &upgrade_->nMuons);
+     fChain->SetBranchAddress("nL1Mu", &upgrade_->nMuons, &b_nMuons);
      fChain->SetBranchAddress("L1Mu_pt", upgrade_->muonEt.data());
      fChain->SetBranchAddress("L1Mu_ptUnconstrained", upgrade_->muonEtUnconstrained.data());
      fChain->SetBranchAddress("L1Mu_eta", upgrade_->muonEta.data());
@@ -571,7 +571,7 @@ void L1Ntuple::Init()
      upgrade_->sumIPhi.resize(bufferSums);
      upgrade_->sumBx.resize(bufferSums);
 
-     fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums);
+     fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums, &b_nSums);
      fChain->SetBranchAddress("L1EtSum_etSumType", upgrade_->sumType.data());
      fChain->SetBranchAddress("L1EtSum_pt", upgrade_->sumEt.data());
      fChain->SetBranchAddress("L1EtSum_phi", upgrade_->sumPhi.data());

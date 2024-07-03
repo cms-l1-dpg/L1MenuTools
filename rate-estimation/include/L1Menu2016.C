@@ -1206,6 +1206,21 @@ bool L1Menu2016::Loop()
     b_eventLumi->GetEntry(ientry);
     int lumiSel = 191;
     if (event_->lumi != lumiSel) continue;
+
+    if (L1Config["doNano"]){ // resize object vectors before loading full event in
+      b_nEGs->GetEntry(ientry);
+      b_nTaus->GetEntry(ientry);
+      b_nJets->GetEntry(ientry);
+      b_nMuons->GetEntry(ientry);
+      b_nSums->GetEntry(ientry);
+
+      upgrade_->egBx.resize(upgrade_->nEGs);
+      upgrade_->tauBx.resize(upgrade_->nTaus);
+      upgrade_->jetBx.resize(upgrade_->nJets);
+      upgrade_->muonBx.resize(upgrade_->nMuons);
+      upgrade_->sumBx.resize(upgrade_->nSums);
+    }
+    
     GetEntry(i);
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
     // std::cout << "Run: " << event_->run << "; Event: " << event_->event << "; Lumi: " << event_->lumi << "; BX: " << event_->bx << "; nPV: " << event_->nPV << std::endl;
