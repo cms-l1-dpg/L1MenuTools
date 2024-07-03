@@ -1207,7 +1207,7 @@ bool L1Menu2016::Loop()
     int lumiSel = 191;
     if (event_->lumi != lumiSel) continue;
 
-    if (L1Config["doNano"]){ // resize object vectors before loading full event in
+    if (L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // resize object vectors before loading full event in
       b_nEGs->GetEntry(ientry);
       b_nTaus->GetEntry(ientry);
       b_nJets->GetEntry(ientry);
@@ -1223,7 +1223,7 @@ bool L1Menu2016::Loop()
     }
     
     GetEntry(i);
-    if(L1Config["doNano"]){ // map muon charges in nanoAOD to equivalent L1Ntuple values: 1 -> -1 and 0 -> 1
+    if(L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // map muon charges in nanoAOD to equivalent L1Ntuple values: 1 -> -1 and 0 -> 1
       for(int imu=0; imu < upgrade_->nMuons; imu++) { // assumes chargeValid is always true
 	if(upgrade_->muonChg.at(imu) == 1){upgrade_->muonChg.at(imu) = -1;}
 	else if(upgrade_->muonChg.at(imu) == 0){upgrade_->muonChg.at(imu) = 1;}

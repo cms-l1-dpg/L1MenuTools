@@ -558,6 +558,7 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1Mu_hwDEtaExtra", upgrade_->muonIDEta.data());
      fChain->SetBranchAddress("L1Mu_hwDPhiExtra", upgrade_->muonIDPhi.data());
      fChain->SetBranchAddress("L1Mu_hwCharge", upgrade_->muonChg.data());
+     // fChain->SetBranchAddress("L1Mu_hwChargeValid", upgrade_->muonChg.data());
      fChain->SetBranchAddress("L1Mu_hwIso", upgrade_->muonIso.data());
      fChain->SetBranchAddress("L1Mu_hwQual", upgrade_->muonQual.data());
      fChain->SetBranchAddress("L1Mu_hwDXY", upgrade_->muonDxy.data());
