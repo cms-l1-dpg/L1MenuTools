@@ -1564,6 +1564,37 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
     else
       IsFired = CheckL1Seed(seed.first);
 
+    // std::string testTrigger = "L1_SingleMu22";
+    // std::string testTrigger = "L1_DoubleMu3er2p0_SQ_OS_dR_Max1p6";
+    // std::string testTrigger = "L1_ETMHF90";
+    // if (IsFired && seed.first == testTrigger){
+    // // if (seed.first == testTrigger){
+    //   std::cout << "Event " << event_->event << ": triggered " << testTrigger << std::endl;
+    //   std::cout << "Sum properties: (nSums = " << upgrade_->nSums << ")" << std::endl;
+    //   for(int isum=0; isum < upgrade_->nSums; isum++) {
+    // 	std::cout << "Sum " << isum
+    // 		  << ": pt = " << upgrade_->sumEt.at(isum) << " GeV"
+    // 		  << ": hw pt = " << upgrade_->sumIEt.at(isum) << " GeV"
+    // 		  << ": type = " << upgrade_->sumType.at(isum)
+    // 		  << "; bx = " << upgrade_->sumBx.at(isum)
+    // 		  << "; bx size = " << upgrade_->sumBx.size()
+    // 		  << std::endl;
+    //   }
+    //   // std::cout << "Muon properties: (nMuons = " << upgrade_->nMuons << ")" << std::endl;
+    //   // for(int imu=0; imu < upgrade_->nMuons; imu++) {
+    //   // 	std::cout << "Muon " << imu
+    //   // 		  << ": pt = " << upgrade_->muonEt.at(imu) << " GeV"
+    //   // 		  // << "; eta = " << upgrade_->muonEta.at(imu)
+    //   // 		  << "; eta (vtx) = " << upgrade_->muonEtaAtVtx.at(imu) 
+    //   // 		  << "; quality = " << upgrade_->muonQual.at(imu)
+    //   // 		  << "; charge = " << upgrade_->muonChg.at(imu)
+    //   // 		  << "; bx = " << upgrade_->muonBx.at(imu)
+    //   // 		  << "; bx size = " << upgrade_->muonBx.size()
+    //   // 		  // << "; TfIdx = " << upgrade_->muonTfMuonIdx.at(imu)
+    //   // 		  << std::endl;
+    //   // }
+    // }
+
     for(auto col : ColumnMap)
     {
     if (L1Config["doReweighting2018"] == 0 && L1Config["doReweightingRun3"] == 0 && !custom_weights) // Reweighting procedure
