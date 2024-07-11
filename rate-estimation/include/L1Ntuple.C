@@ -405,9 +405,10 @@ void L1Ntuple::Init()
 
      int bufferEG = 64;
      int bufferTau = 64;
-     int bufferSize = 32;
-     int bufferSums = 256; // Always 85 for nanoAOD: 17 sum types across 5 bx [-2, -1, 0, 1, 2] -> 17*5 = 85 - however if I set this to 85 the program seg faults at the end
-                           // NOTE: for L1Ntuple this is 60 as bx = 2 sums are missing and only 9 sums are done for bx = 1 -> 17*3 + 9 = 60
+     int bufferJet = 40;
+     int bufferMu = 12;
+     int bufferSums = 85; // Always 85 for nanoAOD: 17 sum types across 5 bx [-2, -1, 0, 1, 2] -> 17*5 = 85
+                          // NOTE: for L1Ntuple this is 60 as bx = 2 sums are missing and only 9 sums are done for bx = 1 -> 17*3 + 9 = 60
      
      // EG objects
      upgrade_->egEt.resize(bufferEG);
@@ -483,23 +484,23 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1Tau_hwQual", upgrade_->tauHwQual.data());
 
      // Jet objects
-     upgrade_->jetEt.resize(bufferSize);
-     upgrade_->jetEta.resize(bufferSize);
-     upgrade_->jetPhi.resize(bufferSize);
-     upgrade_->jetIEt.resize(bufferSize);
-     upgrade_->jetIEta.resize(bufferSize);
-     upgrade_->jetIPhi.resize(bufferSize);
-     upgrade_->jetHwQual.resize(bufferSize);
-     upgrade_->jetBx.resize(bufferSize);
-     upgrade_->jetTowerIPhi.resize(bufferSize);
-     upgrade_->jetTowerIEta.resize(bufferSize);
-     upgrade_->jetRawEt.resize(bufferSize);
-     upgrade_->jetSeedEt.resize(bufferSize);
-     upgrade_->jetPUEt.resize(bufferSize);
-     upgrade_->jetPUDonutEt0.resize(bufferSize);
-     upgrade_->jetPUDonutEt1.resize(bufferSize);
-     upgrade_->jetPUDonutEt2.resize(bufferSize);
-     upgrade_->jetPUDonutEt3.resize(bufferSize);
+     upgrade_->jetEt.resize(bufferJet);
+     upgrade_->jetEta.resize(bufferJet);
+     upgrade_->jetPhi.resize(bufferJet);
+     upgrade_->jetIEt.resize(bufferJet);
+     upgrade_->jetIEta.resize(bufferJet);
+     upgrade_->jetIPhi.resize(bufferJet);
+     upgrade_->jetHwQual.resize(bufferJet);
+     upgrade_->jetBx.resize(bufferJet);
+     upgrade_->jetTowerIPhi.resize(bufferJet);
+     upgrade_->jetTowerIEta.resize(bufferJet);
+     upgrade_->jetRawEt.resize(bufferJet);
+     upgrade_->jetSeedEt.resize(bufferJet);
+     upgrade_->jetPUEt.resize(bufferJet);
+     upgrade_->jetPUDonutEt0.resize(bufferJet);
+     upgrade_->jetPUDonutEt1.resize(bufferJet);
+     upgrade_->jetPUDonutEt2.resize(bufferJet);
+     upgrade_->jetPUDonutEt3.resize(bufferJet);
 
      fChain->SetBranchAddress("nL1Jet", &upgrade_->nJets, &b_nJets);
      fChain->SetBranchAddress("L1Jet_pt", upgrade_->jetEt.data());
@@ -521,26 +522,26 @@ void L1Ntuple::Init()
      fChain->SetBranchAddress("L1Jet_puDonutEt3", upgrade_->jetPUDonutEt3.data());
 
      // Muon objects
-     upgrade_->muonEt.resize(bufferSize);
-     upgrade_->muonEtUnconstrained.resize(bufferSize);
-     upgrade_->muonEta.resize(bufferSize);
-     upgrade_->muonPhi.resize(bufferSize);
-     upgrade_->muonEtaAtVtx.resize(bufferSize);
-     upgrade_->muonPhiAtVtx.resize(bufferSize);
-     upgrade_->muonIEt.resize(bufferSize);
-     upgrade_->muonIEtUnconstrained.resize(bufferSize);
-     upgrade_->muonIEta.resize(bufferSize);
-     upgrade_->muonIPhi.resize(bufferSize);
-     upgrade_->muonIEtaAtVtx.resize(bufferSize);
-     upgrade_->muonIPhiAtVtx.resize(bufferSize);
-     upgrade_->muonIDEta.resize(bufferSize);
-     upgrade_->muonIDPhi.resize(bufferSize);
-     upgrade_->muonChg.resize(bufferSize);
-     upgrade_->muonIso.resize(bufferSize);
-     upgrade_->muonQual.resize(bufferSize);
-     upgrade_->muonDxy.resize(bufferSize);
-     upgrade_->muonTfMuonIdx.resize(bufferSize);
-     upgrade_->muonBx.resize(bufferSize);
+     upgrade_->muonEt.resize(bufferMu);
+     upgrade_->muonEtUnconstrained.resize(bufferMu);
+     upgrade_->muonEta.resize(bufferMu);
+     upgrade_->muonPhi.resize(bufferMu);
+     upgrade_->muonEtaAtVtx.resize(bufferMu);
+     upgrade_->muonPhiAtVtx.resize(bufferMu);
+     upgrade_->muonIEt.resize(bufferMu);
+     upgrade_->muonIEtUnconstrained.resize(bufferMu);
+     upgrade_->muonIEta.resize(bufferMu);
+     upgrade_->muonIPhi.resize(bufferMu);
+     upgrade_->muonIEtaAtVtx.resize(bufferMu);
+     upgrade_->muonIPhiAtVtx.resize(bufferMu);
+     upgrade_->muonIDEta.resize(bufferMu);
+     upgrade_->muonIDPhi.resize(bufferMu);
+     upgrade_->muonChg.resize(bufferMu);
+     upgrade_->muonIso.resize(bufferMu);
+     upgrade_->muonQual.resize(bufferMu);
+     upgrade_->muonDxy.resize(bufferMu);
+     upgrade_->muonTfMuonIdx.resize(bufferMu);
+     upgrade_->muonBx.resize(bufferMu);
 
      fChain->SetBranchAddress("nL1Mu", &upgrade_->nMuons, &b_nMuons);
      fChain->SetBranchAddress("L1Mu_pt", upgrade_->muonEt.data());
