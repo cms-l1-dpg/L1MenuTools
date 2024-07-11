@@ -32,7 +32,7 @@ mkdir -p L1Trigger/L1TGlobal/data/Luminosity/startup/
 cd L1Trigger/L1TGlobal/data/Luminosity/startup/
 wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2024_v1_3_0/L1Menu_Collisions2024_v1_3_0.xml
 cd ../../../../../
-sed -i 's/L1Menu_Collisions2022_v1_2_0.xml/L1Menu_Collisions2024_v1_3_0_.xml/g' L1Trigger/Configuration/python/customiseUtils.py
+sed -i 's/L1Menu_Collisions2022_v1_2_0.xml/L1Menu_Collisions2024_v1_3_0.xml/g' L1Trigger/Configuration/python/customiseUtils.py
 
 git cms-checkdeps -A -a
 
