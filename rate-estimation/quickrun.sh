@@ -20,6 +20,7 @@ if [[ $L1NTUPLE == "TRUE"  ]]; then
     # ./testMenu2016 -m menu/L1Prescales2023.csv -l ntuple/testL1Ntuple.list -o testNtupleArtur -b 2748 --UseUnpackTree --UseuGTDecision --maxEvent 5000 --SelectCol 2p0E34 | tee results/testNtupleArtur.log
     git diff --no-index results/testNtupleGT_$NAME.log results/testNtupleStandalone_$NAME.log |& tee results/testNtuple_$NAME.diff
 else
+    echo "Testing NanoAOD"
     { time ./testMenu2016 -m menu/L1Prescales2023.csv -u menu/EphZB2023_run370293.csv -l $FILENANO -o testNanoGT_$NAME -b 2452 --doPlotLS --doPrintPU --lowerPUbound 58 --UseuGTDecision --UseUnpackTree --maxEvent $EVENTS --SelectCol 2p0E34 --doNano; } |& tee results/testNanoGT_$NAME.log
     { time ./testMenu2016 -m menu/L1Prescales2023.csv -u menu/EphZB2023_run370293.csv -l $FILENANO -o testNanoStandalone_$NAME -b 2452 --doPlotLS --doPrintPU --lowerPUbound 58 --UseUnpackTree --maxEvent $EVENTS --SelectCol 2p0E34 --doNano; } |& tee results/testNanoStandalone_$NAME.log
     # ./testMenu2016 -m menu/L1Prescales2023.csv -l ntuple/testL1Nano.list -o testNanoArtur -b 2748 --UseUnpackTree --UseuGTDecision --maxEvent 5000 --SelectCol 2p0E34 --doNano | tee results/testNanoArtur.log
