@@ -1208,9 +1208,13 @@ bool L1Menu2016::Loop()
     //   }
 
     b_eventLumi->GetEntry(ientry);
-    int lumiSel = 191;
-    if (event_->lumi != lumiSel) continue;
-
+    // int lumiSel = 191;
+    // if (event_->lumi != lumiSel) continue;
+    std::set<int> badLS{177, 231, 244, 255};
+    if(badLS.find(event_->lumi) != badLS.end()){
+      continue; // skip discrepant LS in ntuple vs nano 2023D files
+    }
+    
     if (L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // resize object vectors before loading full event in
       b_nEGs->GetEntry(ientry);
       b_nTaus->GetEntry(ientry);
