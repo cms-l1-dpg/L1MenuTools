@@ -755,7 +755,9 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
       {
         ss << std::setw(65) << it <<" "; 
         temp.name = it;
-        vL1Seed.push_back(it);
+	// if(temp.name == "L1_SingleIsoEG30er2p5"){
+	vL1Seed.push_back(it);
+	// }
       }
       if (k.second == "Prescale")
       {
@@ -798,7 +800,9 @@ bool L1Menu2016::ReadMenuCSV(std::ifstream &menufile)
 
     if (writefiles)
       *outfile << ss.str() <<std::endl;
+    // if(temp.name == "L1_SingleIsoEG30er2p5"){
     mL1Seed[temp.name] = temp;
+      // }
   }
 
   return true;
