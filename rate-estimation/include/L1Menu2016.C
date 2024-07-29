@@ -1216,32 +1216,12 @@ bool L1Menu2016::Loop()
     }
     
     if (L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // resize object vectors before loading full event in
-      b_nEGs->GetEntry(ientry);
-      b_nTaus->GetEntry(ientry);
-      b_nJets->GetEntry(ientry);
-      b_nMuons->GetEntry(ientry);
-      b_nSums->GetEntry(ientry);
-
-      upgrade_->egBx.resize(upgrade_->nEGs);
-      upgrade_->tauBx.resize(upgrade_->nTaus);
-      upgrade_->jetBx.resize(upgrade_->nJets);
-      upgrade_->muonBx.resize(upgrade_->nMuons);
-      upgrade_->sumBx.resize(upgrade_->nSums);
-      upgrade_->sumType.resize(upgrade_->nSums);
+      ResizeNanoVectors(ientry);
     }
     
     GetEntry(i);
     if(L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // map muon charges in nanoAOD to equivalent L1Ntuple values: 1 -> -1 and 0 -> 1
-      for(int imu=0; imu < upgrade_->nMuons; imu++) { // assumes chargeValid is always true
-	if(upgrade_->muonChg.at(imu) == 1){upgrade_->muonChg.at(imu) = -1;}
-	else if(upgrade_->muonChg.at(imu) == 0){upgrade_->muonChg.at(imu) = 1;}
-      }
-      for(int isum=0; isum < upgrade_->nSums; isum++) { // load in values into temp vectors with type matching nanoAOD format and convert into type L1Ntuple format expects
-	upgrade_->sumBx.at(isum) = static_cast<float>(sumBxTmp.at(isum));
-	upgrade_->sumType.at(isum) = static_cast<short int>(sumTypeTmp.at(isum));
-	upgrade_->sumIEt.at(isum) = static_cast<short int>(sumIEtTmp.at(isum));
-	upgrade_->sumIPhi.at(isum) = static_cast<short int>(sumIPhiTmp.at(isum));
-      }
+      LoadNanoVariables();
     }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
     // std::cout << "Run: " << event_->run << "; Event: " << event_->event << "; Lumi: " << event_->lumi << "; BX: " << event_->bx << "; nPV: " << event_->nPV << std::endl;

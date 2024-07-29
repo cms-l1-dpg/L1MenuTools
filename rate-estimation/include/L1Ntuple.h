@@ -91,6 +91,7 @@ public:
   GlobalAlgBlk                                  *l1uGT_;
   GlobalAlgBlk                                  *l1unpackuGT_;
   std::map<std::string, bool>                    nanoDecisions_;
+  std::vector<short int> muonChgValid;
   std::vector<short int> sumBxTmp;
   std::vector<int>       sumTypeTmp;
   std::vector<int>       sumIEtTmp;
@@ -109,6 +110,8 @@ public:
 
   bool Open(const std::string & fname);
   bool OpenWithList(const std::string & fname);
+  bool ResizeNanoVectors(Long64_t entry);
+  bool LoadNanoVariables();
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
   virtual void     Init();
@@ -124,6 +127,7 @@ protected:
   bool OpenWithoutInit();
   bool SelectTree(bool UseUnpack);
   bool OpenNtupleList(const std::string & fname);
+  bool SetNanoBranchAddresses();
 
   std::vector<std::string> listNtuples;
 private :
