@@ -1566,7 +1566,8 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
       }
       else{
 	assert(l1uGT != NULL);
-	IsFired = l1uGT->GetuGTDecision(seed.first);
+	IsFired = l1uGT->GetuGTDecision(seed.first); // use initial decisions
+	// IsFired = l1uGT->GetuGTDecision(seed.first, false); // use final decisions
       }
     }
     else
