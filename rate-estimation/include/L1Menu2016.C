@@ -1202,10 +1202,10 @@ bool L1Menu2016::Loop()
     Long64_t ientry = LoadTree(i); 
     if (ientry < 0) break;
 
-    if (i % 1000 == 0)
-      {
-	std::cout << "Processing event " << i << std::endl;
-      }
+    // if (i % 1000 == 0)
+    //   {
+    // 	std::cout << "Processing event " << i << std::endl;
+    //   }
 
     b_eventLumi->GetEntry(ientry);
     int lumiSel = 191;
