@@ -1573,6 +1573,11 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
     else
       IsFired = CheckL1Seed(seed.first);
 
+    // if (IsFired && seed.second.prescale == 1){
+    //   std::cout << seed.first << " triggered"
+    // 		<< ": lumisection = " << event_->lumi
+    // 		<< "; event = " << event_->event << std::endl;
+    // }
     // std::string testTrigger = "L1_SingleMu22";
     // std::string testTrigger = "L1_DoubleMu3er2p0_SQ_OS_dR_Max1p6";
     // std::string testTrigger = "L1_ETMHF90";
