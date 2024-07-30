@@ -327,6 +327,11 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   tmEventSetup.Axol1tlTrigger,
 ) %}
 
+{% set CicadaTriggerConditionTypes = (
+  tmEventSetup.CicadaTrigger,
+) %}
+
+
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- if cond.getType() in OverlapRemovalConditionTypes %}
     {% set overlap_removal = 1 %}
@@ -409,6 +414,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
   {% elif cond.getType() in Axol1tlTriggerConditionTypes %}
     {% include 'Axol1tlTriggerTemplate.cc' %}
+
+  {% elif cond.getType() in CicadaTriggerConditionTypes %}
+    {% include 'CicadaTriggerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}

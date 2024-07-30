@@ -1,6 +1,6 @@
 # L1Ntuples production recipe
 
-The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples based on the latest conditions deployed during the 2023 data-taking.
+The following L1Ntuples recipe presents the latest snapshot used to create L1Ntuples based on the latest conditions deployed during the 2024 data-taking.
 
 The targeted environment is Lxplus and assumes a standard session:
 ```
@@ -13,8 +13,8 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati), or the following instructions if the twiki is not updated.
 
 ```
-cmsrel CMSSW_14_0_9
-cd CMSSW_14_0_9/src
+cmsrel CMSSW_14_0_10
+cd CMSSW_14_0_10/src
 cmsenv
 git cms-init
 git cms-addpkg L1Trigger/L1TCalorimeter
@@ -28,6 +28,11 @@ cd L1Trigger/L1TZDC/data
 wget https://raw.githubusercontent.com/cms-data/L1Trigger-L1TCalorimeter/master/zdcLUT_HI_v0_1.txt
 cd -
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
+mkdir -p L1Trigger/L1TGlobal/data/Luminosity/startup/
+cd L1Trigger/L1TGlobal/data/Luminosity/startup/
+wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2024_v1_3_0/L1Menu_Collisions2024_v1_3_0.xml
+cd ../../../../../
+sed -i 's/L1Menu_Collisions2022_v1_2_0.xml/L1Menu_Collisions2024_v1_3_0.xml/g' L1Trigger/Configuration/python/customiseUtils.py
 
 git cms-checkdeps -A -a
 
