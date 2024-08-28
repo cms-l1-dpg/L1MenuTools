@@ -864,15 +864,15 @@ bool L1Ntuple::SetNanoBranchAddresses()
   fChain->SetBranchAddress("L1EtSum_hwPhi", sumIPhiTmp.data()); // use temp int vector for initial loading
   fChain->SetBranchAddress("L1EtSum_bx", sumBxTmp.data()); // use temp short int vector for initial loading
 
-  // Showers placeholders - not yet in nano
-  // unsigned short int nMuonShowers;
-  // std::vector<short int> muonShowerBx;
-  // std::vector<short int> muonShowerOneNominal;
-  // std::vector<short int> muonShowerOneTight;
-  // std::vector<short int> muonShowerTwoLoose;
-  // std::vector<short int> muonShowerTwoLooseDiffSectors;
+  // Muon Shower placeholders - not yet in nano
+  // fChain->SetBranchAddress("nL1MuShower", &upgrade_->nMuonShowers, &b_nMuonShowers); 
+  // fChain->SetBranchAddress("L1MuShower_isOneNominal", upgrade_->muonShowerOneNominal.data()); 
+  // fChain->SetBranchAddress("L1MuShower_isOneTight", upgrade_->muonShowerOneTight.data());
+  // fChain->SetBranchAddress("L1MuShower_isTwoLoose", upgrade_->muonShowerTwoLoose.data());
+  // fChain->SetBranchAddress("L1MuShower_isTwoLooseDiffSectors", upgrade_->muonShowerTwoLooseDiffSectors.data()); 
+  // fChain->SetBranchAddress("L1MuShower_bx", sumBxTmp.data()); // use temp short int vector for initial loading
 
-  // Sums ZDC placeholders - not yet in nano
+  // Sums ZDC placeholders - used for heavy ions; no plans yet to include in nano
   // unsigned short int nSumsZDC;
   // std::vector<short int> sumZDCType;
   // std::vector<float> sumZDCEt;
