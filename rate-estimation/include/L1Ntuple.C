@@ -991,7 +991,7 @@ bool L1Ntuple::ResizeNanoVectors(Long64_t entry)
 // ===========================================================================
 bool L1Ntuple::LoadNanoVariables()
 {
-  // Nano loads charged based on hardware boolean - replicate logic here
+  // Nano loads charges based on hardware boolean - replicate logic here
   for(int imu=0; imu < upgrade_->nMuons; imu++) {
     if(muonChgValid.at(imu) == 1){ // check charge measurement is valid
       if(upgrade_->muonChg.at(imu) == 1){upgrade_->muonChg.at(imu) = -1;}
