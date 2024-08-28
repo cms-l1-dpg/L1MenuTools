@@ -1207,8 +1207,7 @@ bool L1Menu2016::Loop()
       LoadNanoVariables();
     }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
-    // std::cout << "Run: " << event_->run << "; Event: " << event_->event << "; Lumi: " << event_->lumi << "; BX: " << event_->bx << "; nPV: " << event_->nPV << std::endl;
-    
+
     if (event_ != NULL )
     {
       if (L1Config["SelectRun"] != -1 && event_->run != L1Config["SelectRun"])
