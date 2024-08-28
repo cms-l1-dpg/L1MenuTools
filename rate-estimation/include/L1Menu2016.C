@@ -1197,7 +1197,15 @@ bool L1Menu2016::Loop()
     i++;
     Long64_t ientry = LoadTree(i); 
     if (ientry < 0) break;
+    
+    if (L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // resize object vectors before loading full event in
+      ResizeNanoVectors(ientry);
+    }
+    
     GetEntry(i);
+    if(L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // map muon charges in nanoAOD to equivalent L1Ntuple values: 1 -> -1 and 0 -> 1
+      LoadNanoVariables();
+    }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
     // std::cout << "Run: " << event_->run << "; Event: " << event_->event << "; Lumi: " << event_->lumi << "; BX: " << event_->bx << "; nPV: " << event_->nPV << std::endl;
     
@@ -1521,7 +1529,8 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
       }
       else{
 	assert(l1uGT != NULL);
-	IsFired = l1uGT->GetuGTDecision(seed.first);
+	IsFired = l1uGT->GetuGTDecision(seed.first); // use initial decisions
+	// IsFired = l1uGT->GetuGTDecision(seed.first, false); // use final decisions
       }
     }
     else
