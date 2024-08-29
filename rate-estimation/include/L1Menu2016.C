@@ -1203,7 +1203,7 @@ bool L1Menu2016::Loop()
     }
     
     GetEntry(i);
-    if(L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // map muon charges in nanoAOD to equivalent L1Ntuple values: 1 -> -1 and 0 -> 1
+    if(L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // load in variables that are stored differently between nanoAOD and L1NTuple formats
       LoadNanoVariables();
     }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
