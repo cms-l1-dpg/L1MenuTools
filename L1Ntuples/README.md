@@ -13,8 +13,8 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati), or the following instructions if the twiki is not updated.
 
 ```
-cmsrel CMSSW_14_0_10
-cd CMSSW_14_0_10/src
+cmsrel CMSSW_14_0_13
+cd CMSSW_14_0_13/src
 cmsenv
 git cms-init
 git cms-addpkg L1Trigger/L1TCalorimeter
