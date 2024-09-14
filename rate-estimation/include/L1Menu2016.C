@@ -127,6 +127,7 @@ bool L1Menu2016::InitConfig()
   L1Config["SelectEvent"]       = -1;
   L1Config["UsePFMETNoMuon"]    = 0;
   L1Config["UseuGTDecision"]    = 0;
+  L1Config["UseFinalDecision"]  = 0;
   L1Config["UseUnpackTree"]     = 0;
   L1Config["doScanLS"]          = 0;
   L1Config["SetL1AcceptPS"]     = 0;
@@ -1528,8 +1529,7 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
       }
       else{
 	assert(l1uGT != NULL);
-	IsFired = l1uGT->GetuGTDecision(seed.first); // use initial decisions
-	// IsFired = l1uGT->GetuGTDecision(seed.first, false); // use final decisions
+	IsFired = l1uGT->GetuGTDecision(seed.first, !L1Config["UseFinalDecision"]); // initial decisions by default, flag switches to final
       }
     }
     else
