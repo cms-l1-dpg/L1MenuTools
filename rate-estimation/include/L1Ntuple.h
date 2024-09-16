@@ -74,6 +74,8 @@ public:
   bool dol1CaloTower;
   bool dol1uGT;
   bool dol1unpackuGT;
+  bool doNano;
+  bool UseuGTDecision;
 
   L1Analysis::L1AnalysisEventDataFormat         *event_;
   L1Analysis::L1AnalysisL1UpgradeDataFormat     *upgrade_;
@@ -88,8 +90,19 @@ public:
   L1Analysis::L1AnalysisL1CaloTowerDataFormat   *l1CaloTower_;
   GlobalAlgBlk                                  *l1uGT_;
   GlobalAlgBlk                                  *l1unpackuGT_;
-  
-
+  std::map<std::string, bool>                    nanoDecisions_;
+  std::vector<short int> muonChgValid;
+  std::vector<short int> sumBxTmp;
+  std::vector<int>       sumTypeTmp;
+  std::vector<int>       sumIEtTmp;
+  std::vector<int>       sumIPhiTmp;
+  TBranch        *b_eventLumi;
+  TBranch        *b_nEGs;
+  TBranch        *b_nTaus;
+  TBranch        *b_nJets;
+  TBranch        *b_nMuons;
+  TBranch        *b_nSums;
+ 
   L1Ntuple();
   L1Ntuple(const std::string & fname);
 
@@ -97,6 +110,8 @@ public:
 
   bool Open(const std::string & fname);
   bool OpenWithList(const std::string & fname);
+  bool ResizeNanoVectors(Long64_t entry);
+  bool LoadNanoVariables();
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
   virtual void     Init();
@@ -112,6 +127,7 @@ protected:
   bool OpenWithoutInit();
   bool SelectTree(bool UseUnpack);
   bool OpenNtupleList(const std::string & fname);
+  bool SetNanoBranchAddresses();
 
   std::vector<std::string> listNtuples;
 private :
@@ -119,6 +135,7 @@ private :
   TFile* rf;
   std::string MainTreePath;
   std::string CaloTreePath;
+  std::string EventTreePath;
   std::string uGTTreePath;
 };
 

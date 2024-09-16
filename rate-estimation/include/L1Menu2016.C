@@ -109,6 +109,7 @@ bool L1Menu2016::InitConfig()
   L1Config["doTnPMuon"]         = 0;
   L1Config["doPlotLS"]          = 0;
   L1Config["doPrintPU"]         = 0;
+  L1Config["doNano"]            = 0;
   L1Config["lowerPUbound"]      = -1;
   L1Config["upperPUbound"]      = -1;
   L1Config["doReweighting2018"] = 0;
@@ -126,6 +127,7 @@ bool L1Menu2016::InitConfig()
   L1Config["SelectEvent"]       = -1;
   L1Config["UsePFMETNoMuon"]    = 0;
   L1Config["UseuGTDecision"]    = 0;
+  L1Config["UseFinalDecision"]  = 0;
   L1Config["UseUnpackTree"]     = 0;
   L1Config["doScanLS"]          = 0;
   L1Config["SetL1AcceptPS"]     = 0;
@@ -990,6 +992,8 @@ bool L1Menu2016::PrintConfig() const
 bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::string, std::string> &configstr)
 {
   GetRunConfig(config, configstr);
+  doNano = L1Config["doNano"];                 //flags for internal usage in L1Ntuple class
+  UseuGTDecision = L1Config["UseuGTDecision"];
   OpenWithList(tuplefilename);
 
   //Prepare Menu
@@ -1007,8 +1011,16 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
 
   PrintConfig();
   BookHistogram();
+
+  if (L1Config["doNano"]){
+    for(auto& seed: mL1Seed) // fill decision map
+    {
+      nanoDecisions_.insert(std::pair<std::string,bool>(seed.first,0));
+      fChain->SetBranchAddress(seed.first.c_str(), &nanoDecisions_.at(seed.first));
+    }
+  }
   
-  if (writeplots)
+  if (writeplots && !L1Config["doNano"])
   {
     GlobalAlgBlk *l1uGTsel_ = l1uGT_;
     TChain       *fl1uGTsel = fl1uGT;
@@ -1066,7 +1078,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
       l1TnP->DoMuonTnP();
     }
   
-  if (l1unpackuGT_ != NULL)
+  if (l1unpackuGT_ != NULL  && !L1Config["doNano"])
     {
       l1unpackuGT = new L1uGT( outrootfile, event_, l1unpackuGT_, &L1Event, &mL1Seed);
       //std::cout << "line 1025 start" << std::endl;
@@ -1074,7 +1086,7 @@ bool L1Menu2016::PreLoop(std::map<std::string, float> &config, std::map<std::str
       //std::cout << "line 1025 end" << std::endl;
     }
   
-  if (L1Config["doCompuGT"] || L1Config["UseuGTDecision"] || L1Config["doPlotuGt"])
+  if ((L1Config["doCompuGT"] || L1Config["UseuGTDecision"] || L1Config["doPlotuGt"])  && !L1Config["doNano"])
     {
       assert(l1uGT_ != NULL);
       l1uGT = new L1uGT( outrootfile, event_, l1uGT_, &L1Event, &mL1Seed);
@@ -1186,7 +1198,15 @@ bool L1Menu2016::Loop()
     i++;
     Long64_t ientry = LoadTree(i); 
     if (ientry < 0) break;
+    
+    if (L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // resize object vectors before loading full event in
+      ResizeNanoVectors(ientry);
+    }
+    
     GetEntry(i);
+    if(L1Config["doNano"] && !L1Config["UseuGTDecision"]){ // load in variables that are stored differently between nanoAOD and L1NTuple formats
+      LoadNanoVariables();
+    }
     if (L1Config["maxEvent"] != -1 && i > L1Config["maxEvent"]) break;
 
     if (event_ != NULL )
@@ -1504,8 +1524,13 @@ bool L1Menu2016::RunMenu(float pu, bool reweight_2018,  bool reweight_Run3, bool
     bool IsFired = false;
     if (L1Config["UseuGTDecision"])
     {
-      assert(l1uGT != NULL);
-      IsFired = l1uGT->GetuGTDecision(seed.first);
+      if(L1Config["doNano"]){
+	IsFired = nanoDecisions_.at(seed.first);
+      }
+      else{
+	assert(l1uGT != NULL);
+	IsFired = l1uGT->GetuGTDecision(seed.first, !L1Config["UseFinalDecision"]); // initial decisions by default, flag switches to final
+      }
     }
     else
       IsFired = CheckL1Seed(seed.first);

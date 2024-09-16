@@ -4,7 +4,7 @@ Long64_t L1Ntuple::GetEntries()
 {
   return nentries_;
 }
-
+ 
 L1Ntuple::L1Ntuple()
 {
   doEvent         = true;
@@ -59,6 +59,7 @@ L1Ntuple::L1Ntuple()
   MainTreePath = "l1UpgradeEmuTree/L1UpgradeTree";
   CaloTreePath = "l1CaloTowerEmuTree/L1CaloTowerTree";
   uGTTreePath  = "l1uGTEmuTree/L1uGTTree";
+  EventTreePath = "l1EventTree/L1EventTree";
 }
 
 L1Ntuple::L1Ntuple(const std::string & fname)
@@ -127,7 +128,7 @@ bool L1Ntuple::CheckFirstFile()
   TTree * mytreel1CaloTower = (TTree*) rf->Get(CaloTreePath.c_str());
   TTree * mytreel1uGT       = (TTree*) rf->Get(uGTTreePath.c_str());
   TTree * mytreel1unpackuGT = (TTree*) rf->Get("l1uGTTree/L1uGTTree");
-  TTree * mytreeEvent    = (TTree*) rf->Get("l1EventTree/L1EventTree");
+  TTree * mytreeEvent    = (TTree*) rf->Get(EventTreePath.c_str());
   TTree * mytreemuon     = (TTree*) rf->Get("l1MuonRecoTreeProducer/MuonRecoTree");
   TTree * mytreeExtra    = (TTree*) rf->Get("l1ExtraTreeProducer/L1ExtraTree");
   TTree * mytreeEmuExtra = (TTree*) rf->Get("l1EmulatorExtraTree/L1ExtraTree");
@@ -279,7 +280,7 @@ bool L1Ntuple::CheckFirstFile()
 bool L1Ntuple::OpenWithoutInit()
 {
   fChain             = new TChain(MainTreePath.c_str());
-  ftreeEvent         = new TChain("l1EventTree/L1EventTree");
+  ftreeEvent         = new TChain(EventTreePath.c_str());
   ftreemuon          = new TChain("l1MuonRecoTreeProducer/MuonRecoTree");
   ftreeExtra         = new TChain("l1ExtraTreeProducer/L1ExtraTree");
   ftreeEmuExtra      = new TChain("l1EmulatorExtraTree/L1ExtraTree");
@@ -399,7 +400,13 @@ void L1Ntuple::Init()
 
    upgrade_      = new L1Analysis::L1AnalysisL1UpgradeDataFormat();
    std::cout<<"Setting branch addresses for L1Upgrade tree...  "<<std::endl;
-   fChain->SetBranchAddress("L1Upgrade", &upgrade_ );
+   if(doNano && !UseuGTDecision){ // since it's a lot of i/o, only use if necessary
+     printf("Using nano config for L1Upgrade tree\n");
+     SetNanoBranchAddresses();
+   }
+   else{
+     fChain->SetBranchAddress("L1Upgrade", &upgrade_ );
+   }
 
    if (doBitWiseLayer1){
      std::cout<<"Setting branch addresses for L1 Upgrade tree w/ Bitwise Emul...  "<<std::endl;
@@ -412,7 +419,16 @@ void L1Ntuple::Init()
      std::cout<<"Setting branch addresses for Event tree..."<<std::endl;
      event_        = new L1Analysis::L1AnalysisEventDataFormat();
      
-     ftreeEvent->SetBranchAddress("Event", &event_ );
+     if(doNano){
+       printf("Using nano config for Event tree\n");
+       ftreeEvent->SetBranchAddress("event", &event_->event );
+       ftreeEvent->SetBranchAddress("run", &event_->run );
+       ftreeEvent->SetBranchAddress("luminosityBlock", &event_->lumi, &b_eventLumi);
+       ftreeEvent->SetBranchAddress("bunchCrossing", &event_->bx );
+     }
+     else{
+       ftreeEvent->SetBranchAddress("Event", &event_, &b_eventLumi);
+     }
      fChain-> AddFriend(ftreeEvent);     
    }
 
@@ -639,9 +655,360 @@ std::map<std::string, std::string> L1Ntuple::GetuGTAlias(TChain* fl1uGT)
 // ===========================================================================
 bool L1Ntuple::SelectTree(bool UseUnpack)
 {
-  if (!UseUnpack) return false;
-  MainTreePath = "l1UpgradeTree/L1UpgradeTree";
-  CaloTreePath = "l1CaloTowerTree/L1CaloTowerTree";
-  uGTTreePath  = "l1uGTTree/L1uGTTree";
-  return true;
+  if(!doNano){
+    if (!UseUnpack) return false;
+    MainTreePath = "l1UpgradeTree/L1UpgradeTree";
+    CaloTreePath = "l1CaloTowerTree/L1CaloTowerTree";
+    uGTTreePath  = "l1uGTTree/L1uGTTree";
+    EventTreePath = "l1EventTree/L1EventTree";
+    return true;
+  }
+  else {
+    MainTreePath = "Events";
+    EventTreePath = "Events";
+    CaloTreePath = "Events";
+    uGTTreePath  = "Events";
+    return true;
+  }
 }       // -----  end of function L1Ntuple::SelectTree  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  L1Ntuple::SetNanoBranchAddresses
+//  Description:  
+// ===========================================================================
+bool L1Ntuple::SetNanoBranchAddresses()
+{
+  // Set maximum buffer size to avoid memory errors with nano branch loading
+  int bufferEG = 64;
+  int bufferTau = 64;
+  int bufferJet = 40;
+  int bufferMu = 12;
+  int bufferSums = 85; // Always 85 for nanoAOD: 17 sum types across 5 bx [-2, -1, 0, 1, 2]
+                       // NOTE: for L1Ntuple this is cut off at 60 - bx = 2 sums are missing and only 9 sums are done for bx = 1
+     
+  // EG objects
+  upgrade_->egEt.resize(bufferEG);
+  upgrade_->egEta.resize(bufferEG);
+  upgrade_->egPhi.resize(bufferEG);
+  upgrade_->egIEt.resize(bufferEG);
+  upgrade_->egIEta.resize(bufferEG);
+  upgrade_->egIPhi.resize(bufferEG);
+  upgrade_->egIso.resize(bufferEG);
+  upgrade_->egBx.resize(bufferEG);
+  upgrade_->egTowerIPhi.resize(bufferEG);
+  upgrade_->egTowerIEta.resize(bufferEG);
+  upgrade_->egRawEt.resize(bufferEG);
+  upgrade_->egIsoEt.resize(bufferEG);
+  upgrade_->egFootprintEt.resize(bufferEG);
+  upgrade_->egNTT.resize(bufferEG);
+  upgrade_->egShape.resize(bufferEG);
+  upgrade_->egTowerHoE.resize(bufferEG);
+  upgrade_->egHwQual.resize(bufferEG);
+
+  fChain->SetBranchAddress("nL1EG", &upgrade_->nEGs, &b_nEGs);
+  fChain->SetBranchAddress("L1EG_pt", upgrade_->egEt.data());// pt == et
+  fChain->SetBranchAddress("L1EG_eta", upgrade_->egEta.data());
+  fChain->SetBranchAddress("L1EG_phi", upgrade_->egPhi.data());
+  fChain->SetBranchAddress("L1EG_hwPt", upgrade_->egIEt.data());// IEt = hwPt (etc)
+  fChain->SetBranchAddress("L1EG_hwEta", upgrade_->egIEta.data());
+  fChain->SetBranchAddress("L1EG_hwPhi", upgrade_->egIPhi.data());
+  fChain->SetBranchAddress("L1EG_hwIso", upgrade_->egIso.data());// Iso = hwIso
+  fChain->SetBranchAddress("L1EG_bx", upgrade_->egBx.data());
+  fChain->SetBranchAddress("L1EG_towerIPhi", upgrade_->egTowerIPhi.data());
+  fChain->SetBranchAddress("L1EG_towerIEta", upgrade_->egTowerIEta.data());
+  fChain->SetBranchAddress("L1EG_rawEt", upgrade_->egRawEt.data());
+  fChain->SetBranchAddress("L1EG_isoEt", upgrade_->egIsoEt.data());
+  fChain->SetBranchAddress("L1EG_footprintEt", upgrade_->egFootprintEt.data());
+  fChain->SetBranchAddress("L1EG_nTT", upgrade_->egNTT.data());
+  fChain->SetBranchAddress("L1EG_shape", upgrade_->egShape.data());
+  fChain->SetBranchAddress("L1EG_towerHoE", upgrade_->egTowerHoE.data());
+  fChain->SetBranchAddress("L1EG_hwQual", upgrade_->egHwQual.data());
+
+  // Tau objects
+  upgrade_->tauEt.resize(bufferTau);
+  upgrade_->tauEta.resize(bufferTau);
+  upgrade_->tauPhi.resize(bufferTau);
+  upgrade_->tauIEt.resize(bufferTau);
+  upgrade_->tauIEta.resize(bufferTau);
+  upgrade_->tauIPhi.resize(bufferTau);
+  upgrade_->tauIso.resize(bufferTau);
+  upgrade_->tauBx.resize(bufferTau);
+  upgrade_->tauTowerIPhi.resize(bufferTau);
+  upgrade_->tauTowerIEta.resize(bufferTau);
+  upgrade_->tauRawEt.resize(bufferTau);
+  upgrade_->tauIsoEt.resize(bufferTau);
+  upgrade_->tauNTT.resize(bufferTau);
+  upgrade_->tauHasEM.resize(bufferTau);
+  upgrade_->tauIsMerged.resize(bufferTau);
+  upgrade_->tauHwQual.resize(bufferTau);
+
+  fChain->SetBranchAddress("nL1Tau", &upgrade_->nTaus, &b_nTaus);
+  fChain->SetBranchAddress("L1Tau_pt", upgrade_->tauEt.data());
+  fChain->SetBranchAddress("L1Tau_eta", upgrade_->tauEta.data());
+  fChain->SetBranchAddress("L1Tau_phi", upgrade_->tauPhi.data());
+  fChain->SetBranchAddress("L1Tau_hwPt", upgrade_->tauIEt.data());
+  fChain->SetBranchAddress("L1Tau_hwEta", upgrade_->tauIEta.data());
+  fChain->SetBranchAddress("L1Tau_hwPhi", upgrade_->tauIPhi.data());
+  fChain->SetBranchAddress("L1Tau_hwIso", upgrade_->tauIso.data());
+  fChain->SetBranchAddress("L1Tau_bx", upgrade_->tauBx.data());
+  fChain->SetBranchAddress("L1Tau_towerIPhi", upgrade_->tauTowerIPhi.data());
+  fChain->SetBranchAddress("L1Tau_towerIEta", upgrade_->tauTowerIEta.data());
+  fChain->SetBranchAddress("L1Tau_rawEt", upgrade_->tauRawEt.data());
+  fChain->SetBranchAddress("L1Tau_isoEt", upgrade_->tauIsoEt.data());
+  fChain->SetBranchAddress("L1Tau_nTT", upgrade_->tauNTT.data());
+  fChain->SetBranchAddress("L1Tau_hasEM", upgrade_->tauHasEM.data());
+  fChain->SetBranchAddress("L1Tau_isMerged", upgrade_->tauIsMerged.data());
+  fChain->SetBranchAddress("L1Tau_hwQual", upgrade_->tauHwQual.data());
+
+  // Jet objects
+  upgrade_->jetEt.resize(bufferJet);
+  upgrade_->jetEta.resize(bufferJet);
+  upgrade_->jetPhi.resize(bufferJet);
+  upgrade_->jetIEt.resize(bufferJet);
+  upgrade_->jetIEta.resize(bufferJet);
+  upgrade_->jetIPhi.resize(bufferJet);
+  upgrade_->jetHwQual.resize(bufferJet);
+  upgrade_->jetBx.resize(bufferJet);
+  upgrade_->jetTowerIPhi.resize(bufferJet);
+  upgrade_->jetTowerIEta.resize(bufferJet);
+  upgrade_->jetRawEt.resize(bufferJet);
+  upgrade_->jetSeedEt.resize(bufferJet);
+  upgrade_->jetPUEt.resize(bufferJet);
+  upgrade_->jetPUDonutEt0.resize(bufferJet);
+  upgrade_->jetPUDonutEt1.resize(bufferJet);
+  upgrade_->jetPUDonutEt2.resize(bufferJet);
+  upgrade_->jetPUDonutEt3.resize(bufferJet);
+
+  fChain->SetBranchAddress("nL1Jet", &upgrade_->nJets, &b_nJets);
+  fChain->SetBranchAddress("L1Jet_pt", upgrade_->jetEt.data());
+  fChain->SetBranchAddress("L1Jet_eta", upgrade_->jetEta.data());
+  fChain->SetBranchAddress("L1Jet_phi", upgrade_->jetPhi.data());
+  fChain->SetBranchAddress("L1Jet_hwPt", upgrade_->jetIEt.data());
+  fChain->SetBranchAddress("L1Jet_hwEta", upgrade_->jetIEta.data());
+  fChain->SetBranchAddress("L1Jet_hwPhi", upgrade_->jetIPhi.data());
+  fChain->SetBranchAddress("L1Jet_hwQual", upgrade_->jetHwQual.data());
+  fChain->SetBranchAddress("L1Jet_bx", upgrade_->jetBx.data());
+  fChain->SetBranchAddress("L1Jet_towerIPhi", upgrade_->jetTowerIPhi.data());
+  fChain->SetBranchAddress("L1Jet_towerIEta", upgrade_->jetTowerIEta.data());
+  fChain->SetBranchAddress("L1Jet_rawEt", upgrade_->jetRawEt.data());
+  fChain->SetBranchAddress("L1Jet_seedEt", upgrade_->jetSeedEt.data());
+  fChain->SetBranchAddress("L1Jet_puEt", upgrade_->jetPUEt.data());
+  fChain->SetBranchAddress("L1Jet_puDonutEt0", upgrade_->jetPUDonutEt0.data());
+  fChain->SetBranchAddress("L1Jet_puDonutEt1", upgrade_->jetPUDonutEt1.data());
+  fChain->SetBranchAddress("L1Jet_puDonutEt2", upgrade_->jetPUDonutEt2.data());
+  fChain->SetBranchAddress("L1Jet_puDonutEt3", upgrade_->jetPUDonutEt3.data());
+
+  // Muon objects
+  upgrade_->muonEt.resize(bufferMu);
+  upgrade_->muonEtUnconstrained.resize(bufferMu);
+  upgrade_->muonEta.resize(bufferMu);
+  upgrade_->muonPhi.resize(bufferMu);
+  upgrade_->muonEtaAtVtx.resize(bufferMu);
+  upgrade_->muonPhiAtVtx.resize(bufferMu);
+  upgrade_->muonIEt.resize(bufferMu);
+  upgrade_->muonIEtUnconstrained.resize(bufferMu);
+  upgrade_->muonIEta.resize(bufferMu);
+  upgrade_->muonIPhi.resize(bufferMu);
+  upgrade_->muonIEtaAtVtx.resize(bufferMu);
+  upgrade_->muonIPhiAtVtx.resize(bufferMu);
+  upgrade_->muonIDEta.resize(bufferMu);
+  upgrade_->muonIDPhi.resize(bufferMu);
+  upgrade_->muonChg.resize(bufferMu);
+  upgrade_->muonIso.resize(bufferMu);
+  upgrade_->muonQual.resize(bufferMu);
+  upgrade_->muonDxy.resize(bufferMu);
+  upgrade_->muonTfMuonIdx.resize(bufferMu);
+  upgrade_->muonBx.resize(bufferMu);
+  muonChgValid.resize(bufferMu);
+
+  fChain->SetBranchAddress("nL1Mu", &upgrade_->nMuons, &b_nMuons);
+  fChain->SetBranchAddress("L1Mu_pt", upgrade_->muonEt.data());
+  fChain->SetBranchAddress("L1Mu_ptUnconstrained", upgrade_->muonEtUnconstrained.data());
+  fChain->SetBranchAddress("L1Mu_eta", upgrade_->muonEta.data());
+  fChain->SetBranchAddress("L1Mu_phi", upgrade_->muonPhi.data());
+  fChain->SetBranchAddress("L1Mu_etaAtVtx", upgrade_->muonEtaAtVtx.data());
+  fChain->SetBranchAddress("L1Mu_phiAtVtx", upgrade_->muonPhiAtVtx.data());
+  fChain->SetBranchAddress("L1Mu_hwPt", upgrade_->muonIEt.data());
+  fChain->SetBranchAddress("L1Mu_hwPtUnconstrained", upgrade_->muonIEtUnconstrained.data());
+  fChain->SetBranchAddress("L1Mu_hwEta", upgrade_->muonIEta.data());
+  fChain->SetBranchAddress("L1Mu_hwPhi", upgrade_->muonIPhi.data());
+  fChain->SetBranchAddress("L1Mu_hwEtaAtVtx", upgrade_->muonIEtaAtVtx.data());
+  fChain->SetBranchAddress("L1Mu_hwPhiAtVtx", upgrade_->muonIPhiAtVtx.data());
+  fChain->SetBranchAddress("L1Mu_hwDEtaExtra", upgrade_->muonIDEta.data());
+  fChain->SetBranchAddress("L1Mu_hwDPhiExtra", upgrade_->muonIDPhi.data());
+  fChain->SetBranchAddress("L1Mu_hwCharge", upgrade_->muonChg.data());
+  fChain->SetBranchAddress("L1Mu_hwChargeValid", muonChgValid.data());
+  fChain->SetBranchAddress("L1Mu_hwIso", upgrade_->muonIso.data());
+  fChain->SetBranchAddress("L1Mu_hwQual", upgrade_->muonQual.data());
+  fChain->SetBranchAddress("L1Mu_hwDXY", upgrade_->muonDxy.data());
+  fChain->SetBranchAddress("L1Mu_tfMuonIndex", upgrade_->muonTfMuonIdx.data());
+  fChain->SetBranchAddress("L1Mu_bx", upgrade_->muonBx.data());
+
+  // Sums
+  upgrade_->sumType.resize(bufferSums);
+  upgrade_->sumEt.resize(bufferSums);
+  upgrade_->sumPhi.resize(bufferSums);
+  upgrade_->sumIEt.resize(bufferSums);
+  upgrade_->sumIPhi.resize(bufferSums);
+  upgrade_->sumBx.resize(bufferSums);
+  sumBxTmp.resize(bufferSums);
+  sumTypeTmp.resize(bufferSums);
+  sumIEtTmp.resize(bufferSums);
+  sumIPhiTmp.resize(bufferSums);
+
+  fChain->SetBranchAddress("nL1EtSum", &upgrade_->nSums, &b_nSums); 
+  fChain->SetBranchAddress("L1EtSum_etSumType", sumTypeTmp.data()); // use temp int vector for initial loading
+  fChain->SetBranchAddress("L1EtSum_pt", upgrade_->sumEt.data());
+  fChain->SetBranchAddress("L1EtSum_phi", upgrade_->sumPhi.data());
+  fChain->SetBranchAddress("L1EtSum_hwPt", sumIEtTmp.data()); // use temp int vector for initial loading
+  fChain->SetBranchAddress("L1EtSum_hwPhi", sumIPhiTmp.data()); // use temp int vector for initial loading
+  fChain->SetBranchAddress("L1EtSum_bx", sumBxTmp.data()); // use temp short int vector for initial loading
+
+  // Muon Shower placeholders - not yet in nano
+  // fChain->SetBranchAddress("nL1MuShower", &upgrade_->nMuonShowers, &b_nMuonShowers); 
+  // fChain->SetBranchAddress("L1MuShower_isOneNominal", upgrade_->muonShowerOneNominal.data()); 
+  // fChain->SetBranchAddress("L1MuShower_isOneTight", upgrade_->muonShowerOneTight.data());
+  // fChain->SetBranchAddress("L1MuShower_isTwoLoose", upgrade_->muonShowerTwoLoose.data());
+  // fChain->SetBranchAddress("L1MuShower_isTwoLooseDiffSectors", upgrade_->muonShowerTwoLooseDiffSectors.data()); 
+  // fChain->SetBranchAddress("L1MuShower_bx", sumBxTmp.data()); // use temp short int vector for initial loading
+
+  // Sums ZDC placeholders - used for heavy ions; no plans yet to include in nano
+  // unsigned short int nSumsZDC;
+  // std::vector<short int> sumZDCType;
+  // std::vector<float> sumZDCEt;
+  // std::vector<float> sumZDCPhi;
+  // std::vector<short int> sumZDCIEt;
+  // std::vector<short int> sumZDCIPhi;
+  // std::vector<float> sumZDCBx;
+
+  return true;
+} // -----  end of function L1Ntuple::SetNanoBranchAddresses  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  L1Ntuple::ResizeNanoVectors
+//  Description:  
+// ===========================================================================
+bool L1Ntuple::ResizeNanoVectors(Long64_t entry)
+{
+  // Load only the numbers of each object type in the event
+  b_nEGs->GetEntry(entry);
+  b_nTaus->GetEntry(entry);
+  b_nJets->GetEntry(entry);
+  b_nMuons->GetEntry(entry);
+  b_nSums->GetEntry(entry);
+
+  // Resize vectors ready for full event loading
+  // NOTE: These vector sizes are used directly in menulib
+  upgrade_->egBx.resize(upgrade_->nEGs);
+  upgrade_->tauBx.resize(upgrade_->nTaus);
+  upgrade_->jetBx.resize(upgrade_->nJets);
+  upgrade_->muonBx.resize(upgrade_->nMuons);
+  upgrade_->sumBx.resize(upgrade_->nSums);
+  upgrade_->sumType.resize(upgrade_->nSums);
+
+  // Remainder of vectors
+  upgrade_->egEt.resize(upgrade_->nEGs);
+  upgrade_->egEta.resize(upgrade_->nEGs);
+  upgrade_->egPhi.resize(upgrade_->nEGs);
+  upgrade_->egIEt.resize(upgrade_->nEGs);
+  upgrade_->egIEta.resize(upgrade_->nEGs);
+  upgrade_->egIPhi.resize(upgrade_->nEGs);
+  upgrade_->egIso.resize(upgrade_->nEGs);
+  upgrade_->egTowerIPhi.resize(upgrade_->nEGs);
+  upgrade_->egTowerIEta.resize(upgrade_->nEGs);
+  upgrade_->egRawEt.resize(upgrade_->nEGs);
+  upgrade_->egIsoEt.resize(upgrade_->nEGs);
+  upgrade_->egFootprintEt.resize(upgrade_->nEGs);
+  upgrade_->egNTT.resize(upgrade_->nEGs);
+  upgrade_->egShape.resize(upgrade_->nEGs);
+  upgrade_->egTowerHoE.resize(upgrade_->nEGs);
+  upgrade_->egHwQual.resize(upgrade_->nEGs);
+
+  upgrade_->tauEt.resize(upgrade_->nTaus);
+  upgrade_->tauEta.resize(upgrade_->nTaus);
+  upgrade_->tauPhi.resize(upgrade_->nTaus);
+  upgrade_->tauIEt.resize(upgrade_->nTaus);
+  upgrade_->tauIEta.resize(upgrade_->nTaus);
+  upgrade_->tauIPhi.resize(upgrade_->nTaus);
+  upgrade_->tauIso.resize(upgrade_->nTaus);
+  upgrade_->tauTowerIPhi.resize(upgrade_->nTaus);
+  upgrade_->tauTowerIEta.resize(upgrade_->nTaus);
+  upgrade_->tauRawEt.resize(upgrade_->nTaus);
+  upgrade_->tauIsoEt.resize(upgrade_->nTaus);
+  upgrade_->tauNTT.resize(upgrade_->nTaus);
+  upgrade_->tauHasEM.resize(upgrade_->nTaus);
+  upgrade_->tauIsMerged.resize(upgrade_->nTaus);
+  upgrade_->tauHwQual.resize(upgrade_->nTaus);
+
+  upgrade_->jetEt.resize(upgrade_->nJets);
+  upgrade_->jetEta.resize(upgrade_->nJets);
+  upgrade_->jetPhi.resize(upgrade_->nJets);
+  upgrade_->jetIEt.resize(upgrade_->nJets);
+  upgrade_->jetIEta.resize(upgrade_->nJets);
+  upgrade_->jetIPhi.resize(upgrade_->nJets);
+  upgrade_->jetHwQual.resize(upgrade_->nJets);
+  upgrade_->jetTowerIPhi.resize(upgrade_->nJets);
+  upgrade_->jetTowerIEta.resize(upgrade_->nJets);
+  upgrade_->jetRawEt.resize(upgrade_->nJets);
+  upgrade_->jetSeedEt.resize(upgrade_->nJets);
+  upgrade_->jetPUEt.resize(upgrade_->nJets);
+  upgrade_->jetPUDonutEt0.resize(upgrade_->nJets);
+  upgrade_->jetPUDonutEt1.resize(upgrade_->nJets);
+  upgrade_->jetPUDonutEt2.resize(upgrade_->nJets);
+  upgrade_->jetPUDonutEt3.resize(upgrade_->nJets);
+
+  upgrade_->muonEt.resize(upgrade_->nMuons);
+  upgrade_->muonEtUnconstrained.resize(upgrade_->nMuons);
+  upgrade_->muonEta.resize(upgrade_->nMuons);
+  upgrade_->muonPhi.resize(upgrade_->nMuons);
+  upgrade_->muonEtaAtVtx.resize(upgrade_->nMuons);
+  upgrade_->muonPhiAtVtx.resize(upgrade_->nMuons);
+  upgrade_->muonIEt.resize(upgrade_->nMuons);
+  upgrade_->muonIEtUnconstrained.resize(upgrade_->nMuons);
+  upgrade_->muonIEta.resize(upgrade_->nMuons);
+  upgrade_->muonIPhi.resize(upgrade_->nMuons);
+  upgrade_->muonIEtaAtVtx.resize(upgrade_->nMuons);
+  upgrade_->muonIPhiAtVtx.resize(upgrade_->nMuons);
+  upgrade_->muonIDEta.resize(upgrade_->nMuons);
+  upgrade_->muonIDPhi.resize(upgrade_->nMuons);
+  upgrade_->muonChg.resize(upgrade_->nMuons);
+  upgrade_->muonIso.resize(upgrade_->nMuons);
+  upgrade_->muonQual.resize(upgrade_->nMuons);
+  upgrade_->muonDxy.resize(upgrade_->nMuons);
+  upgrade_->muonTfMuonIdx.resize(upgrade_->nMuons);
+
+  upgrade_->sumEt.resize(upgrade_->nSums);
+  upgrade_->sumPhi.resize(upgrade_->nSums);
+  upgrade_->sumIEt.resize(upgrade_->nSums);
+  upgrade_->sumIPhi.resize(upgrade_->nSums);
+
+  return true;
+} // -----  end of function L1Ntuple::ResizeNanoVectors  -----
+
+// ===  FUNCTION  ============================================================
+//         Name:  L1Ntuple::LoadNanoVariables
+//  Description:  
+// ===========================================================================
+bool L1Ntuple::LoadNanoVariables()
+{
+  // Nano loads charges based on hardware boolean - replicate logic here
+  for(int imu=0; imu < upgrade_->nMuons; imu++) {
+    if(muonChgValid.at(imu) == 1){ // check charge measurement is valid
+      if(upgrade_->muonChg.at(imu) == 1){upgrade_->muonChg.at(imu) = -1;}
+      else if(upgrade_->muonChg.at(imu) == 0){upgrade_->muonChg.at(imu) = 1;}
+    }
+    else { // set charge to 0 if measurement is invalid
+      upgrade_->muonChg.at(imu) = 0;
+    }
+  }
+  
+  // Cast values loaded into temporary vectors with nanoAOD branch types into types used by L1Ntuple
+  for(int isum=0; isum < upgrade_->nSums; isum++) { 
+    upgrade_->sumBx.at(isum) = static_cast<float>(sumBxTmp.at(isum));
+    upgrade_->sumType.at(isum) = static_cast<short int>(sumTypeTmp.at(isum));
+    upgrade_->sumIEt.at(isum) = static_cast<short int>(sumIEtTmp.at(isum));
+    upgrade_->sumIPhi.at(isum) = static_cast<short int>(sumIPhiTmp.at(isum));
+  }
+  
+  return true;
+} // -----  end of function L1Ntuple::LoadNanoVariables  -----
