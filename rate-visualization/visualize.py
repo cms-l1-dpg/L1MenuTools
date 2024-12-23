@@ -66,8 +66,16 @@ def isLLPSeed(seedname):
     vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias"]
     return ( 
 	any([identifier in seedname for identifier in identifiers]) 
+        and not any([veto in seedname for veto in vetoes])       
+    )
+
+@np.vectorize
+def isADSeed(seedname):
+    identifiers = ["AXO", "CICADA"]
+    vetoes = ["Jet", "EG", "Tau", "ETM", "HTT", "ETT", "ETMHF", "ZeroBias", "upt"]
+    return (
+    any([identifier in seedname for identifier in identifiers])
         and not any([veto in seedname for veto in vetoes])
-        
     )
 
 @np.vectorize
@@ -221,6 +229,7 @@ functions = {
     "isZeroBiasSeed": isZeroBiasSeed,
     "isCalibrationSeed": isCalibrationSeed,
     "isLLPSeed": isLLPSeed,
+    "isADSeed": isADSeed,
 }
 # ... define the rest of the functions here, one for each category...
 # extend the dataframe with new columns that contain the return values of the specific categorization functions
@@ -240,6 +249,7 @@ for category in [
     "isSums",
     "isZeroBias",
     "isLLP",
+    "isAD",
 ]:  # can be later extended ["isSingleMu", "isMultiMu",...]
     func = category + "Seed"
     function = functions[func]
@@ -286,7 +296,8 @@ for rate_type in ["{}".format(rateType)]:
         "isLepJet",
         "isSums",
         "isZeroBias",
-	"isLLP",
+	    "isLLP",
+	    "isAD",
     ]:  # can be extended later: ["isSingleMu", "isMultiMu",...]
         sums[rate_type][category] = (df_PS1[df_PS1[category] == True][rate_type]).sum()
 sumCalib = {}
@@ -314,7 +325,8 @@ categories = {
     "isMultiMu": {"texName":'Multi $\mu$'},
     "isMuEG":    {"texName":'$\mu$ + e/$\gamma$'},
     "isMuJet":   {"texName": '$\mu$ + Jets or Energy sums'},
-    "isLLP":   {"texName": 'LLP seeds (displaced muon or jets)'},
+    "isLLP":   {"texName": 'Displaced $\mu$ or jets'},
+    "isAD":   {"texName": 'Anomaly detection'},
     "isSingleEG":{"texName":'Single e/$\gamma$'},
     "isMultiEG": {"texName":'Multi e/$\gamma$'},
     "isEGJet":{"texName":'e/$\gamma$ + Jets or Energy sums'},
@@ -382,7 +394,8 @@ colours={
     "$\\tau$ + $\mu$ or e/$\gamma$ or Jets or Energy sums":"lime",
     "Energy Sums":"cyan",
     "Zero Bias":"teal",
-    "LLP seeds (displaced muon or jets)":"silver",
+    "Displaced $\mu$ or jets":"silver",
+    "Anomaly detection":"violet",
 
 }
 wedges, lab, pct_text=plt.pie(rates, labels=labels, autopct="%1.1f\%%", labeldistance=1.0, pctdistance=0.6, rotatelabels=True, colors=[colours[key] for key in labels])
