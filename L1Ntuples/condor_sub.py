@@ -5,13 +5,11 @@ print('\nSTART\n')
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-#jobName = "EphZB_2023D_run370293_13_3_0"
-#jobName = "EphZB_2024F_run382250_all_14_0_10_menuv130"
-jobName = "EphZB_2024G_run385127_all_14_0_13_menuv130"
+jobName = "EphZB_2024I_run386593_14_0_13_menuv130"
 jobScript = "cmsRun.sh"
 #jobCfg = "mc.py"
 jobCfg = "data.py"
-rel = "CMSSW_14_0_13"
+rel = "CMSSW_15_0_0_pre3"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
 rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
@@ -28,10 +26,13 @@ ret = 0
 #nJobs = 3696 
 
 ### Settings to run on EphZB2024G (run 385127)
-fileList = rootDir + "EphZB_run385127_all.list"
-nEvents = 12800000
-nJobs = 3096
+#fileList = rootDir + "EphZB_run385127_all.list"
+#nEvents = 12800000
+#nJobs = 3096
 
+### Settings to run on EphZB2024I (run 386593)
+nEvents = 10719500
+nJobs = 2664
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)

@@ -10,11 +10,11 @@ ssh -XY <username>@lxplus.cern.ch
 Follow the below instructions in the given order to produce your own set of L1Ntuples on HTCondor.
 
 ## 1. Environment setup
-Setup the environment according to the [official instructions](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TStage2Instructions#Environment_Setup_with_Integrati), or the following instructions if the twiki is not updated.
+Setup the environment according to the following instructions.
 
 ```
-cmsrel CMSSW_14_0_13
-cd CMSSW_14_0_13/src
+cmsrel CMSSW_15_0_0_pre3
+cd CMSSW_15_0_0_pre3/src
 cmsenv
 git cms-init
 git cms-addpkg L1Trigger/L1TCalorimeter
@@ -54,7 +54,7 @@ cd L1MenuTools/L1Ntuples
 and customize the HTCondor submission script `condor_sub.py` according to your needs:
 - `nEvents`: number of events to process
 - `nJobs`: number of jobs for the splitting (corresponding to the number of files by default)
-- `fileList`: list of GEN-SIM-RAW files
+- `fileList`: list of GEN-SIM-RAW files (suggested run from 2024I for 2025 rate studies: 386593)
 - `jobScript`: bash script containing the cmsRun command. NOTE: the default is `cmsRun.sh`.
 - `eosDir`: output folder for batch jobs (user must have write permissions)
 - `jobName`: name of the directory created in eosDir and locally
