@@ -15,22 +15,8 @@ rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
 ret = 0
 
-### Settings to run on EphZB2023D (run 370293)
-#fileList = rootDir + "EphZB_run370293_all.list"
-#nEvents = 3148150
-#nJobs = 735
-
-### Settings to run on EphZB2024F (run 382250)
-#fileList = rootDir + "EphZB_run382250_all.list"
-#nEvents = 15621250
-#nJobs = 3696 
-
-### Settings to run on EphZB2024G (run 385127)
-#fileList = rootDir + "EphZB_run385127_all.list"
-#nEvents = 12800000
-#nJobs = 3096
-
 ### Settings to run on EphZB2024I (run 386593)
+fileList = rootDir + "EphZB_run386593_all.list"
 nEvents = 10719500
 nJobs = 2664
 
