@@ -39,7 +39,7 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.MessageLogger.suppressWarning = cms.untracked.vstring(
-    'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree',
+    'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree', 'l1uGTTestcrateTree', 'l1AXOEmuTree',
     'l1UpgradeTfMuonTree','l1UpgradeTree','l1HOTree', 'l1Phase2CaloTree')
 
 # Input source                                                                                                                                  
@@ -93,7 +93,8 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '140X_mcRun3_2024_realistic_v14', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, '140X_mcRun3_2024_realistic_v14', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '142X_mcRun3_2025_realistic_v7', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -111,6 +112,12 @@ from L1Trigger.Configuration.customiseReEmul import L1TReEmulMCFromRAWSimHcalTP
 
 #call to customisation function L1TReEmulMCFromRAWSimHcalTP imported from L1Trigger.Configuration.customiseReEmul
 process = L1TReEmulMCFromRAWSimHcalTP(process)
+
+# Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2024_v0_3
+
+#call to customisation function L1TSettingsToCaloParams_2023_v0_4 imported from L1Trigger.Configuration.customiseSettings
+process = L1TSettingsToCaloParams_2024_v0_3(process)
 
 # Automatic addition of the customisation function from L1Trigger.L1TNtuples.customiseL1Ntuple
 from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMUGEN_MC 
