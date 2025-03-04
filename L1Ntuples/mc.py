@@ -1,9 +1,9 @@
 import FWCore.ParameterSet.Config as cms
-from Configuration.Eras.Era_Run3_cff import Run3
+from Configuration.Eras.Era_Run3_2024_cff import Run3_2024
 import FWCore.ParameterSet.VarParsing as VarParsing # ADDED                                                                                                          
 import FWCore.Utilities.FileUtils as FileUtils # ADDED  
 
-process = cms.Process('RAW2DIGI',Run3)
+process = cms.Process('RAW2DIGI',Run3_2024)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
