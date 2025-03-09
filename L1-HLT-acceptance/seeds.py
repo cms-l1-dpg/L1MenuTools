@@ -103,12 +103,12 @@ if not os.path.exists(savedir):
 
 with open(savedir+csvname,"w") as csv_file:
     writer = csv.writer(csv_file)
-    writer.writerow(["HLT"] + runs.keys())
+    writer.writerow(["HLT"] + list(runs))
 
     for key in keys:
         # Count the max number of hltL1 structures for a single HLT path
         ls = []
-        for run in runs.keys():
+        for run in list(runs):
             try:
                 ls.append(len(runs[run][key]))
             except KeyError:
@@ -118,7 +118,7 @@ with open(savedir+csvname,"w") as csv_file:
         for i in range(m): # Iterate through all seeds in possible multiple hltL1 structures for a single HLT path
             ls = []
             ls.append(key)
-            for run in runs.keys():
+            for run in list(runs):
                 try:
                     ls.append(runs[run][key][i])
                 except KeyError:
