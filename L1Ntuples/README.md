@@ -13,8 +13,8 @@ Follow the below instructions in the given order to produce your own set of L1Nt
 Setup the environment according to the following instructions.
 
 ```
-cmsrel CMSSW_15_0_0_pre3
-cd CMSSW_15_0_0_pre3/src
+cmsrel CMSSW_15_0_3
+cd CMSSW_15_0_3/src
 cmsenv
 git cms-init
 git cms-addpkg L1Trigger/L1TCalorimeter
@@ -30,9 +30,9 @@ cd -
 git clone https://github.com/cms-l1t-offline/L1Trigger-L1TCalorimeter.git L1Trigger/L1TCalorimeter/data
 mkdir -p L1Trigger/L1TGlobal/data/Luminosity/startup/
 cd L1Trigger/L1TGlobal/data/Luminosity/startup/
-wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2024_v1_3_0/L1Menu_Collisions2024_v1_3_0.xml
+wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/refs/heads/master/development/L1Menu_Collisions2025_v1_0_0/L1Menu_Collisions2025_v1_0_0.xml
 cd ../../../../../
-sed -i 's/L1Menu_Collisions2022_v1_2_0.xml/L1Menu_Collisions2024_v1_3_0.xml/g' L1Trigger/Configuration/python/customiseUtils.py
+sed -i 's/L1Menu_Collisions2022_v1_2_0.xml/L1Menu_Collisions2025_v1_0_0.xml/g' L1Trigger/Configuration/python/customiseUtils.py
 
 git cms-checkdeps -A -a
 
