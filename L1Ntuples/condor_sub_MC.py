@@ -5,11 +5,11 @@ print('\nSTART\n')
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-jobName = "NuGun_E10_Winter25_15_0_0_pre3_menuv130"
+jobName = "NuGun_E10_Winter25_15_0_3"
 #jobName = "EphZB_2024I_run386593_14_0_13_menuv130_HCALtest"
 jobScript = "cmsRun.sh"
 jobCfg = "mc.py"
-rel = "CMSSW_15_0_0_pre3"
+rel = "CMSSW_15_0_3"
 eosDir = "/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/" + os.environ["USER"] + "/condor/" + jobName + "_" + str(ts) + "/"
 rootDir = os.environ["CMSSW_BASE"] + "/src/L1MenuTools/L1Ntuples/"
 jobDir = rootDir + jobName + "_" + str(ts) + "/"
