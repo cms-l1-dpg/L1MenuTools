@@ -1,10 +1,10 @@
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.Eras.Era_Run3_2024_cff import Run3_2024
+from Configuration.Eras.Era_Run3_2025_cff import Run3_2025
 import FWCore.ParameterSet.VarParsing as VarParsing # ADDED                                                                                        
 import FWCore.Utilities.FileUtils as FileUtils # ADDED 
 
-process = cms.Process('RAW2DIGI',Run3_2024)
+process = cms.Process('RAW2DIGI',Run3_2025)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -93,7 +93,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '140X_dataRun3_HLT_v3', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '150X_dataRun3_HLT_v1', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -107,10 +107,10 @@ associatePatAlgosToolsTask(process)
 # customisation of the process.
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2024_v0_3
+#from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2024_v0_3
 
 #call to customisation function L1TSettingsToCaloParams_2024_v0_3 imported from L1Trigger.Configuration.customiseSettings
-process = L1TSettingsToCaloParams_2024_v0_3(process)
+#process = L1TSettingsToCaloParams_2024_v0_3(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
 from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW 
