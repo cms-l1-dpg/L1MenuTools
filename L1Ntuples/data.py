@@ -40,7 +40,7 @@ process.maxEvents = cms.untracked.PSet(
 
 process.MessageLogger.suppressWarning = cms.untracked.vstring(
     'l1PhaseIITree', 'l1UpgradeTfMuonEmuTree', 'l1CaloTowerTree',
-    'l1UpgradeTfMuonTree','l1UpgradeTree','l1HOTree', 'l1Phase2CaloTree')
+    'l1UpgradeTfMuonTree','l1UpgradeTree','l1HOTree', 'l1Phase2CaloTree', 'l1AXOEmuTree')
 
 # Input source                                                                                                                                           
 process.source = cms.Source("PoolSource",
