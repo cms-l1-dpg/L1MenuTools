@@ -6,12 +6,12 @@ ssh -XY <username>@lxplus.cern.ch
 ```
 Check all the details about the setup and running of the tools in the [Menu twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/HowToL1TriggerMenu#4_Run_3_settings). Find below some general instructions for the first setup.
 ```
-cmsrel CMSSW_14_0_13
-cd CMSSW_14_0_13/src
+cmsrel CMSSW_15_0_5
+cd CMSSW_15_0_5/src
 git clone --depth 1 https://github.com/cms-l1-dpg/L1MenuTools.git
 cd L1MenuTools/rate-estimation
-wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/master/development/L1Menu_Collisions2024_v1_3_0/L1Menu_Collisions2024_v1_3_0.xml # alternatively: place your custom menu XML here
-bash configure.sh  L1Menu_Collisions2024_v1_3_0.xml # alternatively: provide your custom menu XML
+wget https://raw.githubusercontent.com/cms-l1-dpg/L1MenuRun3/refs/heads/master/development/L1Menu_Collisions2025_v1_1_1/L1Menu_Collisions2025_v1_1_1.xml # alternatively: place your custom menu XML here
+bash configure.sh  L1Menu_Collisions2025_v1_1_1.xml # alternatively: provide your custom menu XML
 cmsenv
 mkdir -p objs/include
 make -j 8
