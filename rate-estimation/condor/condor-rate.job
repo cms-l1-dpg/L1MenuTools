@@ -1,0 +1,8 @@
+universe = vanilla
+Executable = launch_rate_est.job
+Requirements = OpSys == "LINUX"&& (Arch != "DUMMY") && (Arch != "aarch64")
+Output = sleep_$(Cluster)_$(Process).stdout
+Error = sleep_$(Cluster)_$(Process).stderr
+Log = sleep_$(Cluster)_$(Process).log
++JobFlavour="tomorrow"
+Queue

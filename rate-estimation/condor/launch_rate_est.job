@@ -1,0 +1,26 @@
+#!/bin/bash
+export SCRAM_ARCH=el9_amd64_gcc12
+#eval `scramv1 runtime -sh`
+
+cd /afs/cern.ch/user/e/emsmith/l1menu/CMSSW_15_0_10/src/
+cmsenv
+cd L1MenuTools/rate-estimation
+#eval `scramv1 runtime -sh`
+bash configure.sh L1Menu_Collisions2025_v1_2_0.xml
+sleep 40
+#eval `scramv1 runtime -sh`
+sleep 20
+mkdir -p objs/include
+sleep 20
+make -j 8
+sleep 40
+
+#./testMenu2016 -u menu/EphZB_2025C_fake.csv -m menu/L1Menu_Collisions2025_v1_1_1.csv -l ntuple/L1IsoTau_2025C_EphZB_run392295_15_0_5_menu2025_v111.list -o L1IsoTau_2025C_run392295_v111_unp-uGT_4M -b 2340 --doPlotLS --doPlotRate --doPlotEff --doPrintPU --SelectCol 2p0E34 --UseUnpackTree --UseuGTDecision --lowerPUbound -1 --upperPUbound -1 --maxEvent 10000
+
+#./testMenu2016 -u menu/EphZB_2025C_fake.csv -m menu/L1Menu_Collisions2025_v1_1_1.csv -l ntuple/L1IsoTau_v3Baseline_2025C_EphZB_run392295_15_0_5_menu2025_v111.list -o L1IsoTau_v3Baseline_2025C_run392295_v111_All -b 2340 --doPlotLS --doPlotRate --doPlotEff --doPrintPU --SelectCol 2p0E34 --UseuGTDecision --lowerPUbound -1 --upperPUbound -1
+
+#./testMenu2016 -u menu/EphZB_2025C_fake.csv -m menu/PStable_L1Menu_Collisions2025_v1_3_0-test.csv -l ntuple/L1IsoTau_v3Baseline_2025C_EphZB_run392295_15_0_5_menu2025_v111.list -o L1SingleJet20_2025C_run392295_v130_All -b 2340 --doPlotLS --doPlotRate --doPlotEff --doPrintPU --SelectCol 2p0E34 --lowerPUbound -1 --upperPUbound -1
+
+#./testMenu2016 -u menu/EphZB_2025C_fake.csv -m menu/PStable_L1Menu_Collisions2025_v1_3_0-test.csv -l ntuple/L1IsoTau_v3Baseline_2025C_EphZB_run392295_15_0_5_menu2025_v111.list -o L1SingleJet20_2025C_run392295_v130_reemu_All -b 2340 --doPlotLS --doPlotRate --doPlotEff --doPrintPU --SelectCol 2p0E34 --lowerPUbound -1 --upperPUbound -1
+
+./testMenu2016 -u menu/EphZB_2025G_run398183_fake.csv -m menu/PStable_L1Menu_Collisions2025_v1_3_0.csv -l ntuple/Nominal_2025G_EphZB_run398183.list -o NominalEMTFComparison_2025G_run398183_v130_reemu_All -b 2340 --UseuGTDecision --doPlotLS --doPlotRate --doPlotEff --doPrintPU --SelectCol 2p0E34 --lowerPUbound -1 --upperPUbound -1
