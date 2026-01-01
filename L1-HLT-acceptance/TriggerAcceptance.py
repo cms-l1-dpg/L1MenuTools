@@ -136,7 +136,7 @@ def main():
         if not path in L1T_paths:
             for group in groups:
                 if path in L1T_unpr[group]: break
-            print '\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group)
+            print('\nUser defined unprescaled seed %s from group %s not in TTree!!! Program will continue.' % (path,group))
             L1T_missing.append(path)
 
     ## HLT_L1_seeds: HLT-L1T 'seed-mappings' based on whether a specific L1T path seeded a particular HLT path. Created through the output of seeds.py
@@ -159,7 +159,7 @@ def main():
 
 
     if L1T_unpr_all ==[]:
-        print 'None of the user defined unprescaled seeds can be found in TTree. System exit'
+        print('None of the user defined unprescaled seeds can be found in TTree. System exit')
         sys.exit()
 
 #############
@@ -217,7 +217,7 @@ def main():
 
             if iEvt >= MAX_EVT and MAX_EVT > 0: break
             iEvt += 1
-            if iEvt % PRT_EVT is 0: print 'Event #%d / %d' % (iEvt, MAX_EVT)
+            if iEvt % PRT_EVT == 0: print('Event #%d / %d' % (iEvt, MAX_EVT))
 
             ch.GetEntry(jEvt)
             run = str(ch.GetLeaf('run').GetValue()).split('.')[0]
@@ -226,7 +226,7 @@ def main():
             if ch.PV_npvsGood < PU_MIN: continue
             iPass += 1
 
-            ## if VERBOSE: print '\nIn event %d we find %d vertices (%d "Good", %d "Other")' % (iEvt, ch.PV_npvs, ch.PV_npvsGood, ch.nOtherPV)
+            ## if VERBOSE: print('\nIn event %d we find %d vertices (%d "Good", %d "Other")' % (iEvt, ch.PV_npvs, ch.PV_npvsGood, ch.nOtherPV))
 
             hists['nPV']     .Fill( min( max(ch.PV_npvs,     nPV_bins[1]+0.01), nPV_bins[2]-0.01) )
             hists['nPV_good'].Fill( min( max(ch.PV_npvsGood, nPV_bins[1]+0.01), nPV_bins[2]-0.01) )
@@ -242,15 +242,15 @@ def main():
                 if ch.GetLeaf(path).GetValue() == 1:
                     L1T_pass.append(path)
                     L1T_acc[path] = []
-                    if VERBOSE: print 'In event %d, %s passes' % (iEvt, path)
+                    if VERBOSE: print('In event %d, %s passes' % (iEvt, path))
             ## End loop: for path in L1T_unpr_all
 
             ## Can quit here if no L1T paths fired
             if len(L1T_pass) == 0: continue
 
             if VERBOSE:
-                print 'Total list of L1T seeds which fire in this event:'
-                print L1T_pass
+                print('Total list of L1T seeds which fire in this event:')
+                print(L1T_pass)
 
             ## Dictionary of lists of fired L1T paths seeding HLT paths which pass
             HLT_seed_fired = collections.OrderedDict()
@@ -266,24 +266,24 @@ def main():
                 hists['HLT_rate_total'].Fill(iHLT+1)
                 HLT_seed_fired[path] = []
 
-                if VERBOSE: print 'In event %d, %s fired' % (iEvt, path)
+                if VERBOSE: print('In event %d, %s fired' % (iEvt, path))
 
                 ## Check to see which fired L1T paths seeded this HLT path
                 for seed in L1T_pass:
                     try:
                         if not seed in HLT_L1_seeds[run][path]:
-                            print '%s not in %s!!!' % (seed,path)
+                            print('%s not in %s!!!' % (seed,path))
                             continue
 
                         ## Conditional that this L1T path seeded the firing HLT path
                         L1T_acc[seed].append(path)
                         HLT_seed_fired[path].append(seed)
-                        print '  * %s fires %s' % (seed,path)
-                        if VERBOSE: print '  * %s fires %s' % (seed,path)
+                        print('  * %s fires %s' % (seed,path))
+                        if VERBOSE: print('  * %s fires %s' % (seed,path))
 
                     except KeyError:
                         HLT_missing.append(path)
-                        print '\n%s not in user defined HLT-L1-seeds!!! Program will continue.' % (path)
+                        print('\n%s not in user defined HLT-L1-seeds!!! Program will continue.' % (path))
 
                 ## End loop: for seed in L1T_pass:
             ## End loop: for iHLT in range(len(HLT_paths))
@@ -311,10 +311,10 @@ def main():
                         nAcc_L1T = min(nAcc_L1T, len(HLT_seed_fired[path]))
 
                     if nAcc_L1T == 0 or nAcc_L1T == 999:
-                        print '\n\nBizzare error!!! nAcc_L1T = %d! Quitting.' % nAcc_L1T
+                        print('\n\nBizzare error!!! nAcc_L1T = %d! Quitting.' % nAcc_L1T)
                         sys.exit()
 
-                    if VERBOSE: print '%s seeded an HLT path with %d other firing seeds' % (seed, nAcc_L1T)
+                    if VERBOSE: print('%s seeded an HLT path with %d other firing seeds' % (seed, nAcc_L1T))
 
                     hists['L1T_%s_acc_rate_total' % group].Fill(iL1T+1)
                     hists['L1T_%s_acc_rate_pure'  % group].Fill(iL1T+1, (nAcc_L1T == 1))
@@ -328,7 +328,7 @@ def main():
         ## End loop over events in chain (jEvt)
     ## End loop over chains (ch)
 
-    print 'Finished with loop over %d events' % iEvt
+    print('Finished with loop over %d events' % iEvt)
 
     ## Configure the rate histograms
     for hname in hists.keys():
@@ -548,14 +548,14 @@ def main():
 
     ## Display the unprescaled seeds defined by the user which are not present in the .root file again
     if L1T_missing !=[]:
-        print '\nThe missing seeds are:'
+        print('\nThe missing seeds are:')
         for ele in L1T_missing:
-            print ele
+            print(ele)
 
     if HLT_missing !=[]:
-        print '\nThe missing paths are:'
+        print('\nThe missing paths are:')
         for ele in HLT_missing:
-            print ele
+            print(ele)
 
 
     ## Delete the output ROOT file from local memory
