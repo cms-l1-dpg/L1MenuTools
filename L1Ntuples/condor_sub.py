@@ -5,7 +5,7 @@ print('\nSTART\n')
 ts = calendar.timegm(time.gmtime())
 
 fileName = "L1Ntuple.root"
-jobName = "Nominal_EphZB_2025G_run398183_15_0_10_menu2025_v130"
+jobName = "LowPileup_SpZB_2025G_run398683_15_0_10_menu2025_v130"
 jobScript = "cmsRun.sh"
 #jobCfg = "mc.py"
 jobCfg = "data.py"
@@ -36,9 +36,17 @@ ret = 0
 # nEvents = 10363769
 # nJobs = 3677
 
-fileList = rootDir + "EphZB_run398183.list"
-nEvents = 10523867
-nJobs = 3702
+# fileList = rootDir + "EphZB_run396102.list"
+# nEvents = 10363769
+# nJobs = 3677
+
+# fileList = rootDir + "EphZB_run398183.list"
+# nEvents = 10523867
+# nJobs = 3702
+
+fileList = rootDir + "SpZB_run398683.list"
+nEvents = 151977629
+nJobs = 4026
 
 while ret == 0:
    ret = os.system("mkdir " + jobDir)
