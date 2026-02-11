@@ -69,6 +69,13 @@ cd ntuple
 cd ..
 ```
 
+It is also possible to run the rate estimation code on nanoAOD using the option `--doNano`.
+Some notes:
+- nanoAOD should only be used with the `--useUnpackTree` option, since nanoAOD does not yet store the emulator trees
+- only the final uGT decisions are stored in nanoAOD, whilst initial decisions are the default;
+to compare the uGT output (for prescaled triggers) with equivalent ntuples the `--UseFinalDecision` flag should be used
+- muon shower variables are not yet stored in nanoAOD for the standalone emulator, so these will return 0 rates
+
 ### Lumi section information table
 In case you are using data ntuples, this table is used to avoid bad lumi sections (LS). 
 It also includes LS vs PU information, which can be useful for plotting rate vs PU dependencies. 
@@ -123,6 +130,7 @@ The arguments that you can use are as follows:
 |`-b`   | Number of bunches. |
 |`--lowerPUbound` | Consider only events with PU >= lowerPUbound for the rate estimation |
 |`--upperPUbound` | Consider only events with PU <= upperPUbound for the rate estimation |
+|`--doNano`       | Use nanoAOD format for input events; default is ntuple |
 |`--doReweightingRun3` | Apply pileup reweighting of the Run 3 flat pileup distribution according to Run 3Lumi POG model (do not use with `--lowerPUbound` or `--upperPUbound` option!) |
 |`--doReweighting2018` | Apply pileup reweighting of the Run 3 flat pileup distribution to match the Run 2 pileup profile (do not use with `--lowerPUbound` or `--upperPUbound` option!) |
 |`--customReweighting` | Apply pileup reweighting using a custom set of weights, set a json-file containing the custom weights |
@@ -130,6 +138,7 @@ The arguments that you can use are as follows:
 |`--SelectLS [startLS,endLS]` | Select lumi sections to run over; default is whole LS provided. |
 |`--SelectCol` | Select the column in the PS table. |
 |`--UseUnpackTree` | Switch to using UnpackTree; default is EmuTree. |
+|`--UseFinalDecision` | Switch to using final uGT decisions; default is initial decisions (relevant only for prescaled triggers). |
 |`--maxEvent` | Run on a subset of the available events. |
 |`--doPrintPU` | Evaluate and save the rates for different pileup values |
 |`--PrescalePrecision` | Select the prescale precision factor e.g. for 100 (=10^2) the prescales are represented with 2 decimal places |
