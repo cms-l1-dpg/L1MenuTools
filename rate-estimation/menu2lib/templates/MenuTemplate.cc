@@ -331,6 +331,10 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
   tmEventSetup.CicadaTrigger,
 ) %}
 
+{% set TopologicalTriggerConditionTypes = (
+  tmEventSetup.TopologicalTrigger,
+) %}
+
 
 {% for name, cond in menu.getConditionMapPtr().items() %}
   {%- if cond.getType() in OverlapRemovalConditionTypes %}
@@ -417,6 +421,9 @@ PermutationFactory::cache_t PermutationFactory::cache_ = {};
 
   {% elif cond.getType() in CicadaTriggerConditionTypes %}
     {% include 'CicadaTriggerTemplate.cc' %}
+
+  {% elif cond.getType() in TopologicalTriggerConditionTypes %}
+    {% include 'TopologicalTriggerTemplate.cc' %}
 
   {% endif -%}
 {% endfor %}

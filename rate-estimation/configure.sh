@@ -26,12 +26,12 @@ if [ ! -d "$ENV_DIR" ]; then
 	echo "creating virtual environment..."
 	$ENV_PYTHON -m venv $ENV_DIR
 	source $ENV_DIR/bin/activate
-	python -m pip $PIP_OPTIONS install -U pip
-	python -m pip $PIP_OPTIONS install -r $SCRIPT_DIR/requirements.txt
+	$ENV_PYTHON -m pip $PIP_OPTIONS install -U pip
+	$ENV_PYTHON -m pip $PIP_OPTIONS install -r $SCRIPT_DIR/requirements.txt
 	deactivate
 	echo "creating virtual environment... done."
 fi
 
 . $ENV_DIR/bin/activate
-python $SCRIPT --menu $MENU_FILE
+$ENV_PYTHON $SCRIPT --menu $MENU_FILE
 deactivate
